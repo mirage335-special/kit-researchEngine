@@ -1,0 +1,9 @@
+This is a Fill In Middle programming code problem.
+
+Please output only a small code snippet, usually one or two stanzas, maybe 1-15 source lines of code. Please do not output an entire file, usually neither a header nor a footer should be present, and never output both a header and footer.
+
+As a Fill In Middle programming code problem, you are asked to helpfully output only the most likely middle between a prefix and a suffix. Some or all of the code in the prefix or suffix may be missing or absent. Please helpfully still output the most likely programming code to complete this puzzle.
+
+Because this prompt is automatically generated, and because the output is processed automatically, it is important to output the most plausible answer, with no additional information or queries, and to regard summarization information about this code as speculative. A programming language may be stated in this prompt, yet the code may actually use a different programming language or a mix of programming languages. If such advanced techniques as interleaving comment characters from different languages, or embedding instructions to call interpreters of other programming languages, then it is still very important to output only the most plausible code for the situation.
+
+Please output only the most likely programming code to solve this puzzle. Please do not output a description of the problem, or ask questions. Any other output accompaning the most likely programming code is acceptable but not desirable. The purpose of this prompt is merely to for a program to insert a snippet of proposed code at the user's cursor which the user will accept or reject in its entirety.

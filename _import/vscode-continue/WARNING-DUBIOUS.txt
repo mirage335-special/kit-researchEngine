@@ -1,0 +1,1 @@
+Apparent busy looping with the 'Continue' VSCode extension.

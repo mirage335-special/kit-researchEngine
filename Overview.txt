@@ -1,0 +1,172 @@
+
+Set environment variable (if desired) OLLAMA_NOHISTORY=true . For MSWindows, search for and use the 'Edit the System Environment Variables' GUI . For Linux/UNIX, move 'ollama'  '~/.bashrc' or similar .
+
+https://github.com/ollama/ollama/pull/4508/commits/37402585e706f4eecd668d1ed5f427f1a8791b6b
+https://github.com/ollama/ollama/issues/3002
+https://github.com/ollama/ollama/issues/3197
+
+
+
+Install extendedInterface .
+
+github.com/mirage335-colossus/extendedInterface
+ Download installer from most recent 'internal' release .
+
+FEATURE: C:\_bash.bat   (bash command prompt)
+
+
+
+Install Ollama (Llama 3.2 Vision Pre-release) on MSW .
+
+https://github.com/ollama/ollama/releases
+https://github.com/likelovewant/ollama-for-amd/releases
+
+
+Install (or update) 'augment' LLM AI model (developer and industrial automation LLM, Llama-augment is derived from Llama-3.1)
+
+_bash> _setup_ollama
+
+FEATURE: Type 'l' at bash command prompt. Use in scripts, ask for help, etc.
+
+
+
+Install Docker .
+
+https://docs.docker.com/desktop/install/windows-install/
+
+<Log Off / Restart after proverbial Setup.exe>
+<Accept Docker Subscription Service Agreement…. 250 employees OR $10million in annual revenue>
+
+
+
+Test Docker
+
+_bash> docker run hello-world
+
+
+
+Install SearXNG (much more powerful search engine)
+
+https://en.wikipedia.org/wiki/SearXNG
+
+_bash> mkdir -p /cygdrive/c/core/data/searxng
+
+Copy file 'settings.yml.patch' from here to 'C:\core\data\searxng' , or edit 'settings.yml' manually later. A patch may enable needed 'json' format, and default to deeper undegraded IT/science/etc multi-category search.
+
+_bash> docker rm -f searxng
+
+_bash> docker pull searxng/searxng:latest
+_bash> docker run -d --name searxng -p 127.0.0.1:8080:8080 -v /c/core/data/searxng:/etc/searxng --restart always searxng/searxng:latest
+_bash> sleep 120
+
+
+_bash> cd /cygdrive/c/core/data/searxng
+_bash> docker stop searxng
+
+# Alternatively, edit 'C:\core\data\searxng' with a text editor.
+_bash> patch -p1 settings.yml < settings.yml.patch
+
+_bash> docker restart searxng
+_bash> cd
+
+
+
+FEATURE: Bookmark http://localhost:8080/ , and configure preferences as desired.
+
+FEATURE: Firefox - from the page http://localhost:8080/ , right click the address bar, add the new search engine.
+
+FEATURE: Edge -  Settings -> Privacy, search, and services -> Services -> Address bar and search  ... add the URL 'http://localhost:8080/search?q=%s' to add the new search engine. Change new tab page as desired with 'Custom New Tab URL' https://microsoftedge.microsoft.com/addons/detail/custom-new-tab-url/oeibmbobgpgnbnlbaffdgebpeepfbnhi .
+
+
+
+Install/Update OpenWebUI (AI Chat, Web Search, Local Search, Image Comprehension, etc)
+
+https://docs.openwebui.com/getting-started/quick-start
+https://openwebui.com/
+https://github.com/open-webui
+
+_bash> mkdir -p /cygdrive/c/core/data/openwebui
+
+_bash> docker rm -f open-webui
+
+_bash> docker pull ghcr.io/open-webui/open-webui:main
+_bash> docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v/c/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
+#_bash> docker pull ghcr.io/open-webui/open-webui:cuda
+#_bash> docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v/c/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+
+FEATURE: Bookmark http://localhost:3000/ . Use  http://host.docker.internal:8080/search?q=<query>  for the SearXNG URL , set search results 20 , set concurrent to 20 . Do NOT bypass SSL , enable SSL.
+
+
+
+Install AI LLM and Vision models .
+
+# You do want this. Often outperforms llama3.2-vision .
+_bash> ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+
+# You do want this. Sometimes useful.
+_bash> ollama run x/llama3.2-vision "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+
+# You do want this. Very specialized, seems useful for programming code copilot (ie.'twinny').
+_bash> ollama run starcoder2:3b ""
+
+# OPTIONAL .
+_bash> echo 'FROM ./ggml-opencodeinterpreter-ds-33b-iq3_xxs.gguf
+PARAMETER num_ctx 4096
+PARAMETER num_keep 4096
+PARAMETER num_predict 4096
+' > OpenCodeInterpreter-DS-33B.Modelfile
+_bash> wget https://huggingface.co/dranger003/OpenCodeInterpreter-DS-33B-iMat.GGUF/blob/main/ggml-opencodeinterpreter-ds-33b-iq3_xxs.gguf
+_bash> ollama create OpenCodeInterpreter-DS-33B -f OpenCodeInterpreter-DS-33B.Modelfile
+
+# OPTIONAL . Experimental.
+_bash> echo 'FROM ./Faro-Yi-9B-DPO.Q8_0.gguf
+PARAMETER num_ctx 10752
+PARAMETER num_keep 10752
+PARAMETER num_predict 10752
+' > Faro-Yi-9B-DPO-Q8.Modelfile
+_bash> wget https://huggingface.co/QuantFactory/Faro-Yi-9B-DPO-GGUF/resolve/main/Faro-Yi-9B-DPO.Q8_0.gguf
+_bash> ollama create Faro-Yi-9B-DPO -f Faro-Yi-9B-DPO-Q8.Modelfile
+
+# OPTIONAL . Experimental.
+_bash> ollama run nemotron-mini "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+
+# OPTIONAL . Experimental. May be needed by 'Continue' VSCode extension.
+# https://www.continue.dev/
+_bash> ollama run llama3.1:8b "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+_bash> ollama run starcoder2:3b ""
+_bash> ollama run nomic-embed-text "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+
+# OPTIONAL . Experimental. May be needed for 'CodeGPT' VSCode extension.
+# https://codegpt.co/
+_bash> ollama run codestral:latest "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+
+# OPTIONAL . Experimental. May be needed for 'twinny' VSCode extension.
+_bash> ollama run qwen2.5-coder "Please output the word true . Any other output accompanying the word true is acceptable
+but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+_bash> ollama run stable-code "Please output the word true . Any other output accompanying the word true is acceptable
+but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+
+
+
+
+
+
+
+# LLM AI through 'ollama' or similar is already a standard feature of "ubdist" . SearXNG and OpenWebUI can be added to custom ubdist derivatives or other UNIX/Linux dist/OS .
+
+# ATTENTION: NOTICE: Seems 'twinny' is very actively developed, with more than 1185 Commits as of 2024-11-09 .
+# https://github.com/twinnydotdev/twinny
+# https://www.youtube.com/watch?v=TKruTkof-zw&t=82s
+# https://github.blog/ai-and-ml/github-copilot/how-github-copilot-is-getting-better-at-understanding-your-code/
+# https://code.visualstudio.com/docs/copilot/prompt-crafting
+# https://thakkarparth007.github.io/copilot-explorer/posts/copilot-internals.html
+# In addition to configuring different Chat and FIM models, also change the FIM template to match .
+# FIM model and template is recommended to use 'starcoder2:3b' .
+
+# https://github.com/docker/login-action/discussions/669
+
+
+
+

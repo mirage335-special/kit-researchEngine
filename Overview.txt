@@ -16,7 +16,7 @@ FEATURE: C:\_bash.bat   (bash command prompt)
 
 
 
-Install Ollama (Llama 3.2 Vision Pre-release) on MSW .
+Install Ollama (with Vision) on MSW .
 
 https://github.com/ollama/ollama/releases
 https://github.com/likelovewant/ollama-for-amd/releases
@@ -59,9 +59,9 @@ _bash> docker pull searxng/searxng:latest
 _bash> docker run -d --name searxng -p 127.0.0.1:8080:8080 -v /c/core/data/searxng:/etc/searxng --restart always searxng/searxng:latest
 _bash> sleep 120
 
+_bash> docker stop searxng
 
 _bash> cd /cygdrive/c/core/data/searxng
-_bash> docker stop searxng
 
 # Alternatively, edit 'C:\core\data\searxng' with a text editor.
 _bash> patch -p1 settings.yml < settings.yml.patch

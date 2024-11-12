@@ -27,15 +27,7 @@
  
  server:
    # Is overwritten by ${SEARXNG_PORT} and ${SEARXNG_BIND_ADDRESS}
-@@ -91,7 +92,7 @@
-   # If your instance owns a /etc/searxng/settings.yml file, then set the following
-   # values there.
- 
--  secret_key: "8417622cad8a786f985b40320497e874e26846bdce1afdb4686360a6280b9018"  # Is overwritten by ${SEARXNG_SECRET}
-+  secret_key: "5e77fb0401a91c23028a0fd369366f78150c108428e638d19e1700e14aac6646"  # Is overwritten by ${SEARXNG_SECRET}
-   # Proxy image results through SearXNG. Is overwritten by ${SEARXNG_IMAGE_PROXY}
-   image_proxy: false
-   # 1.0 and 1.1 are supported
+
 @@ -138,7 +139,7 @@
      simple_style: auto
    # Perform search immediately if a category selected.

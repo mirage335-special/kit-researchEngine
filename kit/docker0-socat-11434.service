@@ -1,0 +1,16 @@
+[Unit]
+Description=Socat Port Forwarder for docker0 Interface
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/docker0_socat_forwarder-11434.sh
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
+
+# ATTRIBUTION: ChatGPT o1-preview 2024-11-13 . ^

@@ -28,7 +28,7 @@ _setup_researchEngine-kit() {
 	functionEntryPWD="$PWD"
 	
 	_mustGetSudo
-	export researchEngine="$currentUser"
+	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="$currentUser"
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
@@ -81,7 +81,7 @@ _hook_ollama_nohistory() {
 	_messageNormal 'Hook OLLAMA_NOHISTORY'
 	
 	_mustGetSudo
-	export researchEngine="$currentUser"
+	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="$currentUser"
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
@@ -140,7 +140,7 @@ _setup_searxng() {
 	_messageNormal 'Install SearXNG (much more powerful search engine)'
 	
 	_mustGetSudo
-	export researchEngine="$currentUser"
+	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="$currentUser"
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
@@ -169,7 +169,7 @@ _setup_openwebui() {
 	_messageNormal 'Install OpenWebUI'
 	
 	_mustGetSudo
-	export researchEngine="$currentUser"
+	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="$currentUser"
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
@@ -227,7 +227,7 @@ _setup_openwebui-portService() {
 	_messageNormal 'Install OpenWebUI - Port Service'
 	
 	_mustGetSudo
-	export researchEngine="$currentUser"
+	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="$currentUser"
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
@@ -236,6 +236,8 @@ _setup_openwebui-portService() {
 
 
 _setup_models_extra-user() {
+	_service_ollama
+	
 	_messagePlain_probe_cmd ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
 	
 	_messagePlain_probe_cmd ollama run x/llama3.2-vision "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
@@ -248,7 +250,7 @@ _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'
 	
 	_mustGetSudo
-	export researchEngine="$currentUser"
+	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="$currentUser"
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	

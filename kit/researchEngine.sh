@@ -32,6 +32,24 @@ _setup_researchEngine-kit() {
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
+	# ATTRIBUTION-AI ChatGPT o1 2024-12-24 .
+	# WARNING: The 'DOCKER_RAMDISK=true' environment variable is necessary, and reportedly (ChatGPT) may be officially unofficial and controversial. An alternative may be to write a wrapper script temporarily replacing runc with the added parameter 'runc --no-pivot' ONLY if the 'run' command is detected (ie. convert 'runc run <container-id>' to 'runc --no-pivot run <container-id>' ) .
+	_messageNormal 'Docker Service - Start'
+	# WARNING: This does assume if dockerd is not already available, it is due to absence of ChRoot, with all mounting/unmounting being necessary. A reasonable assumption, but could cause issues (eg. breaking 'cgroup' on a running system).
+	local currentDockerPID
+	currentDockerPID=""
+	if ! docker ps
+	then
+		sudo -n mkdir -p /sys/fs/cgroup
+		sudo -n mount -t cgroup2 none /sys/fs/cgroup || mount -t cgroup none /sys/fs/cgroup
+		sudo -n mkdir -p /var/run
+		#sudo -n env DOCKER_RAMDISK=true dockerd --config-file=/dev/null --storage-driver=vfs --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
+		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
+		currentDockerPID="$!"
+		_messagePlain_probe_var currentDockerPID
+		export DOCKER_HOST=unix:///var/run/docker.sock
+	fi
+
 	
 	_hook_ollama_nohistory
 	
@@ -70,6 +88,26 @@ _setup_researchEngine-kit() {
 	
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c 'docker logout'
 	
+
+	_messageNormal 'Docker Service - Stop'
+	# WARNING: This does assume if dockerd is not already available, it is due to absence of ChRoot, with all mounting/unmounting being necessary. A reasonable assumption, but could cause issues (eg. breaking 'cgroup' on a running system).
+	if [[ "$currentDockerPID" != "" ]]
+	then
+		kill -TERM "$currentDockerPID"
+		sleep 3
+		kill -TERM "$currentDockerPID"
+		sleep 3
+		kill -TERM "$currentDockerPID"
+		sleep 15
+		kill -KILL "$currentDockerPID"
+
+		sudo -n umount /sys/fs/cgroup
+		sleep 3
+		sudo -n umount /sys/fs/cgroup
+		sleep 6
+
+		rmdir /var/lib/docker/runtimes
+	fi
 	
 	
 	cd "$functionEntryPWD"
@@ -181,6 +219,8 @@ _setup_openwebui() {
 	_messagePlain_request 'SearXNG URL for OpenWebUI: http://host.docker.internal:8080/search?q=<query>'
 	_messagePlain_request 'Search results 20, Concurrent 20 . Do NOT bypass SSL, enable SSL.'
 	_messagePlain_request 'Import config file: "'$HOME'"/core/infrastructure/ubiquitous_bash/_lib/kit/app/researchEngine/_import/openwebui/config-1731195770155.json'
+
+	sleep 20
 }
 
 
@@ -212,7 +252,9 @@ _setup_openwebui-portService-user() {
 	
 	# Enable the service to start on boot
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl enable docker0-socat-11434.service
+	sudo -n ln -s /etc/systemd/system/docker0-socat-11434.service /etc/systemd/system/multi-user.target.wants/docker0-socat-11434.service
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl enable docker0-socat-8080.service
+	sudo -n ln -s /etc/systemd/system/docker0-socat-8080.service /etc/systemd/system/multi-user.target.wants/docker0-socat-8080.service
 	
 	# Start the service immediately
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl start docker0-socat-11434.service

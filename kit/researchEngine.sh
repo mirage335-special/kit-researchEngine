@@ -41,17 +41,17 @@ _setup_researchEngine-kit() {
 	if ! docker ps
 	then
 		sudo -n mkdir -p /sys/fs/cgroup
-		sudo -n mount -t cgroup2 none /sys/fs/cgroup || mount -t cgroup none /sys/fs/cgroup
+		sudo -n mount -t cgroup2 none /sys/fs/cgroup || sudo -n mount -t cgroup none /sys/fs/cgroup
 		sudo -n mkdir -p /var/run
 		#sudo -n env DOCKER_RAMDISK=true dockerd --config-file=/dev/null --storage-driver=vfs --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
-		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
+		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker | sudo -n tee /var/log/dockerd.log 2>&1 &
 		currentDockerPID="$!"
 		_messagePlain_probe_var currentDockerPID
 		export DOCKER_HOST=unix:///var/run/docker.sock
 	fi
 
 	
-	_hook_ollama_nohistory
+	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _hook_ollama_nohistory'
 	
 	
 	_messageNormal '_setup_ollama'

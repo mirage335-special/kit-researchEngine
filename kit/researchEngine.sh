@@ -44,7 +44,7 @@ _setup_researchEngine-kit() {
 		sudo -n mount -t cgroup2 none /sys/fs/cgroup || sudo -n mount -t cgroup none /sys/fs/cgroup
 		sudo -n mkdir -p /var/run
 		#sudo -n env DOCKER_RAMDISK=true dockerd --config-file=/dev/null --storage-driver=vfs --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
-		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker | sudo -n tee /var/log/dockerd.log 2>&1 &
+		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker 2>&1 | sudo -n tee /var/log/dockerd.log > /dev/null &
 		currentDockerPID="$!"
 		_messagePlain_probe_var currentDockerPID
 		export DOCKER_HOST=unix:///var/run/docker.sock

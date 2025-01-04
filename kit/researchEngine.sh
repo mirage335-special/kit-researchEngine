@@ -264,6 +264,11 @@ _setup_openwebui-portService-user() {
 	_messagePlain_nominal 'portService: systemctl: status'
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl status docker0-socat-11434.service
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl status docker0-socat-8080.service
+
+
+	# ATTENTION: Workaround for systemd , which may not start these services on first boot for unknown reasons, but will always start and restart automatically as expected after first boot.
+	( sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c 'crontab -l' ; echo '*/1 * * * * systemctl start docker0-socat-11434.service' ) | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c 'crontab -'
+	( sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c 'crontab -l' ; echo '*/1 * * * * systemctl start docker0-socat-8080.service' ) | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c 'crontab -'
 }
 _setup_openwebui-portService() {
 	_messageNormal 'Install OpenWebUI - Port Service'

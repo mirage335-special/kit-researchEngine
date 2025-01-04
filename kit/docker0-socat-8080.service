@@ -2,7 +2,7 @@
 Description=Socat Port Forwarder for docker0 Interface
 #After=network.target docker.service
 After=network-online.target
-Requires=docker.service
+#Requires=docker.service
 
 [Service]
 Type=simple

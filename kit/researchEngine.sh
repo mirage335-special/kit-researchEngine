@@ -262,8 +262,8 @@ _setup_openwebui-portService-user() {
 	
 	
 	_messagePlain_nominal 'portService: systemctl: status'
-	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl status docker0-socat-11434.service
-	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl status docker0-socat-8080.service
+	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl status docker0-socat-11434.service | cat
+	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN systemctl status docker0-socat-8080.service | cat
 
 
 	# ATTENTION: Workaround for systemd , which may not start these services on first boot for unknown reasons, but will always start and restart automatically as expected after first boot.

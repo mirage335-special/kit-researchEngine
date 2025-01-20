@@ -285,13 +285,19 @@ _setup_openwebui-portService() {
 _setup_models_extra-user() {
 	_service_ollama
 	
-	_messagePlain_probe_cmd ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+	# WARNING: Unlike the reliable llama-augment, some of these models WILL infinite generate/loop . Relying on a '_timeout' may be possible, but is not recommended due to possible changes, regressions, etc, in upstream ollama .
+
+	_messagePlain_probe_cmd ollama pull llava-llama3
+	#_messagePlain_probe_cmd ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
 	
-	_messagePlain_probe_cmd ollama run x/llama3.2-vision "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+	_messagePlain_probe_cmd ollama pull x/llama3.2-vision
+	#_messagePlain_probe_cmd ollama run x/llama3.2-vision "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
 	
-	_messagePlain_probe_cmd ollama run starcoder2:3b ""
+	_messagePlain_probe_cmd ollama pull starcoder2:3b
+	#_messagePlain_probe_cmd ollama run starcoder2:3b ""
 	
-	_messagePlain_probe_cmd ollama run nomic-embed-text ""
+	_messagePlain_probe_cmd ollama pull nomic-embed-text
+	#_messagePlain_probe_cmd ollama run nomic-embed-text ""
 }
 _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'

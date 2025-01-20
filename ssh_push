@@ -3,6 +3,8 @@ Uniquely, submodules 'ubiquitous_bash', which this repository may or may not be,
 
 git remote add origin-ssh git@github.com:mirage335-special/kit-researchEngine.git
 git push origin-ssh
+git pull
+git status
 git remote show origin-ssh
 
 

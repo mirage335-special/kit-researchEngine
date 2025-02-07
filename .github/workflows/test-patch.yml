@@ -44,15 +44,20 @@ jobs:
       - name: Download the YAML file
         run: |
           cd ./_import/etc--searxng
-          curl --output settings.yml https://raw.githubusercontent.com/searxng/SearXNG/heads/master/searx/settings.yml
+          curl --output settings.yml 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml''
       - name: Apply the patch
         run: |
           cd ./_import/etc--searxng
-          yes | patch -p1 settings.yml < settings.yml.patch
+          #patch -p1 settings.yml < settings.yml.patch
+          yes | patch -p1 settings.yml settings.yml.patch && exit 0
+          _messagePlain_bad 'bad: FAIL: patch'
+          _messagePlain_request 'Please download settings.yml, patch, change any unpatched regions to match the changes shown in the patch file, then SPECIFICALLY use the git diff command to create a new patch between the upstream settings.yml and desired settings.yml . Resulting patch may itself be compared to previous patch with diff , git diff , etc .'
+          _messageFAIL
+
       - name: Check if patch still applies correctly
         run: |
           cd ./_import/etc--searxng
-          [[ -e settings.yml.rej ]] && exit 1
+          [[ -e ./_import/etc--searxng/settings.yml.rej ]] && exit 1
           true
 
 

@@ -48,7 +48,7 @@ jobs:
       - name: Apply the patch
         run: |
           cd ./_import/etc--searxng
-          patch -p1 settings.yml < settings.yml.patch
+          yes | patch -p1 settings.yml < settings.yml.patch
       - name: Check if patch still applies correctly
         run: |
           cd ./_import/etc--searxng

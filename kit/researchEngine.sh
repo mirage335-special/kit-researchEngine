@@ -299,6 +299,15 @@ _setup_models_extra-user() {
 	
 	_messagePlain_probe_cmd ollama pull nomic-embed-text
 	#_messagePlain_probe_cmd ollama run nomic-embed-text ""
+
+	# ATTENTION: Llama-augment seems to have much better logic and knowlege for specific tasks, expected more capable and more reliable than DeepSeekR1 'chain-of-reasoning' if within wrapper shell script for a similar purpose, and with far smaller model size at that. What the DeepSeekR1 model is preserved for is quickly defining such software control structures (ie. writing entire computer programs as ChatGPT o1 seems able to).
+	# WARNING: Retain a copy of the '32b' model as well if possible, as 'chain-of-reasoning' seems to amplify the slight differences, with the smaller model output often missing one or more important concepts.
+	# DeepSeekR1 seems to degrade rapidly below '14b' parameter models. The '8b' parameter model should NOT be preserved, at least not without both very extensive fine tuning and high certainty of that fine tuning covering all useful specialities.
+	# WARNING: Effect of quantization on DeepSeekR1 may be worse than other models, due to possibly using more of the available numerical precision during lower numerical precision training. May, or may NOT, explain some of the apparent difference in concepts missing from the output of the '14b' parameter model relative to the '32b' parameter model. Apparently, thorough benchmarks comparing outputs of these models at different quantizations do not seem available yet as of 2025-02-07 .
+	# WARNING: Supposedly identical models from sources other than the 'ollama repository' seem to have been missing important concepts in the output, so those should NOT be preserved for now.
+	# CAUTION: Large model - 9GB .
+	# https://ollama.com/huihui_ai/deepseek-r1-abliterated:14b
+	_messagePlain_probe_cmd ollama pull huihui_ai/deepseek-r1-abliterated:14b
 }
 _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'

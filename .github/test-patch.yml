@@ -1,0 +1,60 @@
+
+# ATTRIBUTION-AI: May inherit code from ChatGPT o1 .
+# ATTRIBUTION-AI: DeepSeek R1 14b 2025-02-07
+
+name: test
+
+
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+permissions:
+  actions: none
+  checks: none
+  contents: read
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+
+
+on:
+  push:
+  workflow_dispatch:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    - cron: '1 1 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: _getCore_ub
+        shell: bash
+        timeout-minutes: 90
+        run: |
+          mkdir -p ~/core/infrastructure
+          cd ~/core/infrastructure
+          git clone --depth 1 --recursive https://github.com/mirage335-colossus/ubiquitous_bash.git
+          cd ubiquitous_bash
+          ./_setupUbiquitous.bat
+      - uses: actions/checkout@v3
+      - name: Download the YAML file
+        run: |
+          cd ./_import/etc--searxng
+          curl --output settings.yml https://raw.githubusercontent.com/searxng/SearXNG/heads/master/searx/settings.yml
+      - name: Apply the patch
+        run: |
+          cd ./_import/etc--searxng
+          patch -p1 settings.yml < settings.yml.patch
+      - name: Check if patch still applies correctly
+        run: |
+          cd ./_import/etc--searxng
+          [[ -e settings.yml.rej ]] && exit 1
+          true
+
+
+
+

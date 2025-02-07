@@ -1,9 +1,11 @@
---- settings.yml	2024-11-08 13:17:33.921924400 -0500
-+++ "settings - Copy.yml"	2024-11-02 22:27:48.000000000 -0400
-@@ -32,15 +32,15 @@
-   # Existing autocomplete backends: "dbpedia", "duckduckgo", "google", "yandex", "mwmbl",
-   # "seznam", "startpage", "stract", "swisscows", "qwant", "wikipedia" - leave blank to turn it off
-   # by default.
+diff --git a/./settings.yml b/../settings.yml
+index 84c5c84..7ccf72b 100644
+--- a/./settings.yml
++++ b/../settings.yml
+@@ -36,15 +36,15 @@ search:
+   # Existing autocomplete backends: "baidu", "brave", "dbpedia", "duckduckgo", "google", "yandex",
+   # "mwmbl", "seznam", "startpage", "stract", "swisscows", "qwant", "wikipedia" -
+   # leave blank to turn it off by default.
 -  autocomplete: ""
 +  autocomplete: "duckduckgo"
    # minimun characters to type before autocompleter starts
@@ -19,7 +21,7 @@
    # max_page: 0  # if engine supports paging, 0 means unlimited numbers of pages
    # Available languages
    # languages:
-@@ -73,6 +73,7 @@
+@@ -77,6 +77,7 @@ search:
    # formats: [html, csv, json, rss]
    formats:
      - html
@@ -27,8 +29,7 @@
  
  server:
    # Is overwritten by ${SEARXNG_PORT} and ${SEARXNG_BIND_ADDRESS}
-
-@@ -138,7 +139,7 @@
+@@ -142,7 +143,7 @@ ui:
      simple_style: auto
    # Perform search immediately if a category selected.
    # Disable to select multiple categories at once and start the search manually.
@@ -36,26 +37,26 @@
 +  search_on_category_select: false
    # Hotkeys: default or vim
    hotkeys: default
- 
-@@ -220,7 +221,7 @@
- 
+   # URL formatting: pretty, full or host
+@@ -237,7 +238,7 @@ outgoing:
  # Comment or un-comment plugin to activate / deactivate by default.
+ #   https://docs.searxng.org/admin/settings/settings_plugins.html
  #
 -# enabled_plugins:
 +enabled_plugins:
  #   # these plugins are enabled if nothing is configured ..
  #   - 'Basic Calculator'
  #   - 'Hash plugin'
-@@ -229,7 +230,7 @@
+@@ -247,7 +248,7 @@ outgoing:
  #   - 'Ahmia blacklist'  # activation depends on outgoing.using_tor_proxy
  #   # these plugins are disabled if nothing is configured ..
  #   - 'Hostnames plugin'  # see 'hostnames' configuration below
 -#   - 'Open Access DOI rewrite'
 +  - 'Open Access DOI rewrite'
  #   - 'Tor check plugin'
- #   # Read the docs before activate: auto-detection of the language could be
- #   # detrimental to users expectations / users can activate the plugin in the
-@@ -350,7 +351,7 @@
+ 
+ # Configuration of the "Hostnames plugin":
+@@ -421,7 +422,7 @@ engines:
      engine: apkmirror
      timeout: 4.0
      shortcut: apkm
@@ -64,7 +65,7 @@
  
    - name: apple app store
      engine: apple_app_store
-@@ -376,7 +377,7 @@
+@@ -447,7 +448,7 @@ engines:
      categories: it
      timeout: 6.0
      shortcut: conda
@@ -73,7 +74,7 @@
  
    - name: arch linux wiki
      engine: archlinux
-@@ -406,6 +407,7 @@
+@@ -485,6 +486,7 @@ engines:
      engine: bandcamp
      shortcut: bc
      categories: music
@@ -81,7 +82,7 @@
  
    - name: wikipedia
      engine: wikipedia
-@@ -428,14 +430,17 @@
+@@ -506,14 +508,17 @@ engines:
    - name: bing images
      engine: bing_images
      shortcut: bii
@@ -99,7 +100,7 @@
  
    - name: bitbucket
      engine: xpath
-@@ -484,6 +489,7 @@
+@@ -562,6 +567,7 @@ engines:
      shortcut: chef
      # to show premium or plus results too:
      # skip_premium: false
@@ -107,7 +108,7 @@
  
    - name: cloudflareai
      engine: cloudflareai
-@@ -513,13 +519,13 @@
+@@ -591,13 +597,13 @@ engines:
      engine: cppreference
      shortcut: cpp
      paging: false
@@ -123,7 +124,7 @@
  
    - name: crowdview
      engine: json_engine
-@@ -687,26 +693,26 @@
+@@ -767,26 +773,26 @@ engines:
      categories: [images, web]
      ddg_category: images
      shortcut: ddi
@@ -154,7 +155,7 @@
  
    - name: apple maps
      engine: apple_maps
-@@ -760,7 +766,7 @@
+@@ -840,7 +846,7 @@ engines:
    - name: fdroid
      engine: fdroid
      shortcut: fd
@@ -163,7 +164,7 @@
  
    - name: findthatmeme
      engine: findthatmeme
-@@ -776,6 +782,7 @@
+@@ -856,6 +862,7 @@ engines:
      # api_key: 'apikey' # required!
      # Or you can use the html non-stable engine, activated by default
      engine: flickr_noapi
@@ -171,7 +172,7 @@
  
    - name: free software directory
      engine: mediawiki
-@@ -784,7 +791,7 @@
+@@ -864,7 +871,7 @@ engines:
      base_url: https://directory.fsf.org/
      search_type: title
      timeout: 5.0
@@ -180,7 +181,7 @@
      about:
        website: https://directory.fsf.org/
        wikidata_id: Q2470288
-@@ -816,6 +823,7 @@
+@@ -896,6 +903,7 @@ engines:
    - name: genius
      engine: genius
      shortcut: gen
@@ -188,7 +189,7 @@
  
    - name: gentoo
      engine: mediawiki
-@@ -830,7 +838,7 @@
+@@ -910,7 +918,7 @@ engines:
      engine: gitlab
      base_url: https://gitlab.com
      shortcut: gl
@@ -197,7 +198,7 @@
      about:
        website: https://gitlab.com/
        wikidata_id: Q16639197
-@@ -871,6 +879,7 @@
+@@ -951,6 +959,7 @@ engines:
      shortcut: go
      # additional_tests:
      #   android: *test_android
@@ -205,7 +206,7 @@
  
    - name: google images
      engine: google_images
-@@ -883,18 +892,21 @@
+@@ -963,18 +972,21 @@ engines:
      #       lang: ['en', 'de', 'fr', 'zh-CN']
      #     result_container:
      #       - ['one_title_contains', 'Salvador']
@@ -227,7 +228,7 @@
  
    - name: google scholar
      engine: google_scholar
-@@ -943,7 +955,7 @@
+@@ -1023,7 +1035,7 @@ engines:
    - name: hackernews
      engine: hackernews
      shortcut: hn
@@ -236,7 +237,7 @@
  
    - name: hex
      engine: hex
-@@ -956,7 +968,7 @@
+@@ -1036,7 +1048,7 @@ engines:
    - name: crates.io
      engine: crates
      shortcut: crates
@@ -245,7 +246,7 @@
      timeout: 6.0
  
    - name: hoogle
-@@ -1027,6 +1039,7 @@
+@@ -1112,6 +1124,7 @@ engines:
        - https://kat.am
      shortcut: kc
      timeout: 4.0
@@ -253,7 +254,7 @@
  
    - name: lemmy communities
      engine: lemmy
-@@ -1075,6 +1088,7 @@
+@@ -1160,6 +1173,7 @@ engines:
      shortcut: zlib
      categories: files
      timeout: 7.0
@@ -261,7 +262,7 @@
  
    - name: library of congress
      engine: loc
-@@ -1157,7 +1171,7 @@
+@@ -1241,7 +1255,7 @@ engines:
    - name: metacpan
      engine: metacpan
      shortcut: cpan
@@ -270,7 +271,7 @@
      number_of_results: 20
  
    # - name: meilisearch
-@@ -1170,6 +1184,7 @@
+@@ -1254,6 +1268,7 @@ engines:
    - name: mixcloud
      engine: mixcloud
      shortcut: mc
@@ -278,7 +279,7 @@
  
    # MongoDB engine
    # Required dependency: pymongo
-@@ -1206,7 +1221,7 @@
+@@ -1290,7 +1305,7 @@ engines:
      engine: npm
      shortcut: npm
      timeout: 5.0
@@ -287,7 +288,7 @@
  
    - name: nyaa
      engine: nyaa
-@@ -1287,7 +1302,7 @@
+@@ -1371,7 +1386,7 @@ engines:
      engine: openlibrary
      shortcut: ol
      timeout: 5
@@ -296,7 +297,7 @@
  
    - name: openmeteo
      engine: open_meteo
-@@ -1355,6 +1370,7 @@
+@@ -1439,6 +1454,7 @@ engines:
    - name: pinterest
      engine: pinterest
      shortcut: pin
@@ -304,7 +305,7 @@
  
    - name: piped
      engine: piped
-@@ -1378,6 +1394,7 @@
+@@ -1462,6 +1478,7 @@ engines:
      categories: music
      piped_filter: music_songs
      timeout: 3.0
@@ -312,7 +313,7 @@
  
    - name: piratebay
      engine: piratebay
-@@ -1386,6 +1403,7 @@
+@@ -1470,6 +1487,7 @@ engines:
      # country
      url: https://thepiratebay.org/
      timeout: 3.0
@@ -320,7 +321,7 @@
  
    - name: pixiv
      shortcut: pv
-@@ -1497,6 +1515,7 @@
+@@ -1585,6 +1603,7 @@ engines:
      categories: [general, web]
      additional_tests:
        rosebud: *test_rosebud
@@ -328,7 +329,7 @@
  
    - name: qwant news
      qwant_categ: news
-@@ -1504,6 +1523,7 @@
+@@ -1592,6 +1611,7 @@ engines:
      shortcut: qwn
      categories: news
      network: qwant
@@ -336,7 +337,7 @@
  
    - name: qwant images
      qwant_categ: images
-@@ -1511,6 +1531,7 @@
+@@ -1599,6 +1619,7 @@ engines:
      shortcut: qwi
      categories: [images, web]
      network: qwant
@@ -344,7 +345,7 @@
  
    - name: qwant videos
      qwant_categ: videos
-@@ -1518,6 +1539,7 @@
+@@ -1606,6 +1627,7 @@ engines:
      shortcut: qwv
      categories: [videos, web]
      network: qwant
@@ -352,7 +353,7 @@
  
    # - name: library
    #   engine: recoll
-@@ -1544,12 +1566,13 @@
+@@ -1632,12 +1654,13 @@ engines:
    - name: radio browser
      engine: radio_browser
      shortcut: rb
@@ -367,7 +368,7 @@
  
    - name: right dao
      engine: xpath
-@@ -1612,6 +1635,7 @@
+@@ -1700,6 +1723,7 @@ engines:
    - name: soundcloud
      engine: soundcloud
      shortcut: sc
@@ -375,7 +376,7 @@
  
    - name: stackoverflow
      engine: stackexchange
-@@ -1660,7 +1684,7 @@
+@@ -1743,7 +1767,7 @@ engines:
    - name: searchcode code
      engine: searchcode_code
      shortcut: scc
@@ -384,7 +385,7 @@
  
    # - name: searx
    #   engine: searx_engine
-@@ -1705,7 +1729,7 @@
+@@ -1788,7 +1812,7 @@ engines:
      engine: startpage
      shortcut: sp
      timeout: 6.0
@@ -393,7 +394,7 @@
      additional_tests:
        rosebud: *test_rosebud
  
-@@ -1722,6 +1746,7 @@
+@@ -1805,6 +1829,7 @@ engines:
      base_url:
        - https://solidtorrents.to
        - https://bitsearch.to
@@ -401,7 +402,7 @@
  
    # For this demo of the sqlite engine download:
    #   https://liste.mediathekview.de/filmliste-v2.db.bz2
-@@ -1839,6 +1864,7 @@
+@@ -1922,6 +1947,7 @@ engines:
    - name: yahoo news
      engine: yahoo_news
      shortcut: yhn
@@ -409,7 +410,7 @@
  
    - name: youtube
      shortcut: yt
-@@ -1879,7 +1905,7 @@
+@@ -1962,7 +1988,7 @@ engines:
      categories: [general, wikimedia]
      base_url: "https://{language}.wikibooks.org/"
      search_type: text
@@ -418,7 +419,7 @@
      about:
        website: https://www.wikibooks.org/
        wikidata_id: Q367
-@@ -2309,6 +2335,7 @@
+@@ -2384,6 +2410,7 @@ engines:
      engine: wttr
      shortcut: wttr
      timeout: 9.0
@@ -426,7 +427,7 @@
  
    - name: yummly
      engine: yummly
-@@ -2358,7 +2385,7 @@
+@@ -2433,7 +2460,7 @@ engines:
    - name: lib.rs
      shortcut: lrs
      engine: lib_rs

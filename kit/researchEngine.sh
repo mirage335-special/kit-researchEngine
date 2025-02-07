@@ -158,7 +158,8 @@ _setup_searxng-user() {
 	elif [[ -e "$HOME"/core/data/searxng/settings.yml.rej ]]
 	then
 		_messagePlain_bad 'patch: fail: present: rej file'
-		_messageFAIL
+		_messageError 'FAIL'
+		#_messageFAIL
 	else
 		if ! [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]]
 		then
@@ -311,3 +312,124 @@ _setup_models_extra() {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_set_researchEngine() {
+	_if_cygwin && ub_researchEngine_data=/cygdrive/c/core/data/
+	! _if_cygwin && ub_researchEngine_data="$HOME"/core/data/
+
+	_if_cygwin && ub_researchEngine_data_docker='C:\core\data\' && return 0
+	! _if_cygwin && ub_researchEngine_data_docker="$HOME"/core/data/ && return 0
+
+	return 1
+}
+
+
+_upgrade_researchEngine_searxng() {
+	_set_researchEngine
+
+	_messageNormal 'SearXNG'
+	_messagePlain_nominal 'SearXNG: copy patch'
+	
+	mkdir -p "$ub_researchEngine_data"searxng
+
+	rm -f "$ub_researchEngine_data"searxng/settings.yml.patch
+	rm -f "$ub_researchEngine_data"searxng/settings.yml
+
+	_messagePlain_nominal 'SearXNG: docker'
+	
+	mkdir -p "$ub_researchEngine_data"searxng
+	
+	docker rm -f searxng
+	
+	# TODO: Attempt to pull from 'ingredients'.
+	_set_ingredients
+	docker pull searxng/searxng:latest
+
+	docker run -d --name searxng -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --restart always searxng/searxng:latest
+
+	sleep 45
+	
+	docker stop searxng
+
+	docker start searxng
+
+	if [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.patch ]]
+	then
+		rm -f "$ub_researchEngine_data"searxng/settings.yml.rej
+		rm -f "$ub_researchEngine_data"searxng/settings.yml.new
+		rm -f "$ub_researchEngine_data"searxng/settings.yml.orig
+
+		cp "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch "$ub_researchEngine_data"searxng/
+		patch -p1 "$ub_researchEngine_data"searxng/settings.yml < "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch
+		if [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.rej ]]
+		then
+			_messagePlain_good 'patch: success: patch exit status'
+		fi
+		if [[ -e "$ub_researchEngine_data"searxng/settings.yml.rej ]]
+		then
+			_messagePlain_bad 'patch: fail: present: rej file'
+			#_messageFAIL
+			_messageError 'FAIL'
+		fi
+	fi
+}
+
+_upgrade_researchEngine_openwebui() {
+	_set_researchEngine
+	
+	_messageNormal 'OpenWebUI'
+	_messagePlain_nominal 'OpenWebUI: docker'
+
+	mkdir -p "$ub_researchEngine_data"openwebui
+	
+	docker rm -f open-webui
+	
+	# TODO: Attempt to pull from 'ingredients'.
+	_set_ingredients
+	docker pull ghcr.io/open-webui/open-webui:main
+
+	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+}
+
+_upgrade_researchEngine_openwebui-nvidia() {
+	_set_researchEngine
+
+	_messageNormal 'OpenWebUI'
+	_messagePlain_nominal 'OpenWebUI: docker'
+
+	mkdir -p "$ub_researchEngine_data"openwebui
+	
+	docker rm -f open-webui
+	
+	#docker pull ghcr.io/open-webui/open-webui:main
+	#docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+	# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
+	# WARNING: Especially strongly discouraged for automatic installation, as 'ollama' will already use GPU if available, and built-in NVIDIA GPU support for only unusual use cases is NOT a sane default!
+	#  If these commands are used, it may be most sensible to include these in a script already installing NVIDIA drivers.
+
+	# TODO: Attempt to pull from 'ingredients'.
+	_set_ingredients
+	docker pull ghcr.io/open-webui/open-webui:cuda
+
+	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+}

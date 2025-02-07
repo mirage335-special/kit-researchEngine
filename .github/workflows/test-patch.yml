@@ -28,7 +28,7 @@ on:
     - cron: '1 1 * * *'
 
 jobs:
-  test:
+  test-patch:
     runs-on: ubuntu-latest
     steps:
       - name: _getCore_ub

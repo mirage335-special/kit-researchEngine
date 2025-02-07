@@ -1,8 +1,8 @@
 
-# ATTRIBUTION-AI: May inherit code from ChatGPT o1 .
+# ATTRIBUTION-AI: May inherit code written for other CI YAML scripts by ChatGPT o1 .
 # ATTRIBUTION-AI: DeepSeek R1 14b 2025-02-07
 
-name: test
+name: test-patch
 
 
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions

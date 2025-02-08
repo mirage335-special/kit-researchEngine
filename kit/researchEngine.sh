@@ -308,6 +308,9 @@ _setup_models_extra-user() {
 	# CAUTION: Large model - 9GB .
 	# https://ollama.com/huihui_ai/deepseek-r1-abliterated:14b
 	_messagePlain_probe_cmd ollama pull huihui_ai/deepseek-r1-abliterated:14b
+
+	# Apparently useful for code review, though not well proven and possibly unreliable for that purpose.
+	#_messagePlain_probe_cmd ollama pull qwen2.5-coder:7b
 }
 _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'

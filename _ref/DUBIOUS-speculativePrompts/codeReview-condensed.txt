@@ -1,0 +1,101 @@
+
+# ATTRIBUTION-AI: ChatGPT o1 2025-02-07
+#Please rewrite this prompt to better work within the limitations of smaller Large Language Models, as low as 8b parameters with little or no code review training.
+
+# ChatGPT can provide vastly more detailed, far more useful, analysis along these points, especially for complex scrripts challenging both Llama-augment with much complexity and DeepSeek R1 with much nuance. Nevertheless, the offline models can be adequate.
+
+# Some AI LLM models have been known to at least address the specific points requested by this prompt.
+# ChatGPT o1 (as of 2025-02-07) (this prompt seems to draw out more reliable intended flow analysis, but otherwise, the original codeReview prompt may draw out more accurate analysis)
+# Llama-augment
+# DeepSeek R1 '14b' (may neglect or not mention some points but seems to at least sometimes correctly identify issues with more complex scipts)
+
+
+Please review this rough, untested code for mistakes or incomplete changes. Focus on potential issues in the following areas:
+
+Purpose
+Infer what the code is intended to achieve.
+Programming language used may or may not be explicitly stated, but is often bash , cmd/batch , python , C , C++ , Rust , or similar.
+
+Intended Flow
+Enumerate stepwise processing of plausible inputs through lines of code, loops.
+
+Consistency
+Check for leftover old code, such as mismatched base URLs, filenames, variable names, or function calls.
+Make sure all necessary updates were applied after copy/pasting code.
+
+
+Quoting
+Verify that filenames or paths with special characters are correctly quoted.
+If in doubt, quote filenames to prevent unexpected behavior.
+
+
+Comments vs Code
+Compare comments to the actual code.
+Check if commented lines, if uncommented, would work as intended.
+Look for comments that no longer match what the code does, or irrelevant/outdated comments.
+
+
+Typos
+Identify misspellings or incorrect variable/function names, especially from partial renaming or transposed letters.
+
+
+Completeness and Correctness
+Infer the intended functionality.
+Check if each line, function, and comment align with that intention.
+Note missing pieces or broken logic.
+
+
+Clarity
+Ensure variable and function names make sense.
+Names that seem random or inconsistent may indicate errors or incomplete updates.
+
+
+
+Assumptions
+Validate that external or library functions are called with correct parameters.
+Ensure calls match their documentation or intended usage.
+
+
+Exceeding Limitations
+Watch for code that performs drastic or dangerous actions.
+For instance, deleting too much data in a function whose purpose is only to retrieve files.
+
+
+Oversight
+Check for incomplete functions or calls missing parameters.
+Confirm that necessary global variables, if any, are defined before use.
+
+
+Platform-Specific Code
+Watch for mixing Windows, Linux, or other OS commands in the same flow without proper condition checks.
+Avoid referencing paths or binaries inconsistent with the intended environment.
+
+
+Contradictions
+Look for comments or code fragments that conflict with each other, indicating incomplete edits.
+
+
+High-Risk Operations
+Check safe wrappers for deletion or other destructive operations.
+Verify they are used correctly and with proper safeguards.
+
+
+Nested Loops
+Confirm nested loops are intentional and not just leftover code.
+Make sure they match the intended logic.
+
+
+Logging and Output
+Verify that logging or output statements match the code’s purpose.
+Look for mismatched or misplaced debug messages that could signal incomplete changes.
+
+
+Numerical Methods and Design Patterns
+Confirm the code uses loops instead of repeated blocks where it makes sense, and vice versa.
+Look for more efficient or clearer ways to accomplish tasks if the current approach seems error-prone.
+
+
+After examining each area, provide a summary of the main issues found and suggest how to fix them. Mention if there are no significant errors.
+
+
+

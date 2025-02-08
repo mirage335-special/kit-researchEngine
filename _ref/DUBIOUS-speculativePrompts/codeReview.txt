@@ -1,0 +1,58 @@
+
+# ATTRIBUTION-AI: Llama-augment 2025-02-07
+# ATTRIBUTION-AI: DeepSeek R1 '14b' 2025-02-07
+# ATTRIBUTION-AI: DeepSeek R1 '32b' 2025-02-07
+
+# ChatGPT can provide vastly more detailed, far more useful, analysis along these points, especially for complex scrripts challenging both Llama-augment with much complexity and DeepSeek R1 with much nuance. Nevertheless, the offline models can be adequate.
+
+# Some AI LLM models have been known to at least address the specific points requested by this prompt.
+# ChatGPT o1 (as of 2025-02-07)
+
+# Some AI LLM models, while addressing the specific points raised by this prompt, had showed limitations.
+# Faro-Yi-9B-DPO (thorough but inaccurate due to mistaking prompt for code)
+# Llama-augment (with the limitation of explicitly stating 'couldn't infer the intended functionality')
+
+# Some AI LLM models were less useful for this specific task, at least in the environment used (beta Ollama, OpenWebUI, etc).
+# DeepSeek R1 '14b', DeepSeeek R1 '32b' (seemed to skip over many of the points, called out spelling errors that did not exist)
+# qwen2.5-coder '7b' (seems unreliable, sometimes accurate, maybe sometimes not, sometimes just wrong or mistakes prompt for code)
+# x/llama3.2-vision (did not demonstrate inferring intended functionality any more than Llama-augment)
+# OpenCodeInterpreter-DS-33B (apparently vaguely predicted large amounts of additional content in the prompt and becoming nonsensical)
+# stable-code
+# nemotron-mini
+# starcoder2:instruct
+
+
+Much of the programming code needing review works with complex situations in a complex environment, and each defect found during testing is very time consuming to diagnose and retest. Please review the code for issues that may occur with a very rough draft of untested code.
+
+
+
+*) Consistency: Ensure all necessary changes have been made to any possibly copy/pasted old code. Example: Base URLs, filenames at the end of URLs, drive letters, variable names, function calls, etc, which do not follow the pattern of the surrounding code, could be the result of old code copy/pasted for the logical skeleton of functionally similar, but for which the names have not been changed. One command commented out using a new a new filename, while the actual command that is not commented out is using the incorrect filename or path, etc, would be a mistake.
+
+*) Quoting: Ensure filenames that may have changed are correctly quoted. Copy/pasted old code may have had filenames without unusual characters which would necessitate such quoting. Better safe than sorry, assume non-alphanumeric characters need quoting unless many widely proven examples have shown the characters are all safe unquoted.
+
+*) Wrong Code according to Comments or Wrong Comments for Code: Ensure code follows the guidelines of comments, that commented lines of workable code correctly provide intended functionality if uncommented, and that uncommented lines of code are consistent with the function calls, varialble names, etc, of commented lines of code. Mismatch between commented guidelines or commented code and uncommented code could indicate incomplete changes after copy/pasting, or changes that were made for testing purposes (eg. to skip some iterations) but which are wrong (eg. missing needed iterations). Irrelevant comments also suggest incompleteness or other mistakes. Look for comments that might not reflect the actual code functionality due to incomplete changes or test adjustments. Please make sure to check both comments and code, comparing code to comments and comments to code, as well as any other checks between code and other code, comments and other comments.
+
+*) Typos: Ensure that, including among the many camel case or other phrases a dictionary spell checker would highlight regardless of spelling, misspellngs and typos, such as transposed characters, characters substituted from a similar location on QWERTY keyboards, characters with similar visual appearance, or wrong spelling generally, do not result in a disconnect between uses of variables, function calls, etc.
+
+*) Completeness and Correctness: Ensure by inferring from a breakdown outlining the apparent intended functionality of the code, expected output, expected effects, etc, that each line of code and comments aligns with that intended functionality, and whether all functionality needed for the logical flow of the code in all situations is complete.
+
+*) Clarity: Ensure all names of all variables, functions, etc, reflect or explain intended functionality. If a sensible name was not used, that was probably the result of a mistake, such as a typo, copy/pasted code without all necessary changes, code that was only partially written due to distraction by another programming problem elsewhere, etc. Functions with descriptive logically consistent names are very well tested and their functionality can be inferred by taking their names at face value, even if not present in the code. Other functions without logically consistent names may be mistakes, and similar mistakes may be nearby. Function calls with logically consistent sensible explanatory names must also be consistent with the functionality that would be needed for that line of code consistent with the apparent intended functionality of the code.
+
+*) Assumptions: Ensure external functions that are known are given correct parameters consistent with their documentation, source code, best practices and the functionality that would be needed for that line of code consistent with the apparent intended functionality of the code.
+
+*) Exceeding Limitations: Ensure each line of code does not take drastic action inconsistent with the apparent intended functionality. If a command installs a package, deletes a parent directory recursively, unreasonably deletes more than expected, in a function with a more limited purpose, such as merely to fetch files, that would be a mistake. Unreasonable or drastic actions in a single line of code are probably mistakes.
+
+*) Oversight: Ensure code is neither partially written nor incomplete. Function calls should not be missing parameters other similar functions seem to have, parameters should not needlessly be in different order to similar function calls, function calls should not be missing parameters that would seem logically necessary, and function calls should not be missing parameters that would be needed for that line of code consistent with the apparent intended functionality of the code. Unless a global variable is explicitly declared, exported, etc, on a preceeding line of code, there may not be a global vairable to substitute for a missing parameter at all.
+
+*) Mix of Platform Specific Code: Ensure code intended for a particular distribution/OperatingSystem, virtualization platform, or compatibility layer, etc, is not mixed in the same flow with code that is compatible with all platforms, etc. Code specific to a particular distribution/OperatingSystem, virtualization platform, or compatibility layer, such as Debian, Ubuntu, MSW/Cygwin, WSL, usually will have such a function as '_if_cygwin' to detect whether the conditions appropriate to run that code exist and only in that case run that. If references to '/cygdrive', MSWindows drive letters, forward and backward slash filesystem paths, MSWindows default binary programs, UNIX/Linux common binary programs, are all referenced in the same flow, when not calling programs specifically requring translated paths, etc, then that could be a mistake.
+
+*) Contradiction: Ensure comments, etc, do not contradict other comments, and do not make logically inconsistent statements. Such inconsistent or outdated information suggests needed changes have not been made, either due to some code not having been revised in a long time, or due to copy pasting, suggesting other mistakes may be nearby.
+
+*) High Stakes Functions and Variables: Ensure certain functions and variables with drastic consequences are used correctly. In particular, '_safeRMR' is a wrapper function for 'rm -rf' which can still be dangerous, "$safeTmp" is a variable with the path of a temporary directory, and "$scriptAbsoluteLocation" is the variable with the absolute path of the script itself often used to call the script itself to recursively call an internal function as a separate process as in  "$scriptAbsoluteLocation" _internalFunction parameters "$@"  .
+
+*) Nested Loops: Ensure nested loops were written on purpose, not as a result of incompletely written code or incompletely changed copy/pasted code, and that these loops fulfill purposes consistent with the apparent intended functionality of the code.
+
+*) Diagnostic Output and Logging: Ensure code is consistent with the purposes of output and logging commands, and that output and logging commands are consistent with code, and that all code, output, and logging commands, are together consistent with the apparent intended functionality of the code. Output and logging commands inconsistent with the purpose of nearby code could be an indication of incompletely written or incompletely copy/pasted code or other mistakes.
+
+*) Numerical Methods and Design Patterns: Ensure code follows a reasonably human-readable and non-hardcoded style, using loops rather than hardcoded slots when appropriate, and to a limited extent, allow for vice versa. If there is a much better way to do something, then revising the code may reduce the probability of mistakes having been made.
+

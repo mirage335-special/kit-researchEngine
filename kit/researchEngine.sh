@@ -447,7 +447,7 @@ _set_researchEngine() {
 
 
 _upgrade_researchEngine_searxng() {
-	_service_researchEngine-docker-chroot-start
+	#_service_researchEngine-docker-chroot-start
 	
 	_set_researchEngine
 
@@ -506,11 +506,11 @@ _upgrade_researchEngine_searxng() {
 
 	docker start searxng
 
-	_service_researchEngine-docker-chroot-stop
+	#_service_researchEngine-docker-chroot-stop
 }
 
 _upgrade_researchEngine_openwebui() {
-	_service_researchEngine-docker-chroot-start
+	#_service_researchEngine-docker-chroot-start
 	
 	_set_researchEngine
 	
@@ -527,11 +527,11 @@ _upgrade_researchEngine_openwebui() {
 
 	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 
-	_service_researchEngine-docker-chroot-stop
+	#_service_researchEngine-docker-chroot-stop
 }
 
 _upgrade_researchEngine_openwebui-nvidia() {
-	_service_researchEngine-docker-chroot-start
+	#_service_researchEngine-docker-chroot-start
 	
 	_set_researchEngine
 
@@ -555,5 +555,5 @@ _upgrade_researchEngine_openwebui-nvidia() {
 
 	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
 
-	_service_researchEngine-docker-chroot-stop
+	#_service_researchEngine-docker-chroot-stop
 }

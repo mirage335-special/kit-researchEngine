@@ -49,7 +49,13 @@ jobs:
         run: |
           cd ./_import/etc--searxng
           #patch -p1 settings.yml < settings.yml.patch
-          yes | patch -p1 settings.yml settings.yml.patch && exit 0
+          if yes | patch -p1 settings.yml settings.yml.patch
+          then
+            # DANGER: GitHub Actions ONLY !
+            rm -f ./*
+            ~/core/infrastructure/ubiquitous_bash/ubiquitous_bash.sh _messagePlain_good 'good: success: patch'
+            exit 0
+          fi
           ~/core/infrastructure/ubiquitous_bash/ubiquitous_bash.sh _messagePlain_bad 'bad: FAIL: patch'
           mv -f settings.yml.patch settings.yml.patch.FAIL
           cat settings.yml.patch

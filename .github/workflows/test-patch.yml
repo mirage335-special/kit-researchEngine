@@ -54,6 +54,15 @@ jobs:
           cat settings.yml.patch
           ~/core/infrastructure/ubiquitous_bash/ubiquitous_bash.sh _messagePlain_request 'Please download settings.yml, patch, change any unpatched regions to match the changes shown in the patch file, then SPECIFICALLY use the git diff command to create a new patch between the upstream original settings.yml and desired settings.yml . Resulting patch may itself be compared to previous patch with diff , git diff , etc .'
           ~/core/infrastructure/ubiquitous_bash/ubiquitous_bash.sh _messageFAIL
+          true
+        continue-on-error: true
+          
+      - name: artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-searxng_settings_patch
+          path: |
+            ./_import/etc--searxng/*
 
       - name: Check if patch still applies correctly
         run: |

@@ -152,7 +152,8 @@ _setup_searxng-user() {
 	
 	_messagePlain_nominal 'SearXNG: patch'
 	cd "$HOME"/core/data/searxng
-	if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
+	#if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
+	if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
 	then
 		_messagePlain_good 'patch: success: patch exit status'
 	elif [[ -e "$HOME"/core/data/searxng/settings.yml.rej ]]

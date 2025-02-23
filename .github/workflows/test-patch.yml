@@ -45,6 +45,7 @@ jobs:
         run: |
           cd ./_import/etc--searxng
           curl --output settings.yml 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
+          #curl --output settings.yml 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
       - name: Apply the patch
         run: |
           cd ./_import/etc--searxng

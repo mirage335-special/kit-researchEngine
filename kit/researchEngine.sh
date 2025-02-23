@@ -132,6 +132,20 @@ _hook_ollama_nohistory() {
 }
 
 
+_fetch_searxng-patch() {
+	cp -f "$1" "$1".accompanying
+	
+	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
+	curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
+
+	if [[ ! -e "$1" ]]
+	then
+		_messagePlain_bad 'fetch: fail: missing: searxng settings.yml'
+		_messagePlain_probe_cmd mv -f "$1".accompanying "$1"
+		return 1
+	fi
+	return 0
+}
 _setup_searxng-user() {
 	_messagePlain_nominal 'SearXNG: copy patch'
 	
@@ -152,6 +166,9 @@ _setup_searxng-user() {
 	
 	_messagePlain_nominal 'SearXNG: patch'
 	cd "$HOME"/core/data/searxng
+
+	_fetch_searxng-patch './settings.yml'
+
 	#if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
 	if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
 	then
@@ -387,11 +404,14 @@ _upgrade_researchEngine_searxng() {
 
 	if [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.patch ]]
 	then
+		_fetch_searxng-patch "$ub_researchEngine_data"searxng/settings.yml
+
 		rm -f "$ub_researchEngine_data"searxng/settings.yml.rej
 		rm -f "$ub_researchEngine_data"searxng/settings.yml.new
 		rm -f "$ub_researchEngine_data"searxng/settings.yml.orig
 
 		cp "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch "$ub_researchEngine_data"searxng/
+
 		#patch -p1 "$ub_researchEngine_data"searxng/settings.yml < "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch
 		yes | patch -p1 "$ub_researchEngine_data"searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch
 		if [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.rej ]]

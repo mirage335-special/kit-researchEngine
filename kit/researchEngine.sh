@@ -19,7 +19,51 @@
 #  .../_lib/kit/app/researchEngine
 # docker
 
+_service_researchEngine-docker-chroot-start() {
+	# ATTRIBUTION-AI ChatGPT o1 2024-12-24 .
+	# WARNING: The 'DOCKER_RAMDISK=true' environment variable is necessary, and reportedly (ChatGPT) may be officially unofficial and controversial. An alternative may be to write a wrapper script temporarily replacing runc with the added parameter 'runc --no-pivot' ONLY if the 'run' command is detected (ie. convert 'runc run <container-id>' to 'runc --no-pivot run <container-id>' ) .
+	_messageNormal 'Docker Service - Start'
+	# WARNING: This does assume if dockerd is not already available, it is due to absence of ChRoot, with all mounting/unmounting being necessary. A reasonable assumption, but could cause issues (eg. breaking 'cgroup' on a running system).
+	#local currentDockerPID
+	currentDockerPID=""
+	if ! docker ps && ! _if_cygwin
+	then
+		sudo -n mkdir -p /sys/fs/cgroup
+		sudo -n mount -t cgroup2 none /sys/fs/cgroup || sudo -n mount -t cgroup none /sys/fs/cgroup
+		sudo -n mkdir -p /var/run
+		#sudo -n env DOCKER_RAMDISK=true dockerd --config-file=/dev/null --storage-driver=vfs --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
+		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker 2>&1 | sudo -n tee /var/log/dockerd.log > /dev/null &
+		currentDockerPID="$!"
+		_messagePlain_probe_var currentDockerPID
+		export DOCKER_HOST=unix:///var/run/docker.sock
+	fi
 
+	export currentDockerPID
+	true
+}
+_service_researchEngine-docker-chroot-stop() {
+	_messageNormal 'Docker Service - Stop'
+	# WARNING: This does assume if dockerd is not already available, it is due to absence of ChRoot, with all mounting/unmounting being necessary. A reasonable assumption, but could cause issues (eg. breaking 'cgroup' on a running system).
+	if [[ "$currentDockerPID" != "" ]]
+	then
+		kill -TERM "$currentDockerPID"
+		sleep 3
+		kill -TERM "$currentDockerPID"
+		sleep 3
+		kill -TERM "$currentDockerPID"
+		sleep 15
+		kill -KILL "$currentDockerPID"
+
+		sudo -n umount /sys/fs/cgroup
+		sleep 3
+		sudo -n umount /sys/fs/cgroup
+		sleep 6
+
+		rmdir /var/lib/docker/runtimes
+	fi
+
+	true
+}
 
 _setup_researchEngine-kit() {
 	_mustGetSudo
@@ -32,23 +76,7 @@ _setup_researchEngine-kit() {
 	[[ "$currentUser_researchEngine" == "" ]] && export currentUser_researchEngine="user"
 	
 	
-	# ATTRIBUTION-AI ChatGPT o1 2024-12-24 .
-	# WARNING: The 'DOCKER_RAMDISK=true' environment variable is necessary, and reportedly (ChatGPT) may be officially unofficial and controversial. An alternative may be to write a wrapper script temporarily replacing runc with the added parameter 'runc --no-pivot' ONLY if the 'run' command is detected (ie. convert 'runc run <container-id>' to 'runc --no-pivot run <container-id>' ) .
-	_messageNormal 'Docker Service - Start'
-	# WARNING: This does assume if dockerd is not already available, it is due to absence of ChRoot, with all mounting/unmounting being necessary. A reasonable assumption, but could cause issues (eg. breaking 'cgroup' on a running system).
-	local currentDockerPID
-	currentDockerPID=""
-	if ! docker ps
-	then
-		sudo -n mkdir -p /sys/fs/cgroup
-		sudo -n mount -t cgroup2 none /sys/fs/cgroup || sudo -n mount -t cgroup none /sys/fs/cgroup
-		sudo -n mkdir -p /var/run
-		#sudo -n env DOCKER_RAMDISK=true dockerd --config-file=/dev/null --storage-driver=vfs --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker >/var/log/dockerd.log 2>&1 &
-		sudo -n env DOCKER_RAMDISK=true dockerd --host=unix:///var/run/docker.sock --data-root=/var/lib/docker --exec-root=/var/run/docker 2>&1 | sudo -n tee /var/log/dockerd.log > /dev/null &
-		currentDockerPID="$!"
-		_messagePlain_probe_var currentDockerPID
-		export DOCKER_HOST=unix:///var/run/docker.sock
-	fi
+	_service_researchEngine-docker-chroot-start
 
 	
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _hook_ollama_nohistory'
@@ -89,25 +117,7 @@ _setup_researchEngine-kit() {
 	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c 'docker logout'
 	
 
-	_messageNormal 'Docker Service - Stop'
-	# WARNING: This does assume if dockerd is not already available, it is due to absence of ChRoot, with all mounting/unmounting being necessary. A reasonable assumption, but could cause issues (eg. breaking 'cgroup' on a running system).
-	if [[ "$currentDockerPID" != "" ]]
-	then
-		kill -TERM "$currentDockerPID"
-		sleep 3
-		kill -TERM "$currentDockerPID"
-		sleep 3
-		kill -TERM "$currentDockerPID"
-		sleep 15
-		kill -KILL "$currentDockerPID"
-
-		sudo -n umount /sys/fs/cgroup
-		sleep 3
-		sudo -n umount /sys/fs/cgroup
-		sleep 6
-
-		rmdir /var/lib/docker/runtimes
-	fi
+	_service_researchEngine-docker-chroot-stop
 	
 	
 	cd "$functionEntryPWD"
@@ -213,6 +223,8 @@ _setup_searxng-user() {
 	sleep 120
 	
 	docker stop searxng
+
+	sleep 45
 	
 	
 	
@@ -426,6 +438,8 @@ _set_researchEngine() {
 
 
 _upgrade_researchEngine_searxng() {
+	_service_researchEngine-docker-chroot-start
+	
 	_set_researchEngine
 
 	_messageNormal 'SearXNG'
@@ -482,9 +496,13 @@ _upgrade_researchEngine_searxng() {
 	fi
 
 	docker start searxng
+
+	_service_researchEngine-docker-chroot-stop
 }
 
 _upgrade_researchEngine_openwebui() {
+	_service_researchEngine-docker-chroot-start
+	
 	_set_researchEngine
 	
 	_messageNormal 'OpenWebUI'
@@ -499,9 +517,13 @@ _upgrade_researchEngine_openwebui() {
 	docker pull ghcr.io/open-webui/open-webui:main
 
 	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+	_service_researchEngine-docker-chroot-stop
 }
 
 _upgrade_researchEngine_openwebui-nvidia() {
+	_service_researchEngine-docker-chroot-start
+	
 	_set_researchEngine
 
 	_messageNormal 'OpenWebUI'
@@ -523,4 +545,6 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	docker pull ghcr.io/open-webui/open-webui:cuda
 
 	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+
+	_service_researchEngine-docker-chroot-stop
 }

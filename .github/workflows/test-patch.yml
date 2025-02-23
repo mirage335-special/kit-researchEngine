@@ -68,7 +68,7 @@ jobs:
         run: |
           cd ./_import/etc--searxng
           [[ -e ./_import/etc--searxng/settings.yml.rej ]] && exit 1
-          true
+          #true
 
 
 

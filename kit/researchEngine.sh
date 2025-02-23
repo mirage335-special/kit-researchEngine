@@ -455,7 +455,7 @@ _upgrade_researchEngine_searxng() {
 	
 	docker stop searxng
 
-	docker start searxng
+	sleep 45
 
 	if [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.patch ]]
 	then
@@ -480,6 +480,8 @@ _upgrade_researchEngine_searxng() {
 			_messageError 'FAIL'
 		fi
 	fi
+
+	docker start searxng
 }
 
 _upgrade_researchEngine_openwebui() {

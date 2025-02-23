@@ -163,8 +163,11 @@ _fetch_searxng-config_settings() {
 	! _currentBackend-sudo ls -1 "$1" > /dev/null 2>&1 && _messageFAIL
 
 	local currentDirectory=$(_currentBackend-sudo "$scriptAbsoluteLocation" _getAbsoluteFolder "$1")
-	_currentBackend-sudo chown "$currentUser":"$currentUser" "$currentDirectory"
-	_currentBackend-sudo chown "$currentUser":"$currentUser" "$1"
+	if ! _if_cygwin
+	then
+		_currentBackend-sudo chown "$currentUser":"$currentUser" "$currentDirectory"
+		_currentBackend-sudo chown "$currentUser":"$currentUser" "$1"
+	fi
 	_currentBackend-sudo mv -f "$1" "$1".accompanying
 	
 	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'

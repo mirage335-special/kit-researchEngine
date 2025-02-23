@@ -173,6 +173,21 @@ _fetch_searxng-config_settings() {
 	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
 	curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
 
+	local current_searxng_random
+	if ! _if_cygwin
+	then
+		current_searxng_random=$(cat /dev/urandom 2> /dev/null | base64 2> /dev/null | tr -dc 'a-f0-9' 2> /dev/null | head -c 64)
+	fi
+	if _if_cygwin
+	then
+		current_searxng_random=$(cat /dev/random 2> /dev/null | base64 2> /dev/null | tr -dc 'a-f0-9' 2> /dev/null | head -c 64)
+	fi
+
+	if [[ -e "$1" ]]
+	then
+		sed -i 's/ultrasecretkey/'"$current_searxng_random"'/g' "$1"
+	fi
+
 	if [[ ! -e "$1" ]]
 	then
 		_messagePlain_bad 'fetch: fail: missing: searxng settings.yml'

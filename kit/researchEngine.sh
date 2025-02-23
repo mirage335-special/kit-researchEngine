@@ -133,7 +133,39 @@ _hook_ollama_nohistory() {
 
 
 _fetch_searxng-config_settings() {
-	cp -f "$1" "$1".accompanying
+	# Cygwin/MSW (at least 'ubcp') default user is root, regardless of whether the process is privileged or not.
+	#  Users of MSW calling the upgrade function from an unprivileged or privileged command prompt window should consider whether a priviliged process was used during setup.
+	_currentBackend-sudo() {
+		if _if_cygwin
+		then
+			"$@"
+			return
+		fi
+		if ! _if_cygwin
+		then
+			sudo -n "$@"
+			return
+		fi
+		_messageFAIL
+	}
+
+	[[ "$1" == "" ]] && _messageFAIL
+	
+	local currentUser="$currentUser_researchEngine"
+	[[ "$currentUser" == "" ]] && currentUser="user"
+
+	local currentIteration=0
+	while ! _currentBackend-sudo ls -1 "$1" > /dev/null 2>&1 && [[ "$currentIteration" -le "27" ]]
+	do
+		sleep 3
+		((currentIteration++))
+	done
+	! _currentBackend-sudo ls -1 "$1" > /dev/null 2>&1 && _messageFAIL
+
+	local currentDirectory=$(_currentBackend-sudo "$scriptAbsoluteLocation" _getAbsoluteFolder "$1")
+	_currentBackend-sudo chown "$currentUser":"$currentUser" "$currentDirectory"
+	_currentBackend-sudo chown "$currentUser":"$currentUser" "$1"
+	_currentBackend-sudo mv -f "$1" "$1".accompanying
 	
 	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
 	curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
@@ -141,13 +173,15 @@ _fetch_searxng-config_settings() {
 	if [[ ! -e "$1" ]]
 	then
 		_messagePlain_bad 'fetch: fail: missing: searxng settings.yml'
-		_messagePlain_probe_cmd mv -f "$1".accompanying "$1"
+		_messagePlain_probe_cmd _currentBackend-sudo mv -f "$1".accompanying "$1"
 		return 1
 	fi
 	return 0
 }
 _setup_searxng-user() {
 	_messagePlain_nominal 'SearXNG: copy patch'
+
+	_mustGetSudo
 	
 	mkdir -p "$HOME"/core/data/searxng
 	
@@ -377,6 +411,9 @@ _upgrade_researchEngine_searxng() {
 	_set_researchEngine
 
 	_messageNormal 'SearXNG'
+
+	! _if_cygwin && _mustGetSudo
+
 	_messagePlain_nominal 'SearXNG: copy patch'
 	
 	mkdir -p "$ub_researchEngine_data"searxng

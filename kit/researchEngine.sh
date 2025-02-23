@@ -36,6 +36,15 @@ _service_researchEngine-docker-chroot-start() {
 		currentDockerPID="$!"
 		_messagePlain_probe_var currentDockerPID
 		export DOCKER_HOST=unix:///var/run/docker.sock
+
+		local currentIteration=27
+		while ! docker ps
+		do
+			sleep 3
+			((currentIteration--))
+			[[ "$currentIteration" -le 0 ]] && _messageFAIL && return 1
+		done
+		sleep 7
 	fi
 
 	export currentDockerPID

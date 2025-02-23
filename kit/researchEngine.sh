@@ -132,7 +132,7 @@ _hook_ollama_nohistory() {
 }
 
 
-_fetch_searxng-patch() {
+_fetch_searxng-config_settings() {
 	cp -f "$1" "$1".accompanying
 	
 	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
@@ -167,7 +167,7 @@ _setup_searxng-user() {
 	_messagePlain_nominal 'SearXNG: patch'
 	cd "$HOME"/core/data/searxng
 
-	_fetch_searxng-patch './settings.yml'
+	_fetch_searxng-config_settings './settings.yml'
 
 	#if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
 	if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
@@ -404,7 +404,7 @@ _upgrade_researchEngine_searxng() {
 
 	if [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.patch ]]
 	then
-		_fetch_searxng-patch "$ub_researchEngine_data"searxng/settings.yml
+		_fetch_searxng-config_settings "$ub_researchEngine_data"searxng/settings.yml
 
 		rm -f "$ub_researchEngine_data"searxng/settings.yml.rej
 		rm -f "$ub_researchEngine_data"searxng/settings.yml.new

@@ -69,8 +69,10 @@ jobs:
       - name: Check if patch still applies correctly
         run: |
           cd ./_import/etc--searxng
-          [[ -e ./_import/etc--searxng/settings.yml.rej ]] && exit 1
-          #true
+          #./_import/etc--searxng
+          [[ -e ./settings.yml.rej ]] && exit 1
+          [[ -e ./settings.yml.patch.FAIL ]] && exit 1
+          true
 
 
 

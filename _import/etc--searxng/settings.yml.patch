@@ -1,10 +1,10 @@
-diff --git a/settings.yml.orig b/settings.yml
-index 98cd574..e85803f 100644
---- a/settings.yml.orig
-+++ b/settings.yml
+diff --git a/./settings.yml b/../settings.yml
+index 84c5c84..7ccf72b 100644
+--- a/./settings.yml
++++ b/../settings.yml
 @@ -36,15 +36,15 @@ search:
    # Existing autocomplete backends: "baidu", "brave", "dbpedia", "duckduckgo", "google", "yandex",
-   # "mwmbl", "seznam", "stract", "swisscows", "qwant", "wikipedia" -
+   # "mwmbl", "seznam", "startpage", "stract", "swisscows", "qwant", "wikipedia" -
    # leave blank to turn it off by default.
 -  autocomplete: ""
 +  autocomplete: "duckduckgo"
@@ -246,7 +246,7 @@ index 98cd574..e85803f 100644
      timeout: 6.0
  
    - name: hoogle
-@@ -1106,6 +1118,7 @@ engines:
+@@ -1112,6 +1124,7 @@ engines:
        - https://kat.am
      shortcut: kc
      timeout: 4.0
@@ -254,7 +254,7 @@ index 98cd574..e85803f 100644
  
    - name: lemmy communities
      engine: lemmy
-@@ -1154,6 +1167,7 @@ engines:
+@@ -1160,6 +1173,7 @@ engines:
      shortcut: zlib
      categories: files
      timeout: 7.0
@@ -262,7 +262,7 @@ index 98cd574..e85803f 100644
  
    - name: library of congress
      engine: loc
-@@ -1235,7 +1249,7 @@ engines:
+@@ -1241,7 +1255,7 @@ engines:
    - name: metacpan
      engine: metacpan
      shortcut: cpan
@@ -271,7 +271,7 @@ index 98cd574..e85803f 100644
      number_of_results: 20
  
    # - name: meilisearch
-@@ -1248,6 +1262,7 @@ engines:
+@@ -1254,6 +1268,7 @@ engines:
    - name: mixcloud
      engine: mixcloud
      shortcut: mc
@@ -279,7 +279,7 @@ index 98cd574..e85803f 100644
  
    # MongoDB engine
    # Required dependency: pymongo
-@@ -1284,7 +1299,7 @@ engines:
+@@ -1290,7 +1305,7 @@ engines:
      engine: npm
      shortcut: npm
      timeout: 5.0
@@ -288,7 +288,7 @@ index 98cd574..e85803f 100644
  
    - name: nyaa
      engine: nyaa
-@@ -1365,7 +1380,7 @@ engines:
+@@ -1371,7 +1386,7 @@ engines:
      engine: openlibrary
      shortcut: ol
      timeout: 5
@@ -297,7 +297,7 @@ index 98cd574..e85803f 100644
  
    - name: openmeteo
      engine: open_meteo
-@@ -1433,6 +1448,7 @@ engines:
+@@ -1439,6 +1454,7 @@ engines:
    - name: pinterest
      engine: pinterest
      shortcut: pin
@@ -305,7 +305,7 @@ index 98cd574..e85803f 100644
  
    - name: piped
      engine: piped
-@@ -1459,6 +1475,7 @@ engines:
+@@ -1462,6 +1478,7 @@ engines:
      categories: music
      piped_filter: music_songs
      timeout: 3.0
@@ -313,7 +313,7 @@ index 98cd574..e85803f 100644
  
    - name: piratebay
      engine: piratebay
-@@ -1467,6 +1484,7 @@ engines:
+@@ -1470,6 +1487,7 @@ engines:
      # country
      url: https://thepiratebay.org/
      timeout: 3.0
@@ -321,7 +321,7 @@ index 98cd574..e85803f 100644
  
    - name: pixiv
      shortcut: pv
-@@ -1582,6 +1600,7 @@ engines:
+@@ -1585,6 +1603,7 @@ engines:
      categories: [general, web]
      additional_tests:
        rosebud: *test_rosebud
@@ -329,7 +329,7 @@ index 98cd574..e85803f 100644
  
    - name: qwant news
      qwant_categ: news
-@@ -1589,6 +1608,7 @@ engines:
+@@ -1592,6 +1611,7 @@ engines:
      shortcut: qwn
      categories: news
      network: qwant
@@ -337,7 +337,7 @@ index 98cd574..e85803f 100644
  
    - name: qwant images
      qwant_categ: images
-@@ -1596,6 +1616,7 @@ engines:
+@@ -1599,6 +1619,7 @@ engines:
      shortcut: qwi
      categories: [images, web]
      network: qwant
@@ -345,7 +345,7 @@ index 98cd574..e85803f 100644
  
    - name: qwant videos
      qwant_categ: videos
-@@ -1603,6 +1624,7 @@ engines:
+@@ -1606,6 +1627,7 @@ engines:
      shortcut: qwv
      categories: [videos, web]
      network: qwant
@@ -353,7 +353,7 @@ index 98cd574..e85803f 100644
  
    # - name: library
    #   engine: recoll
-@@ -1629,12 +1651,13 @@ engines:
+@@ -1632,12 +1654,13 @@ engines:
    - name: radio browser
      engine: radio_browser
      shortcut: rb
@@ -368,7 +368,7 @@ index 98cd574..e85803f 100644
  
    - name: right dao
      engine: xpath
-@@ -1697,6 +1720,7 @@ engines:
+@@ -1700,6 +1723,7 @@ engines:
    - name: soundcloud
      engine: soundcloud
      shortcut: sc
@@ -376,7 +376,7 @@ index 98cd574..e85803f 100644
  
    - name: stackoverflow
      engine: stackexchange
-@@ -1740,7 +1764,7 @@ engines:
+@@ -1743,7 +1767,7 @@ engines:
    - name: searchcode code
      engine: searchcode_code
      shortcut: scc
@@ -385,15 +385,16 @@ index 98cd574..e85803f 100644
  
    # - name: searx
    #   engine: searx_engine
-@@ -1786,6 +1810,7 @@ engines:
+@@ -1788,7 +1812,7 @@ engines:
+     engine: startpage
      shortcut: sp
-     startpage_categ: web
-     categories: [general, web]
+     timeout: 6.0
+-    disabled: true
 +    disabled: false
      additional_tests:
        rosebud: *test_rosebud
  
-@@ -1814,6 +1839,7 @@ engines:
+@@ -1805,6 +1829,7 @@ engines:
      base_url:
        - https://solidtorrents.to
        - https://bitsearch.to
@@ -401,7 +402,7 @@ index 98cd574..e85803f 100644
  
    # For this demo of the sqlite engine download:
    #   https://liste.mediathekview.de/filmliste-v2.db.bz2
-@@ -1931,6 +1957,7 @@ engines:
+@@ -1922,6 +1947,7 @@ engines:
    - name: yahoo news
      engine: yahoo_news
      shortcut: yhn
@@ -409,7 +410,7 @@ index 98cd574..e85803f 100644
  
    - name: youtube
      shortcut: yt
-@@ -1971,7 +1998,7 @@ engines:
+@@ -1962,7 +1988,7 @@ engines:
      categories: [general, wikimedia]
      base_url: "https://{language}.wikibooks.org/"
      search_type: text
@@ -418,7 +419,7 @@ index 98cd574..e85803f 100644
      about:
        website: https://www.wikibooks.org/
        wikidata_id: Q367
-@@ -2393,6 +2420,7 @@ engines:
+@@ -2384,6 +2410,7 @@ engines:
      engine: wttr
      shortcut: wttr
      timeout: 9.0
@@ -426,7 +427,7 @@ index 98cd574..e85803f 100644
  
    - name: yummly
      engine: yummly
-@@ -2442,7 +2470,7 @@ engines:
+@@ -2433,7 +2460,7 @@ engines:
    - name: lib.rs
      shortcut: lrs
      engine: lib_rs

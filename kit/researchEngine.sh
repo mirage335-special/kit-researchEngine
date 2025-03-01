@@ -92,7 +92,7 @@ _setup_researchEngine-kit() {
 	
 	
 	_messageNormal '_setup_ollama'
-	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _setup_ollama'
+	sudo -n --preserve-env=GH_TOKEN --preserve-env=INPUT_GITHUB_TOKEN --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _setup_ollama'
 	
 	
 	_messageNormal 'Test Docker'

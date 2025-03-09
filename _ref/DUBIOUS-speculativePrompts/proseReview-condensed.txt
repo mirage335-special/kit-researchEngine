@@ -1,0 +1,78 @@
+# ATTRIBUTION-AI: ChatGPT o1 2025-03-09
+#Please rewrite this prompt to better work within the limitations of smaller Large Language Models, as low as 8b parameters with little or no code review training.
+
+
+
+
+Please review the following draft text and identify any mistakes, incomplete edits, or illogical statements. Focus on potential issues in these areas:
+
+Purpose
+
+Infer the goal or main point of the text.
+Intended Flow
+
+List the steps or arguments the text wants the reader to follow or agree with.
+Consistency
+
+Look for partially written or leftover text from earlier drafts.
+Make sure any replacements or edits are applied consistently.
+Style
+
+Keep the style professional and straightforward.
+Avoid frequent, unnecessary references to the author’s own thoughts (“I think,” “my view,” etc.).
+Comments
+
+Remove any remnants of editing comments or placeholders like “TODO,” “fix this,” etc.
+Typos
+
+Point out misspellings or misuse of words.
+Completeness and Correctness
+
+Check whether each paragraph or list item serves the main purpose.
+Identify if any critical piece of information is missing or incorrect.
+Clarity
+
+Ensure all terms and concepts are explained or used in a way the reader can understand.
+Replace complicated or obscure words if a simpler option is available.
+Assumptions
+
+Verify the text’s factual basis.
+Note if any claims seem unfounded or contradictory.
+Exceeding Limitations
+
+Make sure the text does not unfairly demand too much effort or knowledge from the reader.
+Oversight
+
+Check that the mention of any examples or details is useful and relevant to the main point.
+Platform-Specific
+
+Confirm that any private or confidential information intended for a specific group is not shared outside that context.
+Contradictions
+
+Identify any statements that conflict with each other or appear illogical.
+High-Risk Operations
+
+Ensure the text does not recommend any unsafe or dangerous actions without proper warnings or instructions.
+Nested Thinking
+
+Verify that each logical step or argument follows clearly from the previous one, without leftover text or broken reasoning.
+Logging and Output
+
+Check if the text asks the reader to record or log information in a way that makes sense for the overall purpose.
+Numerical Methods and Design Patterns
+
+If any procedures or methods are mentioned, confirm they are described clearly and match commonly accepted practices.
+Order of Operations and Structure
+
+Confirm the text follows a clear structure (e.g., introduction, body, conclusion), making it easier to follow.
+Categorical Estimates
+
+If the text states something is likely or unlikely, confirm it remains consistent about the conditions under which it is true.
+Reputation
+
+Note whether controversial or uncertain points are addressed fairly.
+Check if any claims rely too heavily on authority without evidence.
+After reviewing each area, please provide a brief summary of the most important issues you find and suggest how to fix them. If there are no significant errors, state that as well.
+
+
+

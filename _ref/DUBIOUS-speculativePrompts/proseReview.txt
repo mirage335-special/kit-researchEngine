@@ -1,0 +1,103 @@
+
+Please review this rough, unreviewed draft for mistakes, incomplete changes, illogical statements, etc. Focus on potential issues in the following areas:
+
+Purpose
+Infer what the text is intended to achieve.
+
+Intended Flow
+Enumerate stepwise what is desired for the reader to understand, agree to, or comment on.
+
+Consistency
+Check for leftover old text, such as partially spelled words, incomplete paragraphs, or transposed paragraphs.
+Make sure all necessary updates were applied after copy/pasting text.
+
+
+Style
+Ensure a consistent style is used to minimize ambiguity and maintain professionality.
+Frequent unnecessary references to self, such as "me", "I think", etc, should be avoided.
+
+
+Comments
+Ensure nothing looking like a review comment has been accidentally pasted in.
+Ensure no TODO or other brevity terms for incomplete writing are in the text.
+
+
+Typos
+Identify misspellings.
+
+
+Completeness and Correctness
+Infer the intended purpose.
+Check if each sentence, paragraph, list item, aligns with that intention.
+Note missing pieces or broken logic.
+
+
+Clarity
+Ensure technical, invented, or uncommon terminology makes sense in the context of etiology, definitions, and common understanding.
+Any terms used should not have a much better alternative.
+
+
+
+Assumptions
+Consider factual correctness and reasonable plausibility.
+
+
+Exceeding Limitations
+Check for demanding too much of the reader, either due to unfairness, or due to likely lack of technical comprehension.
+
+
+Oversight
+Ensure the reader should reasonably comprehend the reason for mentioning any examples, details, rather than missing any necessary conclusions.
+
+
+Platform-Specific
+Ensure information confidential to one party is not sent to another party.
+
+
+Contradictions
+Look for contradictory, illogical, conflicting statements.
+Identify possible rants or rambling.
+
+
+High-Risk Operations
+Check users are not asked to do anything unjustifiably dangerous.
+Ensure that reasonable best practices are followed, with adequate discussion or signage for safety hazards.
+
+
+Nested Thinking
+Confirm any chains of one conclusion leading to another is intentional and not just leftover text.
+Make sure they match the intended logic.
+
+
+Logging and Output
+Verify that any recordkeeping, accounting, tasks requested of the reader match the purpose of the text.
+Look for mismatched or misplaced requests for recordkeeping, accounting, tasks that could signal incomplete changes.
+
+
+Numerical Methods and Design Patterns
+Ensure specific procedures to follow are efficient as described, such as a checklist, navigating instructions, management technique, method of getting work done, planning format.
+Ensure if relevant that specific procedures align well the more proven, widely acclaimed, most relevant, and most helpful numerical method, published result from game theory, tactic, political maneuver, geopolitical posture, usual geopolitical goal, or bargaining friction.
+Look for more efficient or clearer ways to accomplish tasks if the current approach seems error-prone.
+
+
+Order of Operations and Structure
+
+Academic papers and similarly formal descriptions usually have an abstract, introduction, method, and conclusion.
+Patents may have a background, summary, and brief description of drawings.
+Analysist reports and Wikipedia articles tend to have a certain consistency
+Scientific or other technical information is often easier to read if at least following a similar order of presenting information if not presenting the same explicit subheadings.
+Only replies within a context of previous messages do not tell a complete story.
+
+
+Categorical Estimates
+If the likelihood of an event occurring or an appraisal being correct may change with new information or cannot be bounded in absolute confidence interval percentage terms, the appropriate response is to consistently use the same terminology reflecting the conditions on which the assessment is predicated.
+If it is stated 'that is unlikely', etc, the criteria for that assessment should remain consistent based on available information available at the time the assessment is made - prohibitively expensively escalations actually having happened does not make the next prohibitively expensive escalation less unlikely absent evidence clearly showing the decision makers are in the midst of deliberations in that direction.
+
+Reputation
+Controversy cannot be ignored, formal qualifications represent a vested interest in a day job, not necessarily reliable information.
+Information reported without thorough confirmation and skepticism can be distorted regardless of who reports the information if only due to accumulation of slight distortions as information is restated from one participant to the next.
+
+
+After examining each area, provide a summary of the main issues found and suggest how to fix them. Mention if there are no significant errors.
+
+

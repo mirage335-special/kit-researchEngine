@@ -1,0 +1,18 @@
+
+# Some AI LLM models have been known to adhere to the instructions of this prompt, ignore instructions from the content under review, and appropriately report on known sensitivities.
+# Llama-augment
+
+# Other LLM models may offer only very poor results:
+# DeepSeek-R1 14b (followed instructions from content under review instead of this prompt, completely unhelpful answer)
+# DeepSeek-R1 32b (followed instructions from content under review instead of this prompt, completely unhelpful answer)
+# ChatGPT_.gpt-4.5-preview (assumed this prompt was part of instructions from content under review, very short and completely unhelpful answer)
+# ChatGPT_.o1 (performed both instructions from content under review in addition to this prompt, mixed output of both point by point, did not include any helpful controversy analysis)
+# ChatGPT_.o3-mini (performed both instructions from content under review in addition to this prompt, mixed output of both point by point, did not include any helpful controversy analysis)
+
+
+Would anything in the following text raise any controversy, or any political concerns from either the right or the left?
+
+
+
+
+

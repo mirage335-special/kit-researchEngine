@@ -1,20 +1,65 @@
 
 # DISCLAIMER: Beware this file is NOT intended in any way for use or to allow others to use Llama 3.3 to do anything inconsistent with the Llama 3.3 Acceptable Use Policy . You are responsible for ensuring compliance. See the LICENSE information in this file.
 
-# ollama create huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_M -f huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_M.Modelfile
-# https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_M.gguf
+# ollama create huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated -f Modelfile
+
+# Discouraged.
+# ollama pull hf.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF:IQ3_XXS
+# ollama pull hf.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF:IQ4_XS
+
+# https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_XXS.gguf
 # https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF
 # https://huggingface.co/huihui-ai/DeepSeek-R1-Distill-Llama-70B-abliterated
 # https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-70B
 
-FROM ./huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_M.gguf
+# https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_XXS.gguf
+#  'SHA256: 99be7462a88dc1d7cdc3a37dd57187540b058a39db0035ac6957b2971ed3e0c6'
+#  'Size of remote file: 27.5 GB'
+#  Seems reasonably accurate.
 
-PARAMETER num_ctx 6144
-PARAMETER num_keep 6144
-PARAMETER num_predict 6144
+# https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_M.gguf
+#  'SHA256: 69a1f84c6849bb59cd63bbb4997f5349da4fe33933ada8bbad3fa63351519de8'
+#  'Size of remote file: 31.9 GB'
+#  Slow, but possible with 16GB_VRAM 64GB_RAM at 6144 num_ctx . May or may not be slightly less accurate than IQ3_XXS in some cases, possibly due to smaller parts of the model possibly having lower quality quantization.
+
+# https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ4_XS.gguf
+#  'SHA256: ade33e2a26dfc33ffe4ddfdf0ef68327f3430413187cb761c41a43fe176e8cb9'
+#  'Size of remote file: 37.9 GB'
+
+# Q6_K
+
+
+# IQ2_XXS
+# Discouraged. Not terrible, but noticeably much more likely to make mistakes, omit helpful but less strictly necessary output (eg. comments in code).
+
+
+FROM ./huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_XXS.gguf
+
+PARAMETER num_ctx 3840
+PARAMETER num_keep 3840
+PARAMETER num_predict 3840
+
+TEMPLATE """{{- if .System }}{{ .System }}{{ end }}
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1}}
+{{- if eq .Role "user" }}<｜User｜>{{ .Content }}
+{{- else if eq .Role "assistant" }}<｜Assistant｜>{{ .Content }}{{- if not $last }}<｜end▁of▁sentence｜>{{- end }}
+{{- end }}
+{{- if and $last (ne .Role "assistant") }}<｜Assistant｜>{{- end }}
+{{- end }}"""
+PARAMETER stop <｜begin▁of▁sentence｜>
+PARAMETER stop <｜end▁of▁sentence｜>
+PARAMETER stop <｜User｜>
+PARAMETER stop <｜Assistant｜>
 
 LICENSE """Built with Llama
 Llama 3.3 is licensed under the Llama 3.3 Community License, Copyright © Meta Platforms, Inc. All Rights Reserved.
+
+License and terms of use are inherited from the 'Meta' corporation's llama3_3 license and use policy.
+https://www.llama.com/llama3_3/license/
+https://www.llama.com/llama3_3/use-policy/
+
+Copies of these license and use policies, to the extent required and/or appropriate, are included in appropriate subdirectories of a proper recursive download of any git repository used to distribute this project. 
 
 https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-70B
 https://github.com/deepseek-ai/DeepSeek-R1/blob/main/LICENSE
@@ -42,7 +87,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'
 
-https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_M.gguf
+https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF/blob/main/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_XXS.gguf
 https://huggingface.co/bartowski/huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-GGUF
 
 https://huggingface.co/huihui-ai/DeepSeek-R1-Distill-Llama-70B-abliterated
@@ -94,6 +139,8 @@ All that said, most if not all use cases can be practically, effectively, and ef
 
 
 DeepSeek-R1-Distill-Llama-70B  happens to use  Llama 3.3  . Notably, DeepSeek-R1-Distill-Llama-8B instead uses  Llama 3.1  . If  Llama 3.3  had a non-negligible benefit (ie. other than fewer incorrect responses per random seed), this benefit was most likely entirely unique to the need for a chain-of-reasoning model to essentially generate its own prompt from an inadequate prompt, which, due to the inherent avalanche effect of such positive feedback can be especially sensitive to small differences in accuracy. The benefits of chain-of-reasoning should be achievable without that sensitivity, either by additional fine-tuning or by implementing negative feedback - using AI to review previous outputs before passing back as separate AI inputs for additional work. All other use cases should be achievable by using chain-of-reasoning REASONING models to develop better prompts for INSTRUCT models. All  Llama 3.3  use cases should still be achievable with  Llama 3.1  .
+
+DeepSeek-R1-Distill-Llama-8B  in at least some cases can generate very similar outputs to those of the DeepSeek-R1-Distill-Llama-70B model, with the most significant difference being much more frequent inaccuracies per random seed, consistent with the inaccuracy of a <<32b parameter chain of reasoning model, suggesting  Llama 3.3  is indeed non-essential. Notably, this also suggests the 'Instruct' rather than 'Base' underlying training of the  Llama3.3-70B-Instruct  model was also non-essential.
 
 
 

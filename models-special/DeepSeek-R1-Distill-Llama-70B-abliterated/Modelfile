@@ -32,6 +32,9 @@
 # IQ2_XXS
 # Discouraged. Not terrible, but noticeably much more likely to make mistakes, omit helpful but less strictly necessary output (eg. comments in code).
 
+# https://github.com/matt-c1/llama-3-quant-comparison
+# Beware, in practice, some variation seems to happen - sometimes some quantizations may be worse than usual. Use this chart as an indication of which quantizations could be adequate, then test those quantizations with challenging problems.
+
 
 FROM ./huihui-ai_DeepSeek-R1-Distill-Llama-70B-abliterated-IQ3_XXS.gguf
 

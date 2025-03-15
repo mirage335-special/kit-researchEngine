@@ -1,11 +1,21 @@
 
 # https://huggingface.co/tensorblock/DeepSeek-R1-Distill-Llama-8B-abliterated-GGUF
+
+# https://huggingface.co/tensorblock/DeepSeek-R1-Distill-Llama-8B-abliterated-GGUF/blob/main/DeepSeek-R1-Distill-Llama-8B-abliterated-Q5_K_M.gguf
+
 # https://huggingface.co/tensorblock/DeepSeek-R1-Distill-Llama-8B-abliterated-GGUF/blob/main/DeepSeek-R1-Distill-Llama-8B-abliterated-Q6_K.gguf
+
+# https://huggingface.co/tensorblock/DeepSeek-R1-Distill-Llama-8B-abliterated-GGUF/blob/main/DeepSeek-R1-Distill-Llama-8B-abliterated-Q8_0.gguf
+# ATTENTION: Q8_0 does seem significantly more accurate, less likely to run out of tokens due to inaccurate 'thinking', and not much different in tokens/sec within VRAM limits. Chain-of-reasoning may compound errors with every 'thinking' token, an 8B parameter chain-of-reasoning model is already rather unreasonable for chain-of-reasoning, and 8B models already suffer degradation from quantization much more rapidly than 70B. Thus, it is not surprising that an 8B parameter chain-of-reasoning model is noticeably much better with Q8_0 than Q6_K or Q5_K_M . Use Q8_0 or better if you are really going to use an 8B parameter chain-of-reasoning model.
 
 # ollama create huihui-ai_DeepSeek-R1-Distill-Llama-8B-abliterated -f Modelfile
 
-FROM ./DeepSeek-R1-Distill-Llama-8B-abliterated-Q6_K.gguf
+# https://github.com/matt-c1/llama-3-quant-comparison
+# Beware, in practice, some variation seems to happen - sometimes some quantizations may be worse than usual. Use this chart as an indication of which quantizations could be adequate, then test those quantizations with challenging problems.
 
+FROM ./DeepSeek-R1-Distill-Llama-8B-abliterated-Q8_0.gguf
+
+# Teaching a mere 8B parameter (instead of 70B parameter) model to do chain-of-reasoning results in the model eating a lot of the context window, etc, with just 'thinking', and this will degrade accuracy. Do NOT use a REASONING model if an INSTRUCT model with a better or automatically selected prompt could routinely do the same work.
 PARAMETER num_ctx 6144
 PARAMETER num_keep 6144
 PARAMETER num_predict 6144

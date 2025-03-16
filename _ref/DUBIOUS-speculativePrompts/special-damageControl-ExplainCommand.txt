@@ -1,0 +1,19 @@
+# Some AI LLM models have been known to show good diligence.
+# May be worth doing many-model chat .
+
+# perplexity sonar-deep-research
+# ChatGPT 4.5/preview
+# anthropic claude-3.7-sonnet:thinking
+# ChatGPT o3-mini/high
+# DeepSeek-R1-Distill-Llama-70B
+# Llama 3.1 405b
+
+# Some AI LLM models have been known to get good coverage merging the esoteric features from each result of many-model chat.
+
+# OpRt_.anthropic/claude-3.7-sonnet:thinking
+# ChatGPT_.o3-mini
+# OpRt_.openai/o3-mini-high
+# OpRt_.deepseek/deepseek-r1-distill-llama-70b
+
+
+Please tell me everything that you know about this command, and most of all, please suggest any additional parameters that may be need in situations in which this command may be used.

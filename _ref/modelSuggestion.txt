@@ -1,0 +1,34 @@
+
+# Web Search using only local AI has been best using 'Llama-augment', however, even with 120+ search results, often misses relevant GitHub Issues, etc, and is a supplement rather than a replacement for manual search, other AI search, etc.
+'Llama-augment' -> 'OpenWebUI' -> 'SearXNG'
+
+# Some Web Interface chats offered have been able to provide good search results (sometimes much better than 'Llama-augment'+'OpenWebUI'+'SearXNG' ).
+# ChatGPT o3-mini-high 'Deep Research'
+
+# Some API accessible models have been able to provide good search results.
+perplexity sonar-deep-research
+
+# Some AI LLM models have been known to show good diligence.
+# ChatGPT 4.5/preview
+# anthropic claude-3.7-sonnet:thinking
+# ChatGPT o3-mini/high
+# DeepSeek-R1-Distill-Llama-70B
+# Llama 3.1 405b
+
+
+# Merging results from each of many models is sometimes necessary to get the most comprehensive results.
+# perplexity sonar-deep-research
+# ChatGPT 4.5/preview
+# anthropic claude-3.7-sonnet:thinking
+# ChatGPT o3-mini/high
+# DeepSeek-R1-Distill-Llama-70B
+# Llama 3.1 405b
+
+# Some AI LLM models have been known to get good coverage merging the esoteric features from each result of many-model chat.
+# OpRt_.anthropic/claude-3.7-sonnet:thinking (STRONGLY RECOMMENDED)
+# ChatGPT_.o3-mini
+# OpRt_.openai/o3-mini-high
+# OpRt_.deepseek/deepseek-r1-distill-llama-70b
+
+
+

@@ -32,3 +32,8 @@ perplexity sonar-deep-research
 
 
 
+# Tasks ('OpenWebUI' -> 'Admin Panel' -> 'Interface') (STRONGLY RECOMMENDED)
+# Local Models:   Llama-augment:latest
+# External Models:   OpRt_.anthropic/claude-3.7-sonnet:thinking
+
+

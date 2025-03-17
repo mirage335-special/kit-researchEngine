@@ -16,4 +16,4 @@
 # OpRt_.deepseek/deepseek-r1-distill-llama-70b
 
 
-Please tell me everything that you know about this command, and most of all, please suggest any additional parameters that may be need in situations in which this command may be used.
+Please tell me everything that you know about this command, and most of all, please suggest any additional parameters that may be needed in situations in which this command may be used.

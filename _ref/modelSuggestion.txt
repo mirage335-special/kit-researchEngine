@@ -16,7 +16,7 @@ perplexity sonar-deep-research
 # Llama 3.1 405b
 
 
-# Merging results from each of many models is sometimes necessary to get the most comprehensive results.
+# Many chat from some AI LLM models simultaneously followed by merging outputs is sometimes necessary to get the most comprehensive results.
 # perplexity sonar-deep-research
 # ChatGPT 4.5/preview
 # anthropic claude-3.7-sonnet:thinking
@@ -37,3 +37,9 @@ perplexity sonar-deep-research
 # External Models:   OpRt_.anthropic/claude-3.7-sonnet:thinking
 
 
+
+# Some AI LLM models are cheaper to run through APIs yet can add some of the benefits of other AI LLM models on the rare case that the most thorough diligence is not absolutely essential. Many chat from this set is cheaper per query.
+# ChatGPT_.gpt-4o-search-preview
+# ChatGPT_.chatgpt-4o-latest
+# DeepSeek-R1-Distill-Llama-70B
+# Llama 3.1 405b

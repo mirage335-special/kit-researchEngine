@@ -2,6 +2,8 @@
 # ATTRIBUTION-AI: ChatGPT o1 2025-02-07
 #Please rewrite this prompt to better work within the limitations of smaller Large Language Models, as low as 8b parameters with little or no code review training.
 
+# ATTENTION: Many Chat then Merge has shown vastly better results for code review, etc. This is an exceptional use case for agentic AI and the merging strength of claude-3.7-sonnet:thinking .
+
 # ChatGPT can provide vastly more detailed, far more useful, analysis along these points, especially for complex scrripts challenging both Llama-augment with much complexity and DeepSeek R1 with much nuance. Nevertheless, the offline models can be adequate.
 
 # Some AI LLM models have been known to at least address the specific points requested by this prompt.

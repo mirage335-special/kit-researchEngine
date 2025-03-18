@@ -23,6 +23,7 @@ perplexity sonar-deep-research
 # ChatGPT o3-mini/high
 # DeepSeek-R1-Distill-Llama-70B
 # Llama 3.1 405b
+# ChatGPT o1
 
 # Some AI LLM models have been known to get good coverage merging the esoteric features from each result of many-model chat.
 # OpRt_.anthropic/claude-3.7-sonnet:thinking (STRONGLY RECOMMENDED)

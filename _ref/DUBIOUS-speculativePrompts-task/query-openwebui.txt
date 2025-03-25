@@ -1,12 +1,16 @@
 
+# BEWARE: OpenWebUI 'Local Models' and 'External Models' may require configuring to 'OpRt_.meta-llama/llama-3.1-405b-instruct' , etc, as 'OpRt_.anthropic/claude-3.7-sonnet:thinking' may or may not be used for web query generation if selected as the task model.
+# https://github.com/open-webui/open-webui/issues/12022
+
 # Some AI LLM models have been known to follow the instructions of this prompt.
 # OpRt_.meta-llama/llama-3.1-405b-instruct
 # Llama-augment
 
+
 # Some AI LLM model outputs may be too narrowly focused for the purposes of this prompt.
 # OpRt_.deepseek/deepseek-r1-distill-llama-70b
 
-# Llama 3.1 models and Llama Distill/Reasoning models are suggested.
+# Llama 3.1 (or better) non-reasoning LLM models are suggested.
 
 # Some OpenWebUI Web Search parameters may have been tested.
 #

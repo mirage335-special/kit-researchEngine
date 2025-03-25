@@ -1,6 +1,10 @@
 
+# tldr; Use the 'Condensed' prompt and remember to set 'Task Model' from the usual 'OpRt_.anthropic/claude-3.7-sonnet:thinking' useful for Merged Responses to 'OpRt_.meta-llama/llama-3.1-405b-instruct' and also use 'OpRt_.meta-llama/llama-3.1-405b-instruct' as the chat model if the best possible web search results are needed.
+
+
 # BEWARE: OpenWebUI 'Local Models' and 'External Models' may require configuring to 'OpRt_.meta-llama/llama-3.1-405b-instruct' , etc, as 'OpRt_.anthropic/claude-3.7-sonnet:thinking' may or may not be used for web query generation if selected as the task model.
 # https://github.com/open-webui/open-webui/issues/12022
+# In practice, 'OpRt_.anthropic/claude-3.7-sonnet:thinking' specifically is unusually widely accurate enough that it suffers less from the narrowing of responses due to chain-of-reasoning, and so may sometimes be usable without always switching back to 'OpRt_.meta-llama/llama-3.1-405b-instruct' , the difference being searching something like 200 sites instead of 140 sites , and about half of the top 10 cited results explicitly mentioning a command, API call, etc, asked about, rather than all of the top 10 cited results. Cost of the resulting search is higher: ~$0.04 'OpRt_.anthropic/claude-3.7-sonnet:thinking' vs ~$0.01 'OpRt_.meta-llama/llama-3.1-405b-instruct' . Prompt tokens internally generated just from the web search results is of course significantly higher, but at a concerning limits: ~12000 'OpRt_.anthropic/claude-3.7-sonnet:thinking' vs ~15000 'OpRt_.meta-llama/llama-3.1-405b-instruct' , raising the possibility of misconfigured short context windows missing entire categories of search results entirely.
 
 # Some AI LLM models have been known to follow the instructions of this prompt.
 # OpRt_.meta-llama/llama-3.1-405b-instruct
@@ -14,8 +18,12 @@
 
 # Some OpenWebUI Web Search parameters may have been tested.
 #
+# Search Result Count 10
+# Concurrent Requests 20
+#
 # Search Result Count 18
 # Concurrent Requests 20
+
 
 # ATTRIBUTION-AI: et. al.
 

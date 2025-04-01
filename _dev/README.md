@@ -6,6 +6,11 @@ Llama-augment (INSTRUCT, small, fast, embedded uses)
 Do NOT substitute the 405b model for lower parameter count - accuracy and helpfulness are very substantially better.
 
 
+IMPORTANT:
+
+Corpus of scientific knowledge may be possible to convert to prompt/response pairs by generating questions based on keywords, titles, etc. In addition to better aligning with prompt/response dataset JSONL formats, without blank prompt or response, or recursively generated prompt/response splitting, this may or may not improve the ability of the AI LLM model to integrate this knowledge within general-purpose knwoledge and reasoning (possibly answering scientific questions better).
+
+
 ATTENTION:
 
 Chain-of-reasoning may be taught to  Llama-tech-405b  using DeepSeek R1 (MIT licensed) models (eg. DeepSeek R1, DeepSeek R1 Distill Llama 70b).

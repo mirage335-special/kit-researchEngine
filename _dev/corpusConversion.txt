@@ -1,8 +1,10 @@
 
 Functions to generate usable segments of code are available from ubiquitous_bash (eg. _corpus_bash-write ).
 
+WARNING: May be OBSOLETE. Here documents in 'ubiquitous_bash' 'ai/dataset/convert' may be more recent than the reference text here.
 
-_ Conversion Prompt ( create description for prompt of prompt/response pair, recommend: Llama-augment ) _
+
+_ Description Prompt ( create description for prompt of prompt/response pair, recommend: Llama-augment ) _
 
 Please describe, only what the bash shellcode segment does, if anything. Identify any code patterns, validation checks, or error-handling mechanisms, etc, already present in the script. Do not suggest improvements or speculate about hypothetical failure points or weaknesses - only call out implemented strategies.
 

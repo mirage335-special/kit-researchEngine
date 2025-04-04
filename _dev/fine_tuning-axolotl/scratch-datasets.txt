@@ -1,0 +1,53 @@
+
+#datasets:
+  #- path: "/datasets/ubiquitous_bash_finetuning-continueText.jsonl"
+    #type: "completion"
+
+#datasets:
+  #- path: "/datasets/ubiquitous_bash_finetuning-continuePromptResponse"
+    #type: chat_template
+    #field_messages: messages
+    #message_property_mappings:
+      #role: role
+      #content: content
+    #roles:
+      #system:
+        #- system
+      #user:
+        #- user
+      #assistant:
+        #- assistant
+
+datasets:
+  - path: "/datasets/ubiquitous_bash_finetuning-promptResponse"
+    type: chat_template
+    field_messages: messages
+    message_property_mappings:
+      role: role
+      content: content
+    roles:
+      system:
+        - system
+      user:
+        - user
+      assistant:
+        - assistant
+
+#datasets:
+  #- path: fozziethebeat/alpaca_messages_2k_test
+    #type: chat_template
+    #field_messages: messages
+    #message_property_mappings:
+      #role: role
+      #content: content
+    #roles:
+      #user:
+        #- user
+      #assistant:
+        #- assistant
+
+
+
+
+
+

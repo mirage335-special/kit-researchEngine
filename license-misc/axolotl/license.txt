@@ -1,0 +1,24 @@
+
+Files from axolotl project are available from official sources:
+
+https://github.com/axolotl-ai-cloud/axolotl/tree/main
+
+https://github.com/axolotl-ai-cloud/axolotl/blob/main/docs/config.qmd
+
+https://github.com/axolotl-ai-cloud/axolotl/tree/main/examples/llama-3
+https://github.com/axolotl-ai-cloud/axolotl/blob/main/examples/llama-3/instruct-lora-8b.yml
+https://github.com/axolotl-ai-cloud/axolotl/blob/main/examples/llama-3/lora-8b.yml
+https://github.com/axolotl-ai-cloud/axolotl/blob/main/examples/llama-3/lora-1b.yml
+https://github.com/axolotl-ai-cloud/axolotl/blob/main/examples/llama-3/qlora-fsdp-405b.yaml
+
+https://github.com/axolotl-ai-cloud/axolotl/blob/860609392184cf62a7e0ca676658b170e059ce6c/src/axolotl/utils/chat_templates.py#L17
+
+
+Copies of such files if included with the 'researchEngine' are usually provided for one of a few specific purposes:
+- As reference to generate usable configuration files through prompted AI analysis.
+- As copies to document changes made to create modified files (ie. yml files to configure fine-tuning for an AI LLM model).
+
+
+
+
+

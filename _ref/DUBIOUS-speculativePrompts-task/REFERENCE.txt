@@ -1,5 +1,6 @@
 
 https://github.com/open-webui/open-webui/blob/main/backend/open_webui/config.py
+'DEFAULT_RAG_TEMPLATE'
 'DEFAULT_QUERY_GENERATION_PROMPT_TEMPLATE'
 'DEFAULT_TITLE_GENERATION_PROMPT_TEMPLATE'
 

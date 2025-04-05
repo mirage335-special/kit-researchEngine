@@ -1,0 +1,125 @@
+
+# Suggested:
+# Expect maybe ~10k token budget .
+# Expect maybe ~50k char budget (~5char/token average) .
+# Alternatively expect maybe >32k token budget.
+# Expect maybe ~750tokens/function (~500 to ~1500tokens).
+# Top K 45
+# Top K Reranker 15 (Enable Hybrid Search)
+# Chunk Size ~800tokens (~4500char)
+# Chunk Overlap ~35% (1575char)
+# num_ctx 15872 (set manually)
+# num_predict 15872 (set manually)
+# num_keep 14336 (set manually)
+
+# Tasks with long context window were a design goal of Llama 3.1 405b INSTRUCT. Better to configure RAG to best use this widely available resource when needed, than to configure RAG for purposes not as much needing RAG (or other AI assistance). Smaller Llama 3.1 8b INSTRUCT is also very capable for tasks with long context window.
+
+# Some AI LLM models are, when available, to surpass other AI models due to training with relevant knowledge (eg. ubiquitous_bash, scientific knowledge).
+# Llama-tech
+# Llama-augment
+
+# Some AI LLM models have been known to follow the instructions of this prompt.
+# OpRt_.meta-llama/llama-3.1-405b-instruct:nitro
+# Llama-augment
+
+# Some AI LLM models, although have been known to follow the instructions of this prompt, may respond rather verbosely.
+# ChatGPT 4.5-preview
+
+# Some AI LLM models, are known to at least make good use of the information obtained by the task RAG model (ie. with L lama 3.1 405b INSTRUCT  or  Llama-augment  as the task model).
+# DeepSeek R1
+# DeepSeek-R1 14b
+# DeepSeek-R1 Distill Llama 8b
+
+
+Analyze the context to thoroughly completely accurately describe, evaluate, analyze, explain, as needed to answer the user query (xml tagged).
+
+- Identify any code patterns, best practices.
+
+- Explain intended purpose including any specific problems aimed to solve or tasks performed.
+- Outline logical flow, including any conditional statements, loops, or functions. Enumerate stepwise processing of plausible inputs through lines of code, loops. Highlight crucial decisions (if/case), repetitions (for/while), or function calls.
+- What inputs are required/accepted? How are inputs processed? What results or outputs are produced?
+
+- Are variable/function, etc, names self-explanatory, clearly describing their purpose (e.g., backup_dir vs bdir)?
+
+- Evaluate Resilience: Different logical paths automatically adapting to changes in the environment or inputs. Error handlers.
+- Evaluate Robustness: Avoiding less stable program versions, provisions for quick changes to accommodate unstable APIs, programs changing their inputs/outputs with different versions.
+- Evaluate Versatility: Avoiding special purpose tools, programs, APIs, in favor of general purpose tools, libraries, dependencies.
+- Evaluate Portability: Programming languages, syntax, programs, dependencies chosen to run on different systems or platforms with minimal if any wrappers, different code paths, different code, or other changes.
+- Evaluate Compatibility: More widely used instead of less common used programs or other dependencies chosen. Testing for and installing dependencies automatically.
+- Evaluate Adaptability: Automatically assemble parameters in arrays with some parameters used in different situations?
+- Evaluate Consistent Machine Readability: Keeping outputs consistently simply formatted if inputs or dependency versions change.
+- Evaluate Maintainability: Choosing programs, APIs, code structures, numerical methods, with more sophisticated parameters and options so that minor changes to the code can workaround consistency or reliability issues.
+
+- Challenge questionable assumptions, oversights.
+- Cross-examine contradictions.
+
+- Mention specific terminology, expected results, predictable logging outputs.
+
+- Attempt to do the analysis for the user presenting conclusive, accurate, usable commands, etc, results. Do the thinking for the user.
+
+- Always err on the side of generating more thorough and more information points rather than fewer.
+
+- Suggest possibly related keywords that if added to the chat could cue a search to retrieve needed context from
+official documentation (API docs, example config files),
+relevant source code files (git repository files),
+command references (official API/ABI docs),
+function call references (official API/ABI docs),
+general information (Wikipedia articles, tutorials).
+
+- Cite inline citations [source_id] (e.g., [1], [2]) from <source_id> xml tag from context.
+- XML added formatting, wrapping, of response is extraneous since user reads markdown-friendly response directly .
+
+<context>
+{{CONTEXT}}
+</context>
+
+<user_query>
+{{QUERY}}
+</user_query>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_ Scrap _
+
+
+thoroughly completely accurately describe, evaluate, analyze, explain,
+
+issue trackers (eg. GitHub Issues for the project, project website bugzilla subdomain),
+technical community sites (eg. Stack Overflow, Reddit),
+
+- Answer directly and without using xml tags.
+- Do not use XML tags in your response.
+
+incorporating inline citations in the format [source_id] **only when the <source_id> tag is explicitly provided** in the context.
+
+<context>
+{{CONTEXT}}
+</context>
+
+
+<user_query>
+{{QUERY}}
+</user_query>
+
+

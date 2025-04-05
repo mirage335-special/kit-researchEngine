@@ -15,11 +15,11 @@
 # Tasks with long context window were a design goal of Llama 3.1 405b INSTRUCT. Better to configure RAG to best use this widely available resource when needed, than to configure RAG for purposes not as much needing RAG (or other AI assistance). Smaller Llama 3.1 8b INSTRUCT is also very capable for tasks with long context window.
 
 # Some AI LLM models are, when available, to surpass other AI models due to training with relevant knowledge (eg. ubiquitous_bash, scientific knowledge).
-# Llama-tech
+# Llama-tech (very strongly recommended when available)
 # Llama-augment
 
 # Some AI LLM models have been known to follow the instructions of this prompt.
-# OpRt_.meta-llama/llama-3.1-405b-instruct:nitro
+# OpRt_.meta-llama/llama-3.1-405b-instruct:nitro (STRONGLY RECOMMENDED)
 # Llama-augment
 
 # Some AI LLM models, although have been known to follow the instructions of this prompt, may respond rather verbosely.

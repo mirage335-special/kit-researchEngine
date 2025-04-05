@@ -34,10 +34,12 @@ docker run --shm-size=20g --name axolotl-$(_uid 14) --gpus "all" -v 'C:\q':/q -v
 
 # ###
 
-export NCCL_DEBUG=INFO
-export NCCL_DEBUG_SUBSYS=ALL
-export TORCH_DISTRIBUTED_DEBUG=INFO
-export TORCHELASTIC_ERROR_FILE=/PATH/TO/torcherror.log
+#export NCCL_DEBUG=INFO
+#export NCCL_DEBUG_SUBSYS=ALL
+#export TORCH_DISTRIBUTED_DEBUG=INFO
+#export TORCHELASTIC_ERROR_FILE=/PATH/TO/torcherror.log
+
+# ###
 
 if [[ -e /core/infrastructure/ubiquitous_bash/ubiquitous_bash.sh ]]
 then
@@ -64,12 +66,9 @@ nvidia-smi
 # ###
 
 
-axolotl preprocess /workspace/project/experiment-ubiquitous_bash-lora.yml
 
-#--deepspeed deepspeed_configs/zero1.json
-axolotl train /workspace/project/experiment-ubiquitous_bash-lora.yml
 
-axolotl inference /workspace/project/experiment-ubiquitous_bash-lora.yml
+
 
 
 

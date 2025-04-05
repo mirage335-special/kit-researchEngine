@@ -529,342 +529,228 @@ accelerate launch scripts/finetune.py examples/openllama-7b/qlora.yml --merge_lo
 ```
 
 
-Known possibly relevant, possibly DUBIOUS, commands:
+Known commands:
 ```bash
 axolotl preprocess /workspace/project/experiment-ubiquitous_bash-lora.yml
 
 #--deepspeed deepspeed_configs/zero1.json
 axolotl train /workspace/project/experiment-ubiquitous_bash-lora.yml
 
+# DUBIOUS
 axolotl inference /workspace/project/experiment-ubiquitous_bash-lora.yml
 
 
-# DUBIOUS
-#CUDA_VISIBLE_DEVICES="" python -m axolotl.cli.preprocess examples/openllama-3b/lora.yml
-#accelerate launch --num_processes=2 -m /workspace/project/Llama-augment-ubiquitous_bash-lora.yml --deepspeed deepspeed_configs/zero1.json
-#axolotl train /workspace/project/Llama-augment-ubiquitous_bash-lora.yml
 
+axolotl merge-lora /workspace/project/experiment-ubiquitous_bash-lora.yml --lora-model-dir="/outputs/experiment-ubiquitous_bash/lora-out" --output-dir="/outputs/experiment-ubiquitous_bash"
 
 
-# DUBIOUS - from https://docs.runpod.io/tutorials/pods/fine-tune-llm-axolotl
-#pip3 install packaging ninja
-#pip3 install -e '.[flash-attn,deepspeed]'
 
-#CUDA_VISIBLE_DEVICES=""
-#python -m axolotl.cli.preprocess examples/openllama-3b/lora.yml
-
-#accelerate launch -m axolotl.cli.train examples/openllama-3b/lora.yml
-
-## Very DUBIOUS . Seems this does not accept simple text prompting, requiring at least prompt formatting, and maybe only responding correctly to specialized JSON beyond that.
-## https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1/
-#accelerate launch -m axolotl.cli.inference examples/openllama-3b/lora.yml --lora_model_dir="./lora-out"
-
-#python3 -m axolotl.cli.merge_lora examples/openllama-3b/lora.yml --lora_model_dir="./lora-out"
-
-
-# DUBIOUS - from https://axolotl-ai-cloud.github.io/axolotl/docs/inference.html
-## Very DUBIOUS . Seems this does not accept simple text prompting, requiring at least prompt formatting, and maybe only responding correctly to specialized JSON beyond that.
-axolotl inference your_config.yml --lora-model-dir="./lora-output-dir"
-axolotl inference your_config.yml --base-model="./completed-model"
-axolotl inference your_config.yml --gradio
-cat /tmp/prompt.txt | axolotl inference your_config.yml --base-model="./completed-model" --prompter=None
-axolotl inference your_config.yml --load-in-8bit=True
-
-
-# DUBIOUS - from https://axolotl-ai-cloud.github.io/axolotl/docs/inference.html
-## Configuration Options (alternative)
-#  #gpu_memory_limit: 20GiB  # Adjust based on your GPU
-#  #lora_on_cpu: true        # Process on CPU if needed
-#CUDA_VISIBLE_DEVICES="" axolotl merge-lora ...
-
-# from https://axolotl-ai-cloud.github.io/axolotl/docs/inference.html
-#axolotl preprocess your_config.yml --debug
-```
-
-
-Quantize, Inference, commands from https://medium.com/@qdrddr/the-easiest-way-to-convert-a-model-to-gguf-and-quantize-91016e97c987 .
-```bash
-# Docker
-
-mkdir -p ~/models
-huggingface-cli login
-huggingface-cli download mistralai/Mistral-7B-Instruct-v0.3 --local-dir "~/models" --include "*"
-
-#Convert to GGUF
-docker run --rm -v "~/models":/repo ghcr.io/ggerganov/llama.cpp:full --convert "/repo" --outtype f32
-ls ~/models | grep .gguf
-#> ggml-model-f32.gguf
-
-#Quantize from F32.gguf to Q4_K_M.bin
-docker run --rm -v "~/models":/repo ghcr.io/ggerganov/llama.cpp:full --quantize "/repo/ggml-model-f32.gguf" "/repo/ggml-model-Q4_K_M.bin" "Q4_K_M"
-ls ~/models | grep .bin
-#> ggml-model-Q4_K_M.bin
-
-
-# ollama (alternative)
-
-#GGUF to q6_K
-echo "FROM hf.co/bartowski/Llama-3.2-3B-Instruct-GGUF:F16" > "~/models/modelfile"
-ollama create hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:q6_K --quantize q6_K --file ~/models/modelfile
-
-
-#Safetensors
-model=sentence-transformers-testing/stsb-bert-tiny-safetensors
-modelname=hf.co/${model}
-modeldir=${PWD}/${model}
-mkdir -p "${modeldir}" && huggingface-cli download "${model}" --local-dir "${modeldir}" --include "*"
-echo "FROM ${modeldir}" > "${modeldir}/modelfile"
-ollama create $modelname -f ${modeldir}/modelfile
-ollama list | grep $modelname
-
-
-# ollama without temporary GGUF
-
-model=mistralai/Mistral-7B-Instruct-v0.3
-modelname=Mistral:7b-Instruct-v0.3
-modelfolder=${PWD}/${model}
-
-huggingface-cli login
-huggingface-cli download "${model}" --local-dir "${modelfolder}" --include "*"
-
-#Pointing to directory with PyTorch/Safetensors might not always work, try creating GGUF 
-echo "FROM ${modeldir}" > "${modeldir}/modelfile"
-ollama create "${modelname}" -f "${modeldir}/modelfile"
-
-#If pointing to folder doesn't work, then with GGUF it should work:
-echo "FROM ${modeldir}/ggml-model-f16.gguf" > "${modeldir}/modelfile"
-ollama create "${modelname}" -f "${modeldir}/modelfile"
-```
-
-
-Quantize, Inference, commands from https://medium.com/@kevin.lopez.91/simple-tutorial-to-quantize-models-using-llama-cpp-from-safetesnsors-to-gguf-c42acf2c537d .
-
-```bash
-sudo apt-get install git git-lfs
-git lfs install
-git-lfs clone https://huggingface.co/microsoft/phi-2
-
-conda create — name phi_llm
-conda activate phi_llm
-
-git clone https://github.com/ggerganov/llama.cpp.git
-cd llama.cpp/
-pip install -r requirements.txt
-make -j8 
-# if you have cuda enabled Try using the below instead
-# make LLAMA_CUBLAS=1 -j8
-
-# use the convert script to convert the models from hf to gguf
-./convert-hf-to-gguf.py ../phi-2/ — outfile phi-2_fp16.gguf
-cd ../
-
-# convert the model from fp16 to q4
-./llama.cpp/quantize phi-2_fp16.gguf phi-2_Q4_K_M.gguf Q4_K_M
-
-# test
-llama.cpp/main — model phi-2_Q4_K_M.gguf — interactive
-# if you want to use a GPU then try: 
-# llama.cpp/main — model phi-2_Q4_K_M.gguf — interactive -ngl <number of layers your gpu can handle (3090 can do all layers)>
-
-
-# alternative
-
-pip install llama-cpp-python
-# If you want to use cuda try this:
-# CMAKE_ARGS=”-DLLAMA_CUBLAS=on” pip install llama-cpp-python
-
-python3
-```
-```python
-import os
-import argparse
-import llama_cpp
-from llama_cpp import llama_model_quantize_params
-
-result = llama_cpp.llama_model_quantize("phi-2_fp16.gguf".encode("utf-8"), "phi-2_Q4_1_low_level.gguf".encode("utf-8"), llama_model_quantize_params(0,3,True, True, False))
-```
-```bash
-# test
-llama.cpp/main — model phi-2_Q4_K_M.gguf — interactive
-# if you want to use a GPU then try: 
-# llama.cpp/main — model phi-2_Q4_K_M.gguf — interactive -ngl <number of layers your gpu can handle (3090 can do all layers)>
-```
-
-
-Quantize, Inference, GGML commands from https://towardsdatascience.com/quantize-llama-models-with-ggml-and-llama-cpp-3612dfbcc172/ .
-```bash
-# Install llama.cpp
-!git clone https://github.com/ggerganov/llama.cpp
-!cd llama.cpp && git pull && make clean && LLAMA_CUBLAS=1 make
-!pip install -r llama.cpp/requirements.txt
-
-MODEL_ID = "mlabonne/EvolCodeLlama-7b"
-
-# Download model
-!git lfs install
-!git clone https://huggingface.co/{MODEL_ID}
-
-MODEL_NAME = MODEL_ID.split('/')[-1]
-
-# Convert to fp16
-fp16 = f"{MODEL_NAME}/{MODEL_NAME.lower()}.fp16.bin"
-!python llama.cpp/convert.py {MODEL_NAME} --outtype f16 --outfile {fp16}
-
-QUANTIZATION_METHODS = ["q4_k_m", "q5_k_m"]
-
-for method in QUANTIZATION_METHODS:
-    qtype = f"{MODEL_NAME}/{MODEL_NAME.lower()}.{method.upper()}.gguf"
-    !./llama.cpp/quantize {fp16} {qtype} {method}
-
-# Our two quantized models are now ready for inference.
-```
-```python
-import os
-
-model_list = [file for file in os.listdir(MODEL_NAME) if "gguf" in file]
-
-prompt = input("Enter your prompt: ")
-chosen_method = input("Name of the model (options: " + ", ".join(model_list) + "): ")
-
-# Verify the chosen method is in the list
-if chosen_method not in model_list:
-    print("Invalid name")
-else:
-    qtype = f"{MODEL_NAME}/{MODEL_NAME.lower()}.{method.upper()}.gguf"
-    !./llama.cpp/main -m {qtype} -n 128 --color -ngl 35 -p "{prompt}"
-```
-
-
-Fine Tune, Quantize, Inference, commands from https://www.animal-machine.com/posts/fine-tuning-llama-models-with-qlora-and-axolotl/ .
-```
-# Setup a new conda environment pinned to python 3.9
-conda create -n axolotl python=3.9
-conda activate axolotl
-
-# Install pytorch for cuda 11.8
-pip3 install torch torchvision torchaudio \
-    --index-url https://download.pytorch.org/whl/cu118
-
-# Clone the github and switch directories to it
-git clone https://github.com/OpenAccess-AI-Collective/axolotl
-cd axolotl
-
-# As of the time of this writing, 0.2.1 is the latest release
-git checkout tags/v0.2.1
-
-# Install the dependencies
-pip3 install -e .
-pip3 install -U git+https://github.com/huggingface/peft.git
-
-# I have problems with the current bitandbytes unless I force
-# the the cuda 11.8 version onto the cpu version ...
-cd ~/miniconda3/envs/axolotl/lib/python3.9/site-packages/bitsandbytes
-mv libbitsandbytes_cpu.so backup_libbitsandbytes_cpu.so
-cp libbitsandbytes_cuda118.so libbitsandbytes_cpu.so
-
-cd ~/axolotl
-accelerate config  # selected no distributed training and defaults
-
-# Copy the 3B qlora example for open-llama into a new directory
-mkdir examples/openllama-7b
-cp examples/openllama-3b/qlora.yml \
-    examples/openllama-7b/qlora.yml
-
-vim examples/openllama-7b/qlora.yml
-## EDIT this qlora.yml to change these keys to target the 7B model
-#    base_model: openlm-research/open_llama_7b
-#    base_model_config: openlm-research/open_llama_7b
-
-# This will take some time. Output will be in `./qlora-out`
-accelerate launch scripts/finetune.py \
-    examples/openllama-7b/qlora.yml
-
-# When training finishes, you can test inference with this:
-accelerate launch scripts/finetune.py \
-    examples/openllama-7b/qlora.yml \
-    --inference --lora_model_dir="./qlora-out"
-
-# Merge the lora weights into one file
-accelerate launch scripts/finetune.py \
-    examples/openllama-7b/qlora.yml \
-    --merge_lora --lora_model_dir="./qlora-out" \
-    --load_in_8bit=False --load_in_4bit=False
-
-# Now we have a merged model in ./qlora-out/merged
-# We need to copy the tokenizer.model back into this directory
-cd qlora-out/merged
-wget https://huggingface.co/openlm-research/open_llama_7b/resolve/main/tokenizer.model
-
-# Setup llama.cpp for quantization and inference 
-# (steps shown for linux; ymmv)
-cd $HOME
-git clone https://github.com/ggerganov/llama.cpp.git
+cd /workspace/project/_lib
+##git clone https://github.com/ggerganov/llama.cpp.git
 cd llama.cpp
-make LLAMA_CUBLAS=1
+##make clean && make LLAMA_CUBLAS=1
+cmake -B build
+cmake --build build --config Release
+pip install torch transformers safetensors sentencepiece
 
-# We need to convert the pytorch model into ggml for quantization
-# It crates 'ggml-model-f16.bin' in the 'merged' directory.
-python convert.py --outtype f16 \
-    ~/axolotl/qlora-out/merged/pytorch_model-00001-of-00002.bin 
-
-# Start off by making a basic q4_0 4-bit quantization.
-# It's important to have 'ggml' in the name of the quant for some 
-# software to recognize it's file format. 
-./quantize ~/axolotl/qlora-out/merged/ggml-model-f16.bin \
-    ~/axolotl/qlora-out/merged/openllama-7b-GPT4-ggml-q4_0.bin q4_0
-
-# There we go! Now we have a quantized fine-tuned model! 
-# You can test it out with llama.cpp
-./main -n 128 --color -i -r "User:" -f prompts/chat-with-bob.txt \
-    -m ~/axolotl/qlora-out/merged/openllama-7b-GPT4-ggml-q4_0.bin
-```
+python convert_hf_to_gguf.py /outputs/experiment-ubiquitous_bash/merged --outfile /outputs/experiment-ubiquitous_bash-lora-f32.gguf --outtype f32
 
 
-Inference, Quantize commands and Modelfile parameters from https://github.com/ollama/ollama/blob/main/docs/import.md .
 
-Importing a fine tuned adapter from Safetensors weights
-```Modelfile
-FROM <base model name>
-ADAPTER /path/to/safetensors/adapter/directory
-```
-```bash
-ollama create my-model
-ollama create my-model
+cat <<'EOF' > experiment-ubiquitous_bash.Modelfile
+FROM ./outputs/experiment-ubiquitous_bash-lora-f32.gguf
+#FROM ./models/Llama-3.2-1B
+#ADAPTER ./outputs/experiment-ubiquitous_bash/lora-out
+
+TEMPLATE """<|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+
+{{ if .System }}{{ .System }}
+{{- end }}
+{{- if .Tools }}When you receive a tool call response, use the output to format an answer to the orginal user question.
+
+You are a helpful assistant with tool calling capabilities.
+{{- end }}<|eot_id|>
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 }}
+{{- if eq .Role "user" }}<|start_header_id|>user<|end_header_id|>
+{{- if and $.Tools $last }}
+
+Given the following functions, please respond with a JSON for a function call with its proper arguments that best answers the given prompt.
+
+Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.
+
+{{ range $.Tools }}
+{{- . }}
+{{ end }}
+{{ .Content }}<|eot_id|>
+{{- else }}
+
+{{ .Content }}<|eot_id|>
+{{- end }}{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
+
+{{ end }}
+{{- else if eq .Role "assistant" }}<|start_header_id|>assistant<|end_header_id|>
+{{- if .ToolCalls }}
+{{ range .ToolCalls }}
+{"name": "{{ .Function.Name }}", "parameters": {{ .Function.Arguments }}}{{ end }}
+{{- else }}
+
+{{ .Content }}
+{{- end }}{{ if not $last }}<|eot_id|>{{ end }}
+{{- else if eq .Role "tool" }}<|start_header_id|>ipython<|end_header_id|>
+
+{{ .Content }}<|eot_id|>{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
+
+{{ end }}
+{{- end }}
+{{- end }}"""
+
+LICENSE "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT"
+
+EOF
+
+ollama create llama3-ubiquitous-bash-1b -f experiment-ubiquitous_bash.Modelfile
 ```
 
-Importing a model from Safetensors weights
-```Modelfile
-FROM /path/to/safetensors/directory
-```
-```bash
-ollama create my-model
-```
-```bash
-ollama run my-model
+
+
+Docker containers reportedly exist for llama.cpp . From https://github.com/ggml-org/llama.cpp/blob/master/docs/docker.md .
+```containers
+We have three Docker images available for this project:
+
+ghcr.io/ggml-org/llama.cpp:full: This image includes both the main executable file and the tools to convert LLaMA models into ggml and convert into 4-bit quantization. (platforms: linux/amd64, linux/arm64)
+ghcr.io/ggml-org/llama.cpp:light: This image only includes the main executable file. (platforms: linux/amd64, linux/arm64)
+ghcr.io/ggml-org/llama.cpp:server: This image only includes the server executable file. (platforms: linux/amd64, linux/arm64)
+Additionally, there the following images, similar to the above:
+
+ghcr.io/ggml-org/llama.cpp:full-cuda: Same as full but compiled with CUDA support. (platforms: linux/amd64)
+ghcr.io/ggml-org/llama.cpp:light-cuda: Same as light but compiled with CUDA support. (platforms: linux/amd64)
+ghcr.io/ggml-org/llama.cpp:server-cuda: Same as server but compiled with CUDA support. (platforms: linux/amd64)
+ghcr.io/ggml-org/llama.cpp:full-rocm: Same as full but compiled with ROCm support. (platforms: linux/amd64, linux/arm64)
+ghcr.io/ggml-org/llama.cpp:light-rocm: Same as light but compiled with ROCm support. (platforms: linux/amd64, linux/arm64)
+ghcr.io/ggml-org/llama.cpp:server-rocm: Same as server but compiled with ROCm support. (platforms: linux/amd64, linux/arm64)
+ghcr.io/ggml-org/llama.cpp:full-musa: Same as full but compiled with MUSA support. (platforms: linux/amd64)
+ghcr.io/ggml-org/llama.cpp:light-musa: Same as light but compiled with MUSA support. (platforms: linux/amd64)
+ghcr.io/ggml-org/llama.cpp:server-musa: Same as server but compiled with MUSA support. (platforms: linux/amd64)
 ```
 
-Importing a GGUF based model or adapter
-```Modelfile
-#To import a GGUF model, create a Modelfile containing:
-FROM /path/to/file.gguf
-```
-```Modelfile
-#(alternative)
-#For a GGUF adapter, create the Modelfile with:
-FROM <model name>
-ADAPTER /path/to/file.gguf
-```
-```bash
-ollama create my-model
+
+Newer versions of llama.cpp apparently do not have './quantize' .
+
+
+
+Autogenerated ubiquitous_bash prompt/response dataset entry for the ubiquitous_bash dataset .
+```dataset
+{"messages":[{"role":"system","content":""},{"role":"user","content":"\nPlease invent a self-contained fragment of exemplary well crafted very creative bash shellcode vaguely meeting the description with some, all, or more features, than described. Illustrate modern best practices.\n\nIn this case, you may try to meet some plausibly intended goals of the description, ignoring logical inconsistencies or other errors in the description. Details of the description are more guidelines or mere suggestions created without adequate planning, and thus may need to change significantly. Sloppy incorrect pseudocode may have been the basis for an incompetent technical writer creating the description by stating mere guesses about what the code does not do as if fact. Occasionally the description may be incomprehensible gibberish.\n\nPreamble or trailing context may be omitted by truncating to demonstrate the core technique.\n\n\nYou may treat this as an exercise and generate an essentially academic example.\n\nYou may roleplay, that is pretend,\nto generate a bash shellscript response from a segment of an especially large and sophisticated shell script,\nthat would be used with this prompt including the description, as a prompt/response pair,\nto teach an existing AI LLM model such as Llama 3.1 405b with already vast knowledge and logic from its original training,\nto know,\ncorrect bash shellcode commands and structures,\nfrom this subsequent fine-tuning using the segmented shell script as a vast set of more completely accurate correct examples.\n\n\nIn this case, as a fragment, lines of code needed before and after this code may be missing. All lines of code needed within the middle of the fragment should be present.\n\nIndividual bash commands must be useful, complete, accurate, perfected. Within the fragment, individual bash commands must exceed the highest practical standards for robustness, resilience, versatility, portability, compatibility, adaptability to changing inputs, consistent machine readable outputs, maintainability, etc.\n\nInputs to individual bash commands may be assembled programmatically as arrays and variables to reach such high standards.\n\n\n\nI will analyze the given bash shellcode segment as per your requirements.\n\n**Intended Functionality:**\nThe code appears to be a part of a larger bash script that provides a self-validation mechanism to ensure the script's integrity. It checks the checksum of the script's header and contents to ensure they match the predefined values. If the checksums don't match, the script exits with a non-zero status.\n\n**Logical Flow:**\n\n1. The script starts by adjusting the `PATH` environment variable to include `/usr/local/bin`, `/usr/bin`, and `/bin` if they are not already present.\n2. It then checks if the `ub_setScriptChecksum` variable is set and unsets it if it is.\n3. The script defines two functions: `_ub_cksum_special_derivativeScripts_header` and `_ub_cksum_special_derivativeScripts_contents`, which calculate the checksum of the script's header and contents, respectively.\n4. The script checks if the `ub_setScriptChecksum_disable` variable is set to `'true'` and skips the checksum validation if it is.\n5. If the checksum validation is not disabled, the script checks the checksum of the header and contents using the `_ub_cksum_special_derivativeScripts_header` and `_ub_cksum_special_derivativeScripts_contents` functions. If either checksum doesn't match the predefined value, the script exits with a non-zero status.\n6. The script defines two more functions: `_ub_cksum_special_derivativeScripts_write`, which updates the script's checksum values, and `_user_log-ub`, which is a debugging function that logs output to a file.\n\n**Input-Processing-Output:**\nThe script does not require any external inputs. It processes the script's own contents and outputs a non-zero status if the checksum validation fails. The `_user_log-ub` function takes input from `stdin` and logs it to a file.\n\n**Self-explanatory Naming Convention:**\nThe variable and function names are descriptive and follow a consistent naming convention. For example, `_ub_cksum_special_derivativeScripts_header` clearly indicates that it calculates the checksum of the script's header.\n\n**Commenting:**\nThe script has few comments, but they are informative and provide context where necessary. For example, the comment above the checksum validation section explains the purpose of the code.\n\n**Resilience:**\nThe script has a basic error-handling mechanism in place. If the checksum validation fails, the script exits with a non-zero status. However, there are no provisions for adapting to changes in the environment or inputs.\n\n**Robustness:**\nThe script uses standard bash utilities and does not rely on any specific program versions or unstable APIs. However, it does not have provisions for quick changes to accommodate unstable APIs or programs.\n\n**Versatility:**\nThe script avoids using special-purpose tools or programs and instead relies on general-purpose utilities like `sed` and `cksum`.\n\n**Portability:**\nThe script uses bash syntax and utilities that are widely available on most Unix-like systems, making it relatively portable.\n\n**Compatibility:**\nThe script does not explicitly check for or install dependencies. However, it does use widely available utilities, which reduces the likelihood of compatibility issues.\n\n**Adaptability:**\nThe script does not have provisions for automatically assembling parameters in arrays or adapting to different situations.\n\n**Consistent Machine Readability:**\nThe script's output is not designed to be machine-readable. However, the `_user_log-ub` function logs output in a simple format.\n\n**Maintainability:**\nThe script uses relatively simple bash constructs and avoids complex logic or numerical methods. This makes it easier to maintain and modify. However, the lack of comments and documentation may make it more challenging to understand the script's intent and functionality."},{"role":"assistant","content":"Here is a Bash script with extensive environment preparation and integrity checks, including a checksum validation mechanism.\n```bash\n#===== Segment 1: ubiquitous_bash: lines 1 to 78 =====\n#!/usr/bin/env bash\n\n[[ \"$PATH\" != *\"/usr/local/bin\"* ]] && [[ -e \"/usr/local/bin\" ]] && export PATH=/usr/local/bin:\"$PATH\"\n[[ \"$PATH\" != *\"/usr/bin\"* ]] && [[ -e \"/usr/bin\" ]] && export PATH=/usr/bin:\"$PATH\"\n[[ \"$PATH\" != *\"/bin:\"* ]] && [[ -e \"/bin\" ]] && export PATH=/bin:\"$PATH\"\n\nif [[ \"$ub_setScriptChecksum\" != \"\" ]]\nthen\n\texport ub_setScriptChecksum=\nfi\n\n_ub_cksum_special_derivativeScripts_header() {\n\tlocal currentFile_cksum\n\tif [[ \"$1\" == \"\" ]]\n\tthen\n\t\tcurrentFile_cksum=\"$0\"\n\telse\n\t\tcurrentFile_cksum=\"$1\"\n\tfi\n\t\n\thead -n 30 \"$currentFile_cksum\" | env CMD_ENV=xpg4 cksum | cut -f1 -d\\  | tr -dc '0-9'\n}\n_ub_cksum_special_derivativeScripts_contents() {\n\tlocal currentFile_cksum\n\tif [[ \"$1\" == \"\" ]]\n\tthen\n\t\tcurrentFile_cksum=\"$0\"\n\telse\n\t\tcurrentFile_cksum=\"$1\"\n\tfi\n\t\n\ttail -n +45 \"$currentFile_cksum\" | env CMD_ENV=xpg4 cksum | cut -f1 -d\\  | tr -dc '0-9'\n}\n##### CHECKSUM BOUNDARY - 30 lines\n\n#export ub_setScriptChecksum_disable='true'\n( [[ -e \"$0\".nck ]] || [[ \"${BASH_SOURCE[0]}\" != \"${0}\" ]] || [[ \"$1\" == '--profile' ]] || [[ \"$1\" == '--script' ]] || [[ \"$1\" == '--call' ]] || [[ \"$1\" == '--return' ]] || [[ \"$1\" == '--devenv' ]] || [[ \"$1\" == '--shell' ]] || [[ \"$1\" == '--bypass' ]] || [[ \"$1\" == '--parent' ]] || [[ \"$1\" == '--embed' ]] || [[ \"$1\" == '--compressed' ]] || [[ \"$0\" == \"/bin/bash\" ]] || [[ \"$0\" == \"-bash\" ]] || [[ \"$0\" == \"/usr/bin/bash\" ]] || [[ \"$0\" == \"bash\" ]] ) && export ub_setScriptChecksum_disable='true'\nexport ub_setScriptChecksum_header='2591634041'\nexport ub_setScriptChecksum_contents='2779813709'\n\n# CAUTION: Symlinks may cause problems. Disable this test for such cases if necessary.\n# WARNING: Performance may be crucial here.\n#[[ -e \"$0\" ]] && ! [[ -h \"$0\" ]] && [[ \"$ub_setScriptChecksum\" != \"\" ]]\nif [[ -e \"$0\" ]] && [[ \"$ub_setScriptChecksum_header\" != \"\" ]] && [[ \"$ub_setScriptChecksum_contents\" != \"\" ]] && [[ \"$ub_setScriptChecksum_disable\" != 'true' ]] #&& ! ( [[ -e \"$0\".nck ]] || [[ \"${BASH_SOURCE[0]}\" != \"${0}\" ]] || [[ \"$1\" == '--profile' ]] || [[ \"$1\" == '--script' ]] || [[ \"$1\" == '--call' ]] || [[ \"$1\" == '--return' ]] || [[ \"$1\" == '--devenv' ]] || [[ \"$1\" == '--shell' ]] || [[ \"$1\" == '--bypass' ]] || [[ \"$1\" == '--parent' ]] || [[ \"$1\" == '--embed' ]] || [[ \"$1\" == '--compressed' ]] || [[ \"$0\" == \"/bin/bash\" ]] || [[ \"$0\" == \"-bash\" ]] || [[ \"$0\" == \"/usr/bin/bash\" ]] || [[ \"$0\" == \"bash\" ]] )\nthen\n\t[[ $(_ub_cksum_special_derivativeScripts_header) != \"$ub_setScriptChecksum_header\" ]] && exit 1\n\t[[ $(_ub_cksum_special_derivativeScripts_contents) != \"$ub_setScriptChecksum_contents\" ]] && exit 1\nfi\n##### CHECKSUM BOUNDARY - 45 lines\n\n_ub_cksum_special_derivativeScripts_write() {\n\tlocal current_ub_setScriptChecksum_header\n\tlocal current_ub_setScriptChecksum_contents\n\n\tcurrent_ub_setScriptChecksum_header=$(_ub_cksum_special_derivativeScripts_header \"$1\")\n\tcurrent_ub_setScriptChecksum_contents=$(_ub_cksum_special_derivativeScripts_contents \"$1\")\n\n\tsed -i 's/'#'#'###uk4uPhB663kVcygT0q-UbiquitousBash-ScriptSelfModify-SetScriptChecksumHeader-UbiquitousBash-uk4uPhB663kVcygT0q#####'/'\"$current_ub_setScriptChecksum_header\"'/' \"$1\"\n\tsed -i 's/'#'#'###uk4uPhB663kVcygT0q-UbiquitousBash-ScriptSelfModify-SetScriptChecksumContents-UbiquitousBash-uk4uPhB663kVcygT0q#####'/'\"$current_ub_setScriptChecksum_contents\"'/' \"$1\"\n}\n\n\n#Universal debugging filesystem.\n_user_log-ub() {\n\t# DANGER Do NOT create automatically, or reference any existing directory!\n\t! [[ -d \"$HOME\"/.ubcore/userlog ]] && cat - > /dev/null 2>&1 && return 0\n\t\n\t#Terminal session may be used - the sessionid may be set through .bashrc/.ubcorerc .\n\tif [[ \"$sessionid\" != \"\" ]]\n\tthen\n\t\tcat - >> \"$HOME\"/.ubcore/userlog/u-\"$sessionid\".log\n\t\treturn 0\n\tfi\n\tcat - >> \"$HOME\"/.ubcore/userlog/u-undef.log\n\t\n\treturn 0\n}\n\n```\nThis code provides a comprehensive Bash script that incorporates various best practices for secure and reliable scripting. The script includes several key features that enhance its functionality and maintainability.\n\nThis code demonstrates the following best practices: \n\n*   It adjusts the system's PATH environment variable to ensure the inclusion of essential binary directories, promoting a more predictable and secure environment.\n*   The script checks for the integrity of the script file by comparing expected checksums for both the header and contents. This minimizes the risk of executing tampered or corrupted scripts.\n*   A user logging function is included, which allows for writing to a specific log file within the user's home directory. This log function takes into account session IDs if set, enhancing traceability and debugging capabilities.\n\nThis example includes the following features:\n\n*   Adaptive PATH modification based on directory existence.\n*   Checksum verification for script integrity.\n*   User-friendly log functionality with support for session IDs.\n\nNote that this script uses various external commands (`tail`, `head`, `sed`, `env`, `tr`, `cksum`, `cut`) which are widely available on most Unix-like systems. The script expects certain paths to exist, such as `/usr/local/bin`, `/usr/bin`, and `/bin`, which are typical on many systems but may need adjustments in specialized environments. Additionally, users may need to set a session ID (`sessionid`) in their `.bashrc` or `.ubcorerc` files to fully utilize the logging feature."}]}
 ```
 
-Quantizing a Model
-```Modelfile
-FROM /path/to/my/gemma/f16/model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+experiment-lora-1b.yml
+```yaml
+base_model: NousResearch/Llama-3.2-1B
+# Automatically upload checkpoint and final model to HF
+# hub_model_id: username/custom_model_name
+
+load_in_8bit: false
+load_in_4bit: false
+strict: false
+
+datasets:
+  - path: teknium/GPT4-LLM-Cleaned
+    type: alpaca
+dataset_prepared_path: last_run_prepared
+val_set_size: 0.1
+output_dir: /outputs/lora-out
+
+adapter: lora
+lora_model_dir:
+
+sequence_len: 2048
+sample_packing: true
+eval_sample_packing: true
+pad_to_sequence_len: true
+
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_fan_in_fan_out:
+lora_target_modules:
+  - gate_proj
+  - down_proj
+  - up_proj
+  - q_proj
+  - v_proj
+  - k_proj
+  - o_proj
+
+wandb_project:
+wandb_entity:
+wandb_watch:
+wandb_name:
+wandb_log_model:
+
+gradient_accumulation_steps: 2
+micro_batch_size: 2
+num_epochs: 1
+optimizer: adamw_8bit
+lr_scheduler: cosine
+learning_rate: 0.0002
+
+train_on_inputs: false
+group_by_length: false
+bf16: auto
+fp16:
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+
+loss_watchdog_threshold: 5.0
+loss_watchdog_patience: 3
+
+warmup_steps: 10
+evals_per_epoch: 4
+saves_per_epoch: 1
+debug:
+deepspeed:
+weight_decay: 0.0
+fsdp:
+fsdp_config:
+special_tokens:
+  pad_token: "<|end_of_text|>"
+
 ```
-```bash
-ollama create --quantize q4_K_M mymodel
-```
+
+
 
 
 

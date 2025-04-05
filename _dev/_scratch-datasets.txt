@@ -4,7 +4,7 @@
     #type: "completion"
 
 #datasets:
-  #- path: "/datasets/ubiquitous_bash_finetuning-continuePromptResponse"
+  #- path: "/datasets/ubiquitous_bash_finetuning-continuePromptResponse.jsonl"
     #type: chat_template
     #field_messages: messages
     #message_property_mappings:
@@ -19,7 +19,7 @@
         #- assistant
 
 datasets:
-  - path: "/datasets/ubiquitous_bash_finetuning-promptResponse"
+  - path: "/datasets/ubiquitous_bash_finetuning-promptResponse.jsonl"
     type: chat_template
     field_messages: messages
     message_property_mappings:

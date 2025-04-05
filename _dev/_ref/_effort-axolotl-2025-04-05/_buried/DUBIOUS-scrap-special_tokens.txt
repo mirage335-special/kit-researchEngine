@@ -1,0 +1,22 @@
+
+DUBIOUS
+
+special_tokens:
+  eos_token: "<|eot_id|>"
+  bos_token: "<|begin_of_text|>"
+  pad_token: "<|pad|>"
+
+  pad_token: "<|end_of_text|>"
+
+
+
+
+special_tokens:
+  bos_token: "<|begin_of_text|>"  # verify actual llama3 BOS token
+  eos_token: "<|end_of_text|>"    # match explicitly what LLaMA3 expects
+  unk_token: "<unk>"
+  pad_token: "<|end_of_text|>"    # same padding scheme consistently throughout
+
+
+
+

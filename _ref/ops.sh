@@ -2,6 +2,9 @@
 # Rough example override functions to largely set 'Llama-3.1-405b-INSTRUCT' provided through OpenRouter as the AI LLM model for description, analysis, annotation, etc.
 
 
+export ai_safety="inherent"
+
+
 _convert_bash-backend() {
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]
     jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Fireworks"], "sort": "throughput" }, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
@@ -22,22 +25,16 @@ _convert_bash-dispatch() {
 
 
 _semanticAssist_bash-backend() {
-    export ai_safety="inherent"
-
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]
     jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Fireworks"], "sort": "throughput" },max_tokens: 15000, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
 }
 _semanticAssist_bash-backend-lowLatency() {
-    export ai_safety="inherent"
-
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]
     jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Lambda", "Fireworks"], "sort": "latency" },max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
 }
 # ATTENTION: Override with 'ops.sh' or similar if appropriate.
 # CAUTION: DANGER: Keywords generation is more prone to gibberish, special choice of AI LLM model may be required. See documentation for the '_here_semanticAssist-askGibberish' prompt.
 _semanticAssist_bash-backend-lowLatency-special() {
-    export ai_safety="inherent"
-
     #_convert_bash-backend-lowLatency "$@"
 
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]

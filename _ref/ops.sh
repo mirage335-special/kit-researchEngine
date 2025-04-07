@@ -80,6 +80,6 @@ _semanticAssist_bash-dispatch() {
     
     #-s 4096
     #-P $(nproc)
-    find "$1" -maxdepth 1 -type f -name '*.sh' -print0 | xargs -0 -x -L 1 -P 10 bash -c '"'"$scriptAbsoluteLocation"'"'' --embed _semanticAssist_bash_procedure "$@"' _
+    find "$1" -type f -name '*.sh' -print0 | xargs -0 -x -L 1 -P 10 bash -c '"'"$scriptAbsoluteLocation"'"'' --embed _semanticAssist_bash_procedure "$@"' _
 }
 

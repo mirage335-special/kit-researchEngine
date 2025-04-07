@@ -9,15 +9,21 @@
 # Some AI LLM models have been known to follow the instructions of this prompt.
 # OpRt_.meta-llama/llama-3.1-405b-instruct
 # Llama-augment
+# OpRt_.meta-llama/llama-4-scout:nitro
 
 
 # Some AI LLM model outputs may be too narrowly focused for the purposes of this prompt.
 # OpRt_.deepseek/deepseek-r1-distill-llama-70b
+# OpRt_.meta-llama/llama-4-maverick:nitro
 
 # Llama 3.1 (or better) non-reasoning LLM models are suggested.
 
-# Some OpenWebUI Web Search parameters may have been tested.
+# Some OpenWebUI Web Search parameters may have been tested. Larger numbers of search results may require an AI LLM model with a context-window and needle-in-haystack problem solving ability of >200k tokens (ie. 'Llama-4', etc) .
 #
+# Search Result Count 4
+# Concurrent Requests 8
+#
+# Normally recommended for most searches, very rarely exceeds ~130k context .
 # Search Result Count 10
 # Concurrent Requests 20
 #

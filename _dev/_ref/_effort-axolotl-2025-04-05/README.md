@@ -10,7 +10,30 @@ Some of the documentation, etc, regarding axolotl, may still include some necess
 
 
 
+# Further
+
+Some sort of interactive config for generating axolotl yaml may be available, and better maintained thus more correct.
+
+Fine tuning guide specifically for Llama 3.1 recommends Axolotl (which apparently supports Unsloth as a backend, though that may not be relevant), specifically for multi-GPU support.
+
+Different versions of axolotl may be less problematic.
+
+Commands used with unsloth may be, at least with AI RAG assistance, adaptable to axolotl if necessary for multi-GPU support.
+
+NVIDIA drivers installed with older eGPU present may have disabled support for some crucial features.
+
+
+
 # Reference
+
+
+
+https://huggingface.co/blog/mlabonne/sft-llama3
+https://huggingface.co/mlabonne/FineLlama-3.1-8B-GGUF/tree/main
+https://huggingface.co/collections/unsloth/llama-31-collection-6753dca76f47d9ce1696495f
+
+
+
 
 
 https://axolotl.ai/

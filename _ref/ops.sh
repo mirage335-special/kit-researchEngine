@@ -73,7 +73,7 @@ _semanticAssist_bash-backend-lowLatency-special() {
 
 # ATTENTION: Override with 'ops.sh' or similar if appropriate.
 # (ie. usually to change parallelization for high-latency APIs, providers, etc)
-_semanticAssist_bash-dispatch() {
+_semanticAssist-dispatch() {
     [[ "$1" == "" ]] && return 1
     [[ ! -e "$1" ]] && return 1
     echo 'quick brown fox' | _semanticAssist_bash-backend > /dev/null

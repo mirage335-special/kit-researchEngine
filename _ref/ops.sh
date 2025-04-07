@@ -24,25 +24,53 @@ _convert_bash-dispatch() {
 }
 
 
+# description
 _semanticAssist_bash-backend() {
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]
-    jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Fireworks"], "sort": "throughput" },max_tokens: 15000, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+    jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Fireworks"], "sort": "throughput" }, max_tokens: 15000, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+
+    ## DUBIOUS
+    ##jq -Rs '{ model: "meta-llama/llama-4-scout", provider: { "order": ["Groq"], "sort": "throughput" }, max_tokens: 7500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+
+    ## DUBIOUS
+    ##provider: { "order": ["Fireworks"],
+    #jq -Rs '{ model: "meta-llama/llama-4-maverick", provider: { "order": ["Fireworks"], "sort": "throughput" }, max_tokens: 7500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+
+    ## DUBIOUS
+    ## Mediocre.
+    ##provider: { "order": ["Azure"],
+    #jq -Rs '{ model: "openai/gpt-4o-mini", provider: { "order": ["Azure"], "sort": "throughput" }, max_tokens: 7500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
 }
+
+# keywords
 _semanticAssist_bash-backend-lowLatency() {
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]
-    jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Lambda", "Fireworks"], "sort": "latency" },max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+    jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Lambda", "Fireworks"], "sort": "latency" }, max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+
+    ## DUBIOUS
+    ##provider: { "order": ["Fireworks"],
+    ##jq -Rs '{ model: "meta-llama/llama-4-scout", provider: { "sort": "latency" }, max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+
+    ## DUBIOUS
+    ##provider: { "order": ["Fireworks"],
+    #jq -Rs '{ model: "meta-llama/llama-4-maverick", provider: { "order": ["Fireworks"], "sort": "latency" }, max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+
+    ## DUBIOUS
+    ## Mediocre. Fewer less intriguing keywords.
+    ##provider: { "order": ["Azure"],
+    #jq -Rs '{ model: "openai/gpt-4o-mini", provider: { "sort": "latency" }, max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
 }
+
+# detect: gibberish, etc
 # ATTENTION: Override with 'ops.sh' or similar if appropriate.
 # CAUTION: DANGER: Keywords generation is more prone to gibberish, special choice of AI LLM model may be required. See documentation for the '_here_semanticAssist-askGibberish' prompt.
 _semanticAssist_bash-backend-lowLatency-special() {
     #_convert_bash-backend-lowLatency "$@"
 
     #provider: { "order": ["SambaNova", "Fireworks", "Hyperbolic"]
-    jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Lambda", "Fireworks"], "sort": "latency" },max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
-
-    ###provider: { "order": ["Lambda", "Fireworks"], "sort": "latency" }
-    ##jq -Rs '{ model: "meta-llama/llama-4-scout", provider: { "sort": "latency" }, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
+    jq -Rs '{ model: "meta-llama/llama-3.1-405b-instruct", provider: { "order": ["Lambda", "Fireworks"], "sort": "latency" }, max_tokens: 500, messages: [{"role": "user", "content": .}] }' | curl -fsS --max-time 120 --keepalive-time 300 --compressed --tcp-fastopen --http2 -X POST https://openrouter.ai/api/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $OPENROUTER_API_KEY" --data-binary @- | jq -r '.choices[0].message.content'
 }
+
 # ATTENTION: Override with 'ops.sh' or similar if appropriate.
 # (ie. usually to change parallelization for high-latency APIs, providers, etc)
 _semanticAssist_bash-dispatch() {

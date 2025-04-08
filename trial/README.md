@@ -7,6 +7,9 @@ All of these problems and solutions simultaneously combine:
 * Diagnosing unknown logic fault.
 Such a combination of very complicated logic, exact requirements, and limited explanation of functionality, is an especially difficult case of problems. Usually only both the most structured training and genuinely largest parameter count is sufficient for an AI model to solve such problems.
 
+Isaac Asimov's short story 'Risk' conjectured exactly this scenario on the premise 'go find out what's wrong is not a precise order'.
+
+
 Function '_format_trial' is included with 'ubiquitous_bash' to create JSONL datasets from the convenient Markdown files.
 
 
@@ -29,3 +32,8 @@ All response output must be copied for fine tuning, including reasoning.
 
 Teaching a larger parameter model (eg. Llama-405b-INSTRUCT ) some REASONING by including 'response-solution-*.md' files as fine-tuning responses may be more helpful than fine-tuning a dedicated chain-of-reasoning model. Especially if the alternative REASONING model to fine-tune has fewer or does not have far more 'active parameters'. Chain-of-reasoning models can be very sensitive to missing concepts due to accumulating compounding absent concepts and needle-in-haystack issues, more readily degrading by lower parameter count or quantization, than for an INSTRUCT model.
 
+
+
+# Reference
+https://en.wikipedia.org/wiki/Risk_%28short_story%29?utm_source=chatgpt.com
+ 'As Calvin suspects, Black finds that the fault lies with the robot, which, as a result of imprecise orders, has damaged the controls of the ship. They realize that the precise and finite robot mind must be compensated for by human ingenuity.'

@@ -1,7 +1,7 @@
 Actually extract, analyze, look at the contents of the zip file, do not guess.
 
 
-Use techniques found in the ubiquitous_bash codebase as examples to write correct comprehensive code in a similar style and using the functions of ubiquitous_bash to meet the requested specifications.
+Use techniques found in the ubiquitous_bash and derivative projects codebases as examples to write correct comprehensive code in a similar style and using the functions of ubiquitous_bash to meet the requested specifications.
 
 
 Script 'ubiquitous_bash.sh' is compiled from most of the shellscript files included in the ubiquitous_bash knowledge zip archive. Calling ./ubiquitous_bash.sh with an _function as the first parameter will call that internal function with remaining parameters given to that function. Dynamic loading by importing other shellscript files at runtime (eg. 'ops.sh') si unusual, normally mostly only done to override functions for testing.

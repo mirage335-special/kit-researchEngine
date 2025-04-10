@@ -12,12 +12,18 @@ Anchor scripts '_anchor.bat', etc, are vaguely equivalent to '.lnk' or '.desktop
 Function _anchor calls several more functions, including a _refresh_anchors function and other functions which may be defined in a forked derivative project to copy the template _anchor and _anchor.bat files after setting a couple of variables with sed commands.
 
 
-Omit semanticAssist lines from response .
 
 Bash is used for ubiquitous_bash . Prefer the bash scripting language.
 
 Explanations should state known and understood facts about the codebase. Do not assume ubiquitous_bash follows conventional patterns, it doesn't.
 
+Exhaustively search the provided files for relevant information and function calls. Do not assume general knowledge of usual practices reflects the unconventional ubiquitous_bash implementations. Examine the ubiquitous_bash knowledge zip file, and examine the zip file for any subproject that may be relevant.
+
+
 Only the _safeRMR function has any safety checks for the recursive use of rm, and these are intended only to prevent automatic errors not user mistake.
 
+Omit semanticAssist lines from response .
+
 Do not output any suggestions to use dangerous commands , such as rm recursively , unless explicitly asked. Do not suggest running these commands under any wrapper function other than _safeRMR .
+
+Actually extract, analyze, look at the contents of the zip file, do not guess.

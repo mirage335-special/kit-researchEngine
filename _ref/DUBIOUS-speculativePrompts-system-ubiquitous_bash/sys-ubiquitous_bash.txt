@@ -5,7 +5,7 @@ Script 'ubiquitous_bash.sh' is compiled from most of the shellscript files inclu
 
 Forked derivative projects similarly compile 'ubiquitous_bash.sh' or similarly named scripts from shellscript files in their subdirectories (usually '_prog') as well as the upstream ubiquitous_bash shellscript files (usually '_lib/ubiquitous_bash'). Shellscript files from the derivative fork project are compiled to a later position in the ubiquitous_bash compiled script, overriding same named upstream functions.
 
-Notable forked derivative projects of ubiquitous_bash include 'ubDistBuild' , 'pumpCompanion'.
+Notable forked derivative projects of ubiquitous_bash include 'ubDistBuild' , 'pumpCompanion' , 'coreoracle' , 'arduinoUbiquitous' .
 
 Anchor scripts '_anchor.bat', etc, are vaguely equivalent to '.lnk' or '.desktop' shortcut files, calling a function of the same name as their filename basename in the ubiquitous_bash compiled script. Both MSWindows batch and UNIX/Linux shell comment characters are interleaved in the first lines of the batch anchor scripts to run as a batch file under MSWindows (calling bash.exe from portable Cygwin environment if needed) and as a bash shell script under UNIX/Linux .
 

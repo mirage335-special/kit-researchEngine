@@ -1,0 +1,1 @@
+ChatGPT with knowledge of ubiquitous_bash as framework and vast example of correct UNIX/Linux commands. Good stepwise diagnostics. Explanations also obtainable by manually uploading knowledge file (eg. to ChatGPT 4.5-preview). Copyleft https://github.com/mirage335-special/kit-researchEngine/releases

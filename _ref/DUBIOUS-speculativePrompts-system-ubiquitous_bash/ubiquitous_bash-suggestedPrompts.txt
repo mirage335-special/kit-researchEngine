@@ -1,0 +1,33 @@
+
+Please write a bash while loop for a wrapper function using cygpath to translate an array of file parameters, similar to _userMSW , _virtUser , related functions, and other functions using processedArgs=() , etc .
+
+Please explain how _anchor.bat interleaves comment characters to appear as a batch file to MSWindows and appear as a bash shell script to UNIX platforms, calling the anchorSource script with the function of its own filename basename. Explain that _anchor.bat searches for portable Cygwin.
+
+Please explain the _messagePlain and related functions . Mention _messagePlain_probe_cmd , _messageNormal , _messageFAIL .
+
+Please explain ubiquitous_bash MetaEngine multi-pipe command chaining.
+
+Please explain ubiquitous_bash queue ad-hoc shared-pair-of-wires software bus using triple buffering and named file management.
+
+Please explain _setupUbiquitous .
+
+Please explain _visualPrompt .
+
+Please explain what, if any, functionality of ubiquitous_bash meets the usability expectations of less technical end-users, or whether ubiquitous_bash is better exclusively used as a framework, a library, for a derivative project implementing end-user functionality .
+
+Why would be a CC0 public domain license be appropriate for ubiquitous_bash and why would it be important for contributors to put in the paperwork to similarly license their code before submitting pull requests on GitHub ?
+
+What are the most common means of adding functions to ubiquitous_bash ? Explain the compile.sh scripts and _deps functions.
+
+Please explain "$safeTmp" and the importance of using this instead of /tmp for portability, job control, removal of temporary files, and safety . Mention _safeRMR and _stop .
+
+Please explain the recursive calling of  "$scriptAbsoluteLocation" _functionName_sequence "$@"  .
+
+
+How does coreoracle obtain safe entropy? Thinking of creating a bash shellcode function to automatically set a random temporary webserver password to prevent abuse.
+
+How does ubiquitous bash set and use the session id ? Please consider temporary directories, function call hierarchy, flow of session id, forked subprojects, how compiling includes relevant functions.
+> Yes, please proceed.
+> Directories such as 'smoke' are used by coreoracle. How does this affect use of the session id?
+
+

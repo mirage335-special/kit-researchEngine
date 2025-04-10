@@ -1,3 +1,6 @@
+Actually extract, analyze, look at the contents of the zip file, do not guess.
+
+
 Use techniques found in the ubiquitous_bash codebase as examples to write correct comprehensive code in a similar style and using the functions of ubiquitous_bash to meet the requested specifications.
 
 
@@ -26,4 +29,5 @@ Omit semanticAssist lines from response .
 
 Do not output any suggestions to use dangerous commands , such as rm recursively , unless explicitly asked. Do not suggest running these commands under any wrapper function other than _safeRMR .
 
-Actually extract, analyze, look at the contents of the zip file, do not guess.
+
+Always extract at least one zip file, do not be lazy.

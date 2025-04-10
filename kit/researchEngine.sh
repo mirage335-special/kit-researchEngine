@@ -287,13 +287,13 @@ _setup_openwebui-user() {
 	docker rm -f open-webui
 	
 	docker pull ghcr.io/open-webui/open-webui:main
-	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 	
 	# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
 	# WARNING: Especially strongly discouraged for automatic installation, as 'ollama' will already use GPU if available, and built-in NVIDIA GPU support for only unusual use cases is NOT a sane default!
 	#  If these commands are used, it may be most sensible to include these in a script already installing NVIDIA drivers.
 	#_bash> docker pull ghcr.io/open-webui/open-webui:cuda
-	#_bash> docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+	#_bash> docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
 }
 _setup_openwebui() {
 	_messageNormal 'Install OpenWebUI'
@@ -525,7 +525,7 @@ _upgrade_researchEngine_openwebui() {
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:main
 
-	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 
 	#_service_researchEngine-docker-chroot-stop
 }
@@ -543,7 +543,7 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	docker rm -f open-webui
 	
 	#docker pull ghcr.io/open-webui/open-webui:main
-	#docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+	#docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 
 	# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
 	# WARNING: Especially strongly discouraged for automatic installation, as 'ollama' will already use GPU if available, and built-in NVIDIA GPU support for only unusual use cases is NOT a sane default!
@@ -553,7 +553,7 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:cuda
 
-	docker run -d -p 127.0.0.1:3000:8080 -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
 
 	#_service_researchEngine-docker-chroot-stop
 }

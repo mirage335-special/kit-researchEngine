@@ -2,13 +2,20 @@
 # Rough example . Override functions to largely set 'Llama-3.1-405b-INSTRUCT' provided through OpenRouter as the AI LLM model for description, analysis, annotation, etc.
 
 
+
 #export FORCE_WGET=true
 #export FORCE_AXEL=4
 
 export GH_TOKEN=""
 
+[[ "$OPENAI_API_KEY" == "" ]] && OPENAI_API_KEY=""
 [[ "$OPENROUTER_API_KEY" == "" ]] && export OPENROUTER_API_KEY=""
 
+# FineTuning (also Inference) Key
+export HF_AKI_KEY=""
+
+# SSH public key.
+export PUBLIC_KEY=$(cat ~/.ssh/id_ed25519_sk-keyName.pub)
 
 
 

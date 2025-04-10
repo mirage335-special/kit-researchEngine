@@ -18,7 +18,7 @@ export HF_AKI_KEY=""
 export PUBLIC_KEY=$(cat ~/.ssh/id_ed25519_sk-keyName.pub)
 
 # Temporary passwords. May be convenient to keep same per terminal session, persisting across service restarts, but not computer reboot, etc.
-export JUPYTER_PASSWORD=$(openssl rand 768 | base64 | tr -dc 'a-zA-Z0-9' | head -c "24")
+export JUPYTER_PASSWORD=$(openssl rand 768 | base64 | tr -dc 'a-zA-Z0-9' | tr -d 'acdefhilmnopqrsuvACDEFHILMNOPQRSU14580' | head -c "24")
 
 
 export ai_safety="inherent"

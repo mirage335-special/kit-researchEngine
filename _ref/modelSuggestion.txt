@@ -1,4 +1,15 @@
 
+# Some models have comprehended reasoning and knowledge categorically belonging to the largest of models.
+# Llama 3.1 Nemotron Ultra 253b v1
+#  Recommend:
+#   Temperature 0.75 . Nominal temperature range between official recommendation 0.6, OpenWebUI 0.8 - higher temperature may cause gibberish output, lower temperature may degrade chain-of-reasoning.
+#   Top P 0.95 .
+#   System Prompt: DISCOURAGED. ONLY empty , 'detailed thinking on' , 'detailed thinking off' .
+#    Recommend not setting any system prompt. Contrary to official statements, apparently the model will appropriately switch between REASONING and INSTRUCT .
+# ChatGPT 4.5/preview
+# ChatGPT o1-pro
+
+
 # Web Search using only local AI has been best using 'Llama-augment', however, even with 120+ search results, often misses relevant GitHub Issues, etc, and is a supplement rather than a replacement for manual search, other AI search, etc.
 'Llama-augment' -> 'OpenWebUI' -> 'SearXNG'
 

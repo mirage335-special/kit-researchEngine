@@ -12,26 +12,27 @@
 # Expect maybe ~750tokens/function (~500 to ~1500tokens).
 # Chunk Size ~800tokens (~4500char)
 # Chunk Overlap ~35% (1575char)
-# Top K 45
+# Top K 105
 # num_ctx 15872 (set manually)
 # num_predict 15872 (set manually)
 # num_keep 14336 (set manually)
 
+# Embedding Model Options (prefered first)
+awhiteside/CodeRankEmbed-Q5_K_M-GGUF #ollama pull hf.co/awhiteside/CodeRankEmbed-Q5_K_M-GGUF
+nomic-ai/CodeRankEmbed
+sentence-transformers/all-MiniLM-L6-v2
+nomic-ai/nomic-embed-code
+
 # Hybrid Search (DUBIOUS)
 # Reranking Model 
-# Top K 15
+# Top K 105
 # Top K Reranker 5
 
-# Reranking Model Options
+# Reranking Model Options (prefered first)
+mirage335/CodeRankLLM-Q5_K_M-GGUF
 nomic-ai/CodeRankLLM
 mradermacher/CodeRankLLM-GGUF #ollama pull hf.co/mradermacher/CodeRankLLM-GGUF:Q5_K_M
 puppyM/bge-reranker-v2-m3-Q4_K_M-GGUF
-
-# Embedding Model Options
-sentence-transformers/all-MiniLM-L6-v2
-nomic-ai/CodeRankEmbed
-awhiteside/CodeRankEmbed-Q5_K_M-GGUF #ollama pull hf.co/awhiteside/CodeRankEmbed-Q5_K_M-GGUF
-nomic-ai/nomic-embed-code
 
 
 # Tasks with long context window were a design goal of Llama 3.1 405b INSTRUCT. Better to configure RAG to best use this widely available resource when needed, than to configure RAG for purposes not as much needing RAG (or other AI assistance). Smaller Llama 3.1 8b INSTRUCT is also very capable for tasks with long context window.

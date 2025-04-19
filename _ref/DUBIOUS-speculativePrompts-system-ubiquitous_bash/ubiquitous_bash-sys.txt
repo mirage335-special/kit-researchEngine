@@ -4,7 +4,7 @@ Actually extract, analyze, look at the contents of the zip file, do not guess.
 Use techniques found in the ubiquitous_bash and derivative projects codebases as examples to write correct comprehensive code in a similar style and using the functions of ubiquitous_bash to meet the requested specifications.
 
 
-Script 'ubiquitous_bash.sh' is compiled from most of the shellscript files included in the ubiquitous_bash knowledge zip archive. Calling ./ubiquitous_bash.sh with an _function as the first parameter will call that internal function with remaining parameters given to that function. Dynamic loading by importing other shellscript files at runtime (eg. 'ops.sh') si unusual, normally mostly only done to override functions for testing.
+Script 'ubiquitous_bash.sh' is compiled from most of the shellscript files included in the ubiquitous_bash knowledge zip archive. Calling ./ubiquitous_bash.sh with an _function as the first parameter will call that internal function with remaining parameters given to that function. Dynamic loading by importing other shellscript files at runtime (eg. 'ops.sh') is unusual, normally mostly only done to override functions for testing.
 
 Forked derivative projects similarly compile 'ubiquitous_bash.sh' or similarly named scripts from shellscript files in their subdirectories (usually '_prog') as well as the upstream ubiquitous_bash shellscript files (usually '_lib/ubiquitous_bash'). Shellscript files from the derivative fork project are compiled to a later position in the ubiquitous_bash compiled script, overriding same named upstream functions.
 

@@ -379,17 +379,19 @@ _setup_models_extra-user() {
 	
 	# WARNING: Unlike the reliable llama-augment, some of these models WILL infinite generate/loop . Relying on a '_timeout' may be possible, but is not recommended due to possible changes, regressions, etc, in upstream ollama .
 
-	_messagePlain_probe_cmd ollama pull llava-llama3
-	#_messagePlain_probe_cmd ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+	#_messagePlain_probe_cmd ollama pull llava-llama3
+	##_messagePlain_probe_cmd ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
 	
-	_messagePlain_probe_cmd ollama pull x/llama3.2-vision
-	#_messagePlain_probe_cmd ollama run x/llama3.2-vision "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
+	#_messagePlain_probe_cmd ollama pull x/llama3.2-vision
+	##_messagePlain_probe_cmd ollama run x/llama3.2-vision "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
 	
 	_messagePlain_probe_cmd ollama pull starcoder2:3b
 	#_messagePlain_probe_cmd ollama run starcoder2:3b ""
 	
 	_messagePlain_probe_cmd ollama pull nomic-embed-text
 	#_messagePlain_probe_cmd ollama run nomic-embed-text ""
+
+	_messagePlain_probe_cmd ollama pull hf.co/awhiteside/CodeRankEmbed-Q5_K_M-GGUF
 
 	# ATTENTION: Llama-augment seems to have much better logic and knowlege for specific tasks, expected more capable and more reliable than DeepSeekR1 'chain-of-reasoning' if within wrapper shell script for a similar purpose, and with far smaller model size at that. What the DeepSeekR1 model is preserved for is quickly defining such software control structures (ie. writing entire computer programs as ChatGPT o1 seems able to).
 	# WARNING: Retain a copy of the '32b' model as well if possible, as 'chain-of-reasoning' seems to amplify the slight differences, with the smaller model output often missing one or more important concepts.
@@ -402,6 +404,12 @@ _setup_models_extra-user() {
 
 	# Apparently useful for code review, though not well proven and possibly unreliable for that purpose.
 	#_messagePlain_probe_cmd ollama pull qwen2.5-coder:7b
+
+
+	# Both compantibility with less minimally capable resources and availability of minimal capability are goals of researchEngine .
+	# Large inference models with a near-essential leap in capability but not typically installed locally by default include:
+	# Llama 3.1 Nemotron Ultra 253b v1
+	# Mistral Small 3.1 24b
 }
 _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'

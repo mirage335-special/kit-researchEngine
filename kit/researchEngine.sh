@@ -216,19 +216,66 @@ _fetch_searxng-config_settings() {
 	return 0
 }
 _setup_searxng-user() {
+	
+	_set_researchEngine
+
 	_messagePlain_nominal 'SearXNG: copy patch'
 
-	_mustGetSudo
+	! _if_cygwin && _mustGetSudo
 	
-	mkdir -p "$HOME"/core/data/searxng
+	#mkdir -p "$HOME"/core/data/searxng
+	mkdir -p "$ub_researchEngine_data"searxng
+
+	mkdir -p "$ub_researchEngine_data"certs
+	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
 	
-	cp "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch "$HOME"/core/data/searxng/
+	#cp "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch "$HOME"/core/data/searxng/
+	cp "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch "$ub_researchEngine_data"searxng/
 	
 	docker rm -f searxng
 	
 	_messagePlain_nominal 'SearXNG: docker'
+	# TODO: Attempt to pull from 'ingredients'.
+	_set_ingredients
 	docker pull searxng/searxng:latest
-	docker run -d --name searxng -p 127.0.0.1:8080:8080 -v "$HOME"/core/data/searxng:/etc/searxng --restart always searxng/searxng:latest
+
+	rm -f "$ub_researchEngine_data"searxng/._run.sh
+	{
+		echo '#!/usr/bin/env sh'
+		echo 'set -e'
+		echo 'update-ca-certificates'
+		echo 'exec "$@"'
+	} >> "$ub_researchEngine_data"searxng/._run.sh
+	chmod +x "$ub_researchEngine_data"searxng/._run.sh
+	
+	local entrypoint cmd
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' searxng/searxng:latest)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' searxng/searxng:latest)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' searxng/searxng:latest)
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}searxng/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}searxng/._run.sh"
+	
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"searxng/._run.sh
+
+
+	
+	#echo 'bash -i' >> "$ub_researchEngine_data"searxng/._run.sh
+
+	#--entrypoint "/etc/searxng/._run.sh"
+	#-v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro
+	docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always --entrypoint "/etc/searxng/._run.sh" searxng/searxng:latest
+
+
+
+
+
+	# OBSOLETE
+	#docker run -d --name searxng -p 127.0.0.1:8080:8080 -v "$HOME"/core/data/searxng:/etc/searxng --restart always searxng/searxng:latest
+
+
+
+
+
 	sleep 120
 	
 	docker stop searxng
@@ -280,14 +327,58 @@ _setup_searxng() {
 
 
 _setup_openwebui-user() {
-	mkdir -p "$HOME"/core/data/openwebui
+	
+	_set_researchEngine
+	#export ub_researchEngine_data="$HOME"/core/data/openwebui
 	
 	_messagePlain_nominal 'OpenWebUI: docker'
-	
+
+	mkdir -p "$ub_researchEngine_data"openwebui
+
+	mkdir -p "$ub_researchEngine_data"certs
+	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
+
 	docker rm -f open-webui
 	
+	# TODO: Attempt to pull from 'ingredients'.
+	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:main
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+	rm -f "$ub_researchEngine_data"openwebui/._run.sh
+	{
+		echo '#!/usr/bin/env bash'
+		echo 'set -e'
+		echo 'update-ca-certificates'
+		echo 'exec "$@"'
+	} >> "$ub_researchEngine_data"openwebui/._run.sh
+	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
+	
+	local entrypoint cmd
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
+
+
+	
+	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh
+
+	#--entrypoint "/app/backend/data/._run.sh"
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+
+
+
+
+
+
+
+	# OBSOLETE
+
+	#docker pull ghcr.io/open-webui/open-webui:main
+	#docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 	
 	# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
 	# WARNING: Especially strongly discouraged for automatic installation, as 'ollama' will already use GPU if available, and built-in NVIDIA GPU support for only unusual use cases is NOT a sane default!
@@ -460,10 +551,9 @@ _upgrade_researchEngine_searxng() {
 	_set_researchEngine
 
 	_messageNormal 'SearXNG'
+	_messagePlain_nominal 'SearXNG: copy patch'
 
 	! _if_cygwin && _mustGetSudo
-
-	_messagePlain_nominal 'SearXNG: copy patch'
 	
 	mkdir -p "$ub_researchEngine_data"searxng
 
@@ -473,6 +563,9 @@ _upgrade_researchEngine_searxng() {
 	_messagePlain_nominal 'SearXNG: docker'
 	
 	mkdir -p "$ub_researchEngine_data"searxng
+
+	mkdir -p "$ub_researchEngine_data"certs
+	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
 	
 	docker rm -f searxng
 	
@@ -480,7 +573,42 @@ _upgrade_researchEngine_searxng() {
 	_set_ingredients
 	docker pull searxng/searxng:latest
 
-	docker run -d --name searxng -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --restart always searxng/searxng:latest
+	rm -f "$ub_researchEngine_data"searxng/._run.sh
+	{
+		echo '#!/usr/bin/env sh'
+		echo 'set -e'
+		echo 'update-ca-certificates'
+		echo 'exec "$@"'
+	} >> "$ub_researchEngine_data"searxng/._run.sh
+	chmod +x "$ub_researchEngine_data"searxng/._run.sh
+	
+	local entrypoint cmd
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' searxng/searxng:latest)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' searxng/searxng:latest)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' searxng/searxng:latest)
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}searxng/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}searxng/._run.sh"
+	
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"searxng/._run.sh
+
+
+	
+	#echo 'bash -i' >> "$ub_researchEngine_data"searxng/._run.sh
+
+	#--entrypoint "/etc/searxng/._run.sh"
+	#-v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro
+	docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always --entrypoint "/etc/searxng/._run.sh" searxng/searxng:latest
+
+
+
+
+
+	# OBSOLETE
+	#docker run -d --name searxng -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --restart always searxng/searxng:latest
+
+
+
+
 
 	sleep 45
 	
@@ -526,14 +654,40 @@ _upgrade_researchEngine_openwebui() {
 	_messagePlain_nominal 'OpenWebUI: docker'
 
 	mkdir -p "$ub_researchEngine_data"openwebui
-	
+
+	mkdir -p "$ub_researchEngine_data"certs
+	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
+
 	docker rm -f open-webui
 	
 	# TODO: Attempt to pull from 'ingredients'.
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:main
 
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+	rm -f "$ub_researchEngine_data"openwebui/._run.sh
+	{
+		echo '#!/usr/bin/env bash'
+		echo 'set -e'
+		echo 'update-ca-certificates'
+		echo 'exec "$@"'
+	} >> "$ub_researchEngine_data"openwebui/._run.sh
+	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
+	
+	local entrypoint cmd
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
+
+
+	
+	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh
+
+	#--entrypoint "/app/backend/data/._run.sh"
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 
 	#_service_researchEngine-docker-chroot-stop
 }
@@ -547,21 +701,40 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	_messagePlain_nominal 'OpenWebUI: docker'
 
 	mkdir -p "$ub_researchEngine_data"openwebui
+
+	mkdir -p "$ub_researchEngine_data"certs
+	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
 	
 	docker rm -f open-webui
 	
-	#docker pull ghcr.io/open-webui/open-webui:main
-	#docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
-
-	# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
-	# WARNING: Especially strongly discouraged for automatic installation, as 'ollama' will already use GPU if available, and built-in NVIDIA GPU support for only unusual use cases is NOT a sane default!
-	#  If these commands are used, it may be most sensible to include these in a script already installing NVIDIA drivers.
-
 	# TODO: Attempt to pull from 'ingredients'.
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:cuda
+	
+	rm -f "$ub_researchEngine_data"openwebui/._run.sh
+	{
+		echo '#!/usr/bin/env bash'
+		echo 'set -e'
+		echo 'update-ca-certificates'
+		echo 'exec "$@"'
+	} >> "$ub_researchEngine_data"openwebui/._run.sh
+	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
+	
+	local entrypoint cmd
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
 
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+
+	
+	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh
+
+	#--entrypoint "/app/backend/data/._run.sh"
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 
 	#_service_researchEngine-docker-chroot-stop
 }

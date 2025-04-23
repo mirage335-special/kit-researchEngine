@@ -285,21 +285,21 @@ _setup_searxng-user() {
 	
 	
 	_messagePlain_nominal 'SearXNG: patch'
-	cd "$HOME"/core/data/searxng
+	cd "$ub_researchEngine_data"searxng
 
 	_fetch_searxng-config_settings './settings.yml'
 
-	#if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
-	if [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]] && yes | patch -p1 "$HOME"/core/data/searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$HOME"/core/data/searxng/settings.yml.rej ]]
+	#if [[ -e "$ub_researchEngine_data"searxng/settings.yml.patch ]] && yes | sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN patch -p1 "$ub_researchEngine_data"searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.rej ]]
+	if [[ -e "$ub_researchEngine_data"searxng/settings.yml.patch ]] && yes | patch -p1 "$ub_researchEngine_data"searxng/settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e "$ub_researchEngine_data"searxng/settings.yml.rej ]]
 	then
 		_messagePlain_good 'patch: success: patch exit status'
-	elif [[ -e "$HOME"/core/data/searxng/settings.yml.rej ]]
+	elif [[ -e "$ub_researchEngine_data"searxng/settings.yml.rej ]]
 	then
 		_messagePlain_bad 'patch: fail: present: rej file'
 		_messageError 'FAIL'
 		#_messageFAIL
 	else
-		if ! [[ -e "$HOME"/core/data/searxng/settings.yml.patch ]]
+		if ! [[ -e "$ub_researchEngine_data"searxng/settings.yml.patch ]]
 		then
 		_messagePlain_bad 'patch: fail: missing: patch file'
 		_messageFAIL

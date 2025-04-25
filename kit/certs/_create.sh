@@ -734,6 +734,12 @@ _create() {
 
 
 
+
+	# 'ultra' ... best REASONING , possibly also best INSTRUCT
+	# ie. Llama 3.1 Nemotron Ultra 253b v1
+	currentPrefix="fellowship_adhoc_c3dt"
+	currentServer=ultra
+	_create_ssl-server "$@"
 }
 
 

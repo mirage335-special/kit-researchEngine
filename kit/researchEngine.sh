@@ -497,10 +497,20 @@ _setup_models_extra-user() {
 	#_messagePlain_probe_cmd ollama pull qwen2.5-coder:7b
 
 
-	# Both compantibility with less minimally capable resources and availability of minimal capability are goals of researchEngine .
+	# ATTENTION: NOTICE: Both compantibility with less minimally capable resources and availability of minimal capability are goals of researchEngine .
 	# Large inference models with a near-essential leap in capability but not typically installed locally by default include:
 	# Llama 3.1 Nemotron Ultra 253b v1
-	# Mistral Small 3.1 24b
+	# Mistral Small 3.1 24b q3_k_s num_gpu 41
+
+	# 16GB VRAM Vision AI model (general purpose - vision encoder to language model)
+	# https://github.com/ollama/ollama/issues/10393
+	#ollama pull mistral-small3.1:24b-instruct-2503-fp16
+	#echo FROM mistral-small3.1:24b-instruct-2503-fp16 > Modelfile
+	#ollama create -q q3_k_s mistral-small3.1:24b-instruct-2503-q3_k_s
+	#echo FROM mistral-small3.1:24b-instruct-2503-q3_k_s > Modelfile
+	#echo PARAMETER num_gpu 41 >> Modelfile
+	#ollama create mistral-small3.1:24b-instruct-2503-g41-q3_k_s
+	#ollama run mistral-small3.1:24b-instruct-2503-g41-q3_k_s describe this image ./download.png
 }
 _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'

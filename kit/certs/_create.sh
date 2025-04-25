@@ -688,9 +688,12 @@ _create_ssl-server() {
 
 	openssl genrsa -out "$currentFileName_base".key 4096
 
-	openssl req -new -key "$currentFileName_base".key -out "$currentFileName_base".csr -subj "/C=XX/ST=XX/L=XX/O=fellowship_adhoc_m335/CN=""$currentDomainName" -config <(printf "[req]\nreq_extensions = v3_req\n[ v3_req ]\nextendedKeyUsage=serverAuth\nsubjectAltName=IP:127.0.0.1,DNS:$currentDomainName")
+	openssl req -new -key "$currentFileName_base".key -out "$currentFileName_base".csr -subj "/C=XX/ST=XX/L=XX/O=""$currentPrefix""/OU=""$currentFileName_base""CN=""$currentDomainName" -config <(printf "[req]\nreq_extensions = v3_req\n[ v3_req ]\nextendedKeyUsage=serverAuth\nsubjectAltName=IP:127.0.0.1,DNS:$currentDomainName")
 
 	openssl x509 -req -in "$currentFileName_base".csr -signkey "$currentFileName_base".key -out "$currentFileName_base".crt -days 9125
+
+	echo "$currentFileName_base" | cat - "$currentFileName_base".crt > "$currentFileName_base".crt.tmp
+	mv -f "$currentFileName_base".crt.tmp "$currentFileName_base".crt
 
 	_messagePlain_good 'done: _create_ssl-server: '"$currentPrefix"_"$currentServer"
 }

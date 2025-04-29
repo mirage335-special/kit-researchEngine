@@ -248,7 +248,7 @@ _setup_searxng-user() {
 	} >> "$ub_researchEngine_data"searxng/._run.sh
 	chmod +x "$ub_researchEngine_data"searxng/._run.sh
 	
-	local entrypoint cmd
+	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' searxng/searxng:latest)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' searxng/searxng:latest)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' searxng/searxng:latest)
@@ -353,7 +353,7 @@ _setup_openwebui-user() {
 	} >> "$ub_researchEngine_data"openwebui/._run.sh
 	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
 	
-	local entrypoint cmd
+	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
@@ -592,7 +592,7 @@ _upgrade_researchEngine_searxng() {
 	} >> "$ub_researchEngine_data"searxng/._run.sh
 	chmod +x "$ub_researchEngine_data"searxng/._run.sh
 	
-	local entrypoint cmd
+	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' searxng/searxng:latest)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' searxng/searxng:latest)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' searxng/searxng:latest)
@@ -683,7 +683,7 @@ _upgrade_researchEngine_openwebui() {
 	} >> "$ub_researchEngine_data"openwebui/._run.sh
 	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
 	
-	local entrypoint cmd
+	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
@@ -730,7 +730,7 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	} >> "$ub_researchEngine_data"openwebui/._run.sh
 	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
 	
-	local entrypoint cmd
+	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)

@@ -4,6 +4,7 @@ Essential information to operate 'Llama-tech' factory .
 [___quick]'/project/zFactory/'Llama-tech
 ```
 
+# Program Installation (if not already done)
 
 ```bash
 # ###
@@ -83,7 +84,13 @@ pip install --no-deps "xformers<0.0.27" "trl<0.9.0" peft accelerate bitsandbytes
 
 ```
 
+
+# Fine Tuning (unsloth)
+
+
 ```bash
+# https://huggingface.co/blog/mlabonne/sft-llama3
+# https://huggingface.co/blog/mlabonne/merge-models
 clear ; python
 
 ```

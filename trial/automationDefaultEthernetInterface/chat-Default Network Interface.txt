@@ -1,0 +1,21 @@
+# USER
+Based on this, what is the default network interface?
+
+```terminal
+ip route list default
+default via 172.17.0.1 dev eth0
+```
+Please specify only the default interface. Since this will be processed automatically, the default interface will be helpful, whereas any other output will be unhelpful.
+
+## ASSISTANT
+The default network interface is:
+
+`eth0`
+
+# USER
+Please specify only the default interface. Since this will be processed automatically, the default interface will be helpful, whereas any other output will be unhelpful.
+
+## ASSISTANT
+eth0
+
+

@@ -89,6 +89,58 @@ git reset --hard
 
 # Reference
 
+https://www.youtube.com/watch?v=rpAtVIZB72U&t=420s
+ 'LLAMA-3.1' 'FINE-TUNE'
+ DUBIOUS. Possibly usefully so. Shows example code and diagnostic outputs from Unsloth in some detail.
+
+https://www.youtube.com/watch?v=Ucg1X_o1HDE&t=1020s
+ 'Finetuning Llama 3.1 to talk like Rick Sanchez | Unsloth Tutorial'
+ Briefly shows some Unsloth diagnostic output.
+
+https://www.youtube.com/watch?v=pxhkDaKzBaY&t=60s
+ 'Fine-Tune a LLM' 'Use it with Ollama'
+ Apparently shows the Ollama Modelfile and such used for an Unsloth fine tuned model.
+
+https://www.youtube.com/watch?v=lj44Bt9UxYQ
+ 'Axolotl is a AI FineTuning Magician'
+ 'When I used just the install that's on the website, almost nothing worked. And I had endless errors with mismatched versions and it was just a mess. Let's start by creating the environment using'
+ 'conda create -n ax python=3.11'
+ 'conda activate ax'
+ 'conda install pytorch torchvision torchaudio pytorch-cuda -c pytorch -c nvidia'
+ 'git clone https://github.com/axolotl-ai-cloud/axolotl.git/axolotl'
+ 'pip install packaging'
+ 'pip install -e '.[flash-attn,deepspeed]'
+ 'pip install -U git+https://github.com/huggingface/peft.git'
+ 'pip install --upgrade "jinja2>=3.1.0"
+
+"Llama-3.1" "See axolotl config" site:huggingface.co
+https://huggingface.co/axolotl-ai-co/finetome-llama-3.1-70b
+ 'finetome'
+https://huggingface.co/minionai/llama_3.1_70b_cove_prod_81424_amazon_filt_merged
+https://huggingface.co/pbevan11/llama-3.1-8b-ocr-correction
+https://huggingface.co/ericflo/Llama-3.1-SyntheticPython-405B-Base-LoRA
+https://huggingface.co/SE6446/Llama-3.1-SuperNova-Lite-Reflection-V1.0
+ 'model appears to perform adequatel'
+ 'Loss: 0.6365'
+ 'must use the tokenizer provided with the model as the COT tokens are unique special tokens'
+ 'should work on most inference engines that can run llama 3.1'
+  '2.7211	0.0049	1	1.4048
+   0.6381	0.5	103	0.6583
+   0.4985	1.0049	206	0.6320
+   0.4992	1.5049	309	0.6365'
+https://huggingface.co/femT-data/llama-3.1-8B-instruct-GNER
+https://huggingface.co/suayptalha/EmojiLlama-3.1-8B
+https://huggingface.co/winglian/llama-3.1-8b-math-r1
+https://huggingface.co/jplhughes2/1a_meta-llama-Llama-3.1-405B-Instruct-fsdp
+https://huggingface.co/VoyagerYuan/Xillama-3.1-405B-Instruct-BNB-NF4-BF16-Writer
+https://huggingface.co/axolotl-ai-co/numina-70b-ep3-lr1e-5-sft-lora
+https://huggingface.co/anthracite-org/magnum-v2-4b
+
+
+
+
+
+
 https://arxiv.org/abs/2305.14314
  'QLoRA: Efficient Finetuning of Quantized LLMs'
 

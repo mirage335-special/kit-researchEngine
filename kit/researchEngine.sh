@@ -731,9 +731,9 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
 	
 	local entrypoint cmd workdir
-	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
-	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
-	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:cuda)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:cuda)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:cuda)
 	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
 	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
 	

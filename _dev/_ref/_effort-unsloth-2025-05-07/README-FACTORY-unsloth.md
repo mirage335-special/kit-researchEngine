@@ -95,7 +95,7 @@ python -m pip install --upgrade pip --cache-dir "$PIP_CACHE_DIR"
 
 
 
-#python -m pip uninstall -y torch torchvision torchaudio triton unsloth unsloth_zoo xformers sympy mpmath
+python -m pip uninstall -y torch torchvision torchaudio triton unsloth unsloth_zoo xformers sympy mpmath
 
 #python -m pip install --upgrade pip --cache-dir "$PIP_CACHE_DIR"
 
@@ -107,7 +107,10 @@ python -m pip install --upgrade pip --cache-dir "$PIP_CACHE_DIR"
 
 # https://colab.research.google.com/drive/164cg_O7SV7G8kZr_JXqLd6VC7pd86-1Z?usp=sharing
 # runpod/pytorch:2.8.0-py3.11-cuda12.8.1-cudnn-devel-ubuntu22.04
-pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git" --cache-dir "$PIP_CACHE_DIR"
+export PIP_CACHE_DIR="/workspace/cache_pip"
+mkdir -p "$PIP_CACHE_DIR"
+#pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git" --cache-dir "$PIP_CACHE_DIR"
+pip install "unsloth" --cache-dir "$PIP_CACHE_DIR"
 
 ```
 

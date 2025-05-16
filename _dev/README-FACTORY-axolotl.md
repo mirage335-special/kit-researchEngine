@@ -14,7 +14,7 @@ Do NOT mount a volume directly to the container '/workspace' directory - this wi
 
 # Scrap - Fine Tuning
 
-
+Commands using 'accelerate' instead of 'axolotl' expected deprecated.
 
 
 
@@ -124,7 +124,7 @@ ollama run hf.co/mradermacher/Llama-3.1-SuperNova-Lite-Reflection-V1.0-i1-GGUF:I
 
 
 cd /workspace/axolotl
-axolotl preprocess /workspace/data/example_se6446_llama_3_1_supernova_lite_reflection_v1_0.yml
+axolotl preprocess /workspace/data/example-se6446_llama-3.1-supernova-lite-reflection-v1_0.yml
 
 
 

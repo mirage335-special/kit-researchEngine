@@ -6,7 +6,7 @@ Essential information to operate 'Llama-tech' factory .
 
 # Compatibility - Docker, RunPod
 
-CMD  sleep infinity  directive may be necessary for some cloud providers (eg. RunPod) . Conversely, 'null' or '/bin/bash' may be appropriate CMD directives otherwise.
+CMD  bash -c 'service ssh start ; sleep infinity'  directive may be necessary for some cloud providers (eg. RunPod) . Conversely, 'null' or '/bin/bash' may be appropriate CMD directives otherwise.
 
 Do NOT mount a volume directly to the container '/workspace' directory - this will interfere with '/workspace/axolotl'.
 

@@ -171,6 +171,6 @@ https://huggingface.co/anthracite-org/magnum-v2-4b
 
 https://blog.runpod.io/how-to-achieve-true-ssh-on-runpod/
 
-
+https://axolotl-ui.vercel.app/
 
 

@@ -1,4 +1,18 @@
 
+Preferred version of Axolotl is from the official axolotl Docker image. Also should be reasonable to use the version of axolotl obtained through official installation steps, git repository, etc.
+
+Obviously open to adapting the config to newer Axolotl versions, however, keeping changes minimal or configuring Axolotl to outright properly understand and use an older version configuration file could minimize extraneous changes that could cause the resulting model to output gibberish again.
+
+Most concern is regarding the eos_token . More than just whether the '<|im_end|>' value is functionally equivalent to older configs used implicitly for the 'sharegpt' type, would very much appreciate information regarding what other values could have been implied for the 'sharegpt' type, etc. Would appreciate information about what values could be plausible from the original YAML specifications: dataset SE6446/MAGllama_Sharegpt , model arcee-ai/Llama-3.1-SuperNova-Lite , etc .
+...
+
+
+
+
+
+
+
+
 ```bash
 cd /workspace/axolotl
 axolotl preprocess /workspace/data/example-se6446_llama-3.1-supernova-lite-reflection-v1_0.yml

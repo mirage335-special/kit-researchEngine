@@ -6,7 +6,7 @@ Essential information to operate 'Llama-tech' factory .
 
 # Compatibility - Docker, RunPod
 
-CMD  bash -c 'service ssh start ; sleep infinity'  directive may be necessary for some cloud providers (eg. RunPod) . Conversely, 'null' or '/bin/bash' may be appropriate CMD directives otherwise.
+CMD  bash -c 'mkdir -p ~/.ssh ; chmod 700 ~/.ssh ; echo "$PUBLIC_KEY" > ~/.ssh/authorized_keys ; chmod 600 ~/.ssh/authorized_keys ; service ssh start ; sleep infinity'  directive may be necessary for some cloud providers (eg. RunPod) . Conversely, 'null' or '/bin/bash' may be appropriate CMD directives otherwise.
 
 Do NOT mount a volume directly to the container '/workspace' directory - this will interfere with '/workspace/axolotl'.
 
@@ -167,7 +167,9 @@ https://huggingface.co/anthracite-org/magnum-v2-4b
 
 
 
+# Reference
 
+https://blog.runpod.io/how-to-achieve-true-ssh-on-runpod/
 
 
 

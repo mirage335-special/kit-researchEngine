@@ -179,7 +179,7 @@ _fetch_searxng-config_settings() {
 		sleep 3
 		((currentIteration++))
 	done
-	! _currentBackend-sudo ls -1 "$1" > /dev/null 2>&1 && _messageFAIL
+	#! _currentBackend-sudo ls -1 "$1" > /dev/null 2>&1 && _messageFAIL
 
 	local currentDirectory=$(_currentBackend-sudo "$scriptAbsoluteLocation" _getAbsoluteFolder "$1")
 	if ! _if_cygwin
@@ -187,7 +187,7 @@ _fetch_searxng-config_settings() {
 		_currentBackend-sudo chown "$currentUser":"$currentUser" "$currentDirectory"
 		_currentBackend-sudo chown "$currentUser":"$currentUser" "$1"
 	fi
-	_currentBackend-sudo mv -f "$1" "$1".accompanying
+	_currentBackend-sudo mv -f "$1" "$1".accompanying 2>/dev/null
 	
 	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
 	curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
@@ -263,7 +263,9 @@ _setup_searxng-user() {
 
 	#--entrypoint "/etc/searxng/._run.sh"
 	#-v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro
-	docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always --entrypoint "/etc/searxng/._run.sh" searxng/searxng:latest
+	#
+	#docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always --entrypoint "/etc/searxng/._run.sh" searxng/searxng:latest
+	docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always searxng/searxng:latest
 
 
 
@@ -607,7 +609,10 @@ _upgrade_researchEngine_searxng() {
 
 	#--entrypoint "/etc/searxng/._run.sh"
 	#-v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro
-	docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always --entrypoint "/etc/searxng/._run.sh" searxng/searxng:latest
+	#
+	# ATTENTION: SearXNG Docker container may not be reliably consistent enough (presumably filesystem changes in the upstream container image, or removal of 'update-ca-certificates' binary, or removal of necessary PATH information) to override the entrypoint with a replacement script. However, this technique did remain reliable for other Docker containers, and was for a while reliable for SearXNG upgrades as well - put simply the technique was validated but specifically for SearXNG, not necessary and possibly not appropriate.
+	#docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always --entrypoint "/etc/searxng/._run.sh" searxng/searxng:latest
+	docker run -d -p 127.0.0.1:8080:8080 -v "$ub_researchEngine_data_docker"searxng:/etc/searxng --name searxng --restart always searxng/searxng:latest
 
 
 

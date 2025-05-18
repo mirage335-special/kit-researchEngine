@@ -16,11 +16,7 @@ Apparently able to create sane output NOT gibberish fine tuned AI models:
 ## 2025-05-14
 
 Factory Docker containers built somewhat recently as of 2025-05-14 .
-docker pull ghcr.io/mirage335-colossus/runpod-pytorch-unsloth@sha256:ba5997e48b5faba292f2068615f4f1ad35dd3a177d89d8cd68f05f84bbde7614   ???
-docker pull ghcr.io/mirage335-colossus/runpod-pytorch-unsloth@sha256:1500bb9d4210fad70301f025a8810d1014d84b43aab56315a64a6c9bd9eefb3c   ???
-docker pull ghcr.io/mirage335-colossus/runpod-pytorch-unsloth@sha256:1dcfbed76b32a62c34d21040db6492136d0927cfae2f6903c6ca16c64d33cbad   ???
-docker pull ghcr.io/mirage335-colossus/runpod-pytorch-unsloth@sha256:798ff5adba26c2c58ccedb56a79906cb0a76de846dc9955dd2fa280648a191d2   ???
-docker pull ghcr.io/mirage335-colossus/runpod-pytorch-unsloth@sha256:0f85c5b797f571ca6316d529fe45ff46f5572b01d43056891fa4fb458863e1c1   ???
+https://github.com/orgs/mirage335-colossus/packages?repo_name=ubiquitous_bash
 
 
 

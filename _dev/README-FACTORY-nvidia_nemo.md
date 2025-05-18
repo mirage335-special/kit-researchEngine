@@ -29,3 +29,10 @@ https://github.com/dominodatalab/nvidia-nemotron-finetuning
 'nvcr.io/nvidia/nemo:24.01.framework'
 
 
+
+
+https://catalog.ngc.nvidia.com/orgs/nvidia/containers/nemo
+https://catalog.ngc.nvidia.com/orgs/nvidia/containers/nemo/tags
+
+
+

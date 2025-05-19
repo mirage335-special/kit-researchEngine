@@ -3,9 +3,22 @@
 
 
 
+DUBIOUS
+```bash
+export HF_HOME=/path/to/big_disk/hf_cache
+apt-get install ffmpeg -y
+```
 
 
+```bash
+cd /workspace/data
+python
+```
 
+```python
+from nemo.collections import llm
+llm.import_ckpt(model=llm.LlamaNemotronModel(llm.Llama31NemotronUltra253BConfig()), source='hf://nvidia/Llama-3_1-Nemotron-Ultra-253B-v1')
+```
 
 
 

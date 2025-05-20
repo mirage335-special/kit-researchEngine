@@ -7,6 +7,7 @@ DUBIOUS
 ```bash
 export HF_HOME=/path/to/big_disk/hf_cache
 apt-get install ffmpeg -y
+pip3 install --upgrade git+https://github.com/huggingface/transformers.git
 ```
 
 

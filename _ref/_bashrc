@@ -13,6 +13,7 @@ export GH_TOKEN=""
 
 # FineTuning (also Inference) Key
 export HF_AKI_KEY=""
+export HF_TOKEN="$HF_API_KEY"
 
 # SSH public key.
 export PUBLIC_KEY=$(cat ~/.ssh/id_ed25519_sk-keyName.pub)

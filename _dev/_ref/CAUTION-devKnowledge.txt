@@ -6,6 +6,8 @@ Some examples:
 
 NVIDIA documentation may broadly refer to LLMs as 'compute bound', without specifying the arguably very unusual conditions under which this may be the case.
 
+https://docs.nvidia.com/nemo-framework/user-guide/latest/performance/performance-guide.html#gpu-core-clock-optimization
+DUBIOUS
 
 
 

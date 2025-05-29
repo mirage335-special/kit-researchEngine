@@ -749,13 +749,23 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
 
 
-
 	if _if_cygwin
 	then
+		# ATTRIBUTION-AI: ChatGPT o3  Deep Research  2025-05-28 .
 		#wsl -d docker-desktop sysctl -w net.core.bpf_jit_harden=1
 		wsl -d docker-desktop sh -c "echo 'net.core.bpf_jit_harden=1' > /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf"
 		#wsl -d docker-desktop sysctl --system
 		wsl -d docker-desktop sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+
+		# ATTRIBUTION-AI: ChatGPT o3  2025-05-28 .
+		if _if_cygwin && ! wsl -d docker-desktop --user root cat /etc/wsl.conf | grep 'bpf_jit_harden' > /dev/null 2>&1
+		then
+		wsl -d docker-desktop --user root tee -a /etc/wsl.conf <<'EOF'
+[boot]
+command = /sbin/sysctl -w net.core.bpf_jit_harden=1
+EOF
+		fi
+
 		true
 	fi
 	if ! _if_cygwin

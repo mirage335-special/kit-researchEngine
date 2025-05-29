@@ -713,6 +713,10 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	_set_researchEngine
 
 	_messageNormal 'OpenWebUI'
+
+	! _if_cygwin && _mustGetSudo
+
+
 	_messagePlain_nominal 'OpenWebUI: docker'
 
 	mkdir -p "$ub_researchEngine_data"openwebui
@@ -744,6 +748,23 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	
 	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
 
+
+
+	if _if_cygwin
+	then
+		#wsl -d docker-desktop sysctl -w net.core.bpf_jit_harden=1
+		wsl -d docker-desktop sh -c "echo 'net.core.bpf_jit_harden=1' > /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf"
+		#wsl -d docker-desktop sysctl --system
+		wsl -d docker-desktop sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+		true
+	fi
+	if ! _if_cygwin
+	then
+		#echo 'net.core.bpf_jit_harden=1' | sudo -n tee /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf > /dev/null
+		##sudo -n sysctl --system
+		#sudo -n sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+		true
+	fi
 
 	
 	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh

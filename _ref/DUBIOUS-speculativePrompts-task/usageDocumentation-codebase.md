@@ -4,7 +4,7 @@
 
 - Please rewrite this prompt to better work within the limitations of smaller Large Language Models, as low as 8b parameters with little or no code review training. (STRONGLY DISCOURAGED: Only very large LLM AI models should be used for generating usage documentation from source code, etc.)
 
-- Please suggest the best approach to prompt a possibly agentic AI system to generate fresh usage documentation for a specific goal from source code and questionable documentation by encouraging comprehensively exploring the code by tracing, explaining, annotating:
+- Please suggest the best approach to prompt a possibly agentic AI system (possibly using AGENTS.md, agents.json, .well-known/ai-plugin.json, PROMPT.md, SPEC.md, TASKS.md, PLAN.md, WindSurf/Codeium, ChatGPT Pro Codex, etc) to generate fresh usage documentation for a specific goal from source code and questionable documentation by encouraging comprehensively exploring the code by tracing, explaining, annotating:
   - ... subtasks of Generate Usage Documentation, etc...
 
 - Please add to or otherwise revise this prompt to improve the reliability of a possibly agentic AI system which itself generates short programming scripts as the tool to do its Retrieval-Augmented-Generation (RAG) tracing, encouraging the AI to actually search for information, not rely on assumptions, and retry if the RAG failed (as often happens simply due to the AI itself making simple syntax mistakes writing its scripts for RAG).

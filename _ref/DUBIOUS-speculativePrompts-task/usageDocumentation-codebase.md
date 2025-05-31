@@ -84,7 +84,7 @@ Please elucidate what the relevant officially documented commands, etc, actually
 
 # Fuse
 
-Please fuse, blend, harmonize, reconcile, etc, the code, etc, from different specific and nonspecific relevant official documentation, write-up of expectations, etc, and suggest how to adapt .
+Please fuse, blend, harmonize, reconcile, etc, the code, etc, from different specific and nonspecific relevant official documentation, write-up of expectations, etc, and suggest how to adapt . Please provide one minimalist 'hello world' example closely resembling an official documentation example, but which would actually work based on all available information, examples, source code, tracing function calls through function definitions across the codebase, etc. Fusing does not necessarily imply merging approaches, using commands from examples using different wrappers, etc, and usually such merging should be avoided.
 
 ```Markdown
 # Documentation specific to some goals .
@@ -140,6 +140,8 @@ Just want one 'hello world' example to establish something workable that can be 
 
 Create how-to 'hello world' example usage documentation commands, code, scripts, configuration files, etc, applicable to the most useful and troublesome situation, adaptable to non-example inputs.
 
+As a 'hello world' example, the example usage documentation should closely resemble some official documentation, should not add new features (eg. do not dynamically set variables from command line parameters), but should be evaluated against the source code to ensure workability. Differences from official documentation needed to get working code should preferably be few as possible so the few changes would be obvious and explainable by the user from a basic diff.
+
 # SubGoals
 
 More quickly experiment with what works and what doesn't by establishing similar commands, code, configuration, etc, for more quickly computed outputs.
@@ -192,6 +194,12 @@ Defaults (eg. default dataset and dataset format), etc, may be used to get an in
 
 ```
 Avoid referencing paths or binaries inconsistent with the intended environment.
+```
+
+```
+This computer unfortunately has neither the software nor hardware to run fine tuning scripts.
+
+Please use the source code to evaluate the plausibility of example code.
 ```
 
 

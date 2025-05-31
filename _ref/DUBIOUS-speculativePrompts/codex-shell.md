@@ -1,8 +1,8 @@
 
 ```bash
-mkdir -p /licenses
-cd /licenses
-pip install -U --no-cache-dir --quiet pip-licenses
+mkdir -p /directory
+cd /directory
+pip install -U --no-cache-dir --quiet pip-programs
 codex --approval-mode full-auto
 
 ```

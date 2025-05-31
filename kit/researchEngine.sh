@@ -505,6 +505,7 @@ _setup_models_extra-user() {
 	# Mistral Small 3.1 24b q3_k_s num_gpu 41
 
 	# 16GB VRAM Vision AI model (general purpose - vision encoder to language model)
+	# ATTENTION: TODO: More robust convention may be to place the 'g41' suffix after the upstream model name.
 	# https://github.com/ollama/ollama/issues/10393
 	#ollama pull mistral-small3.1:24b-instruct-2503-fp16
 	#echo FROM mistral-small3.1:24b-instruct-2503-fp16 > Modelfile
@@ -513,6 +514,25 @@ _setup_models_extra-user() {
 	#echo PARAMETER num_gpu 41 >> Modelfile
 	#ollama create mistral-small3.1:24b-instruct-2503-g41-q3_k_s
 	#ollama run mistral-small3.1:24b-instruct-2503-g41-q3_k_s describe this image ./download.png
+
+	# 16GB VRAM VibeCoding and Vision Model (general purpose - vision encoder to language model, also may be sufficient for agentic AI - eg. Cline, etc)
+	# CAUTION: This is NOT an INSTRUCT model (apparently a BASE model) ! Serious deficiencies (especially for purposes other than strictly agentic VibeCoding) may break some possible use cases !
+	#ollama pull hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ3_XS
+	#
+	# May be untested.
+	#ollama pull hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ3_M
+	#ollama pull hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ4_XS
+	#
+	#ollama pull hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:Q6_K_L
+	#
+	# Suggested <6144 token context window (ie. 'num_ctx') . May be unreliable (at the limits of what fits in 16GB VRAM, limiting context window, etc).
+	#ollama pull hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ4_XS
+	#echo FROM hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ4_XS > Modelfile
+	#echo PARAMETER num_gpu 41 >> Modelfile
+	#ollama create hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ4_XS-g41
+	#ollama run hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ4_XS-g41 describe this image ./download.png
+
+
 }
 _setup_models_extra() {
 	_messageNormal 'Install Models (non-Augment)'

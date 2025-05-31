@@ -12,7 +12,7 @@ export GH_TOKEN=""
 [[ "$OPENROUTER_API_KEY" == "" ]] && export OPENROUTER_API_KEY=""
 
 # FineTuning (also Inference) Key
-export HF_AKI_KEY=""
+export HF_API_KEY=""
 export HF_TOKEN="$HF_API_KEY"
 
 # SSH public key.

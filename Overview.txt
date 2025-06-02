@@ -128,5 +128,22 @@ Install AI LLM and Vision models .
 
 # codex ... should be installed by default with ubdist/OS , factory Docker , etc
 
-# installing codex directly under MSWindows may or may NOT be possible, after installing node, npm, etc ...
+
+
+
+
+# installing codex directly under Cygwin/MSWindows may or may NOT be possible, after installing node, npm, etc ...
+# https://github.com/coreybutler/nvm-windows#installation--upgrades
+# https://github.com/coreybutler/nvm-windows/releases
+nvm install latest
+nvm use latest
+
+# DUBIOUS
+#npm install -g npm@latest
+
+##@openai/codex@latest
+npm install -g @openai/codex
+
+
+
 

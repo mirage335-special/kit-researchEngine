@@ -516,7 +516,7 @@ _setup_models_extra-user() {
 	#ollama run mistral-small3.1:24b-instruct-2503-g41-q3_k_s describe this image ./download.png
 
 	# 16GB VRAM VibeCoding and Vision Model (general purpose - vision encoder to language model, also may be sufficient for agentic AI - eg. Cline, etc)
-	# CAUTION: This is NOT an INSTRUCT model (apparently a BASE model) ! Serious deficiencies (especially for purposes other than strictly agentic VibeCoding) may break some possible use cases !
+	# CAUTION: This is only somewhat an INSTRUCT model (apparently nearly a BASE model) ! Serious deficiencies (especially for purposes other than strictly agentic VibeCoding) may break some possible use cases !
 	#ollama pull hf.co/bartowski/mistralai_Devstral-Small-2505-GGUF:IQ3_XS
 	#
 	# May be untested.

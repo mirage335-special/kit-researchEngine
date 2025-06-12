@@ -7,6 +7,10 @@ ChatGPT o3-mini
 Llama-augment
 ChatGPT 4.5
 
+
+
+# ASCII art
+
 Please write an ASCII art function call graph for this code . Emphasize only obviously custom functions encapsulating functionality - ignore standard commands, _start/_stop, _message, _getAbsoluteLocation, etc. Please keep it simple and editable, essential information only, similar to this format:
 
     a() 
@@ -14,3 +18,23 @@ Please write an ASCII art function call graph for this code . Emphasize only obv
             |___ c()
                 |___ find/xargs
                     |___ d()
+
+
+
+
+
+# Markdown Format
+
+Please write an ASCII art function call graph for this code . Emphasize only obviously custom functions encapsulating functionality - ignore standard commands, _start/_stop, _message, _getAbsoluteLocation, etc. Please keep it simple and editable, essential information only, similar to this format:
+
+- a() 
+  - b() 
+    - c()
+      - find/xargs
+        - d()
+
+```
+./src/file.sh
+```
+
+

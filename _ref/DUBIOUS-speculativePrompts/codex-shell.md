@@ -19,6 +19,233 @@ Please also improve the results if possible, such as by changing the format of o
 
 
 
+# Environment
+
+Please explain what code is sensitive to the remote environment to account for the bad patterns, or how to reproduce the remote environment locally, so minimalistic narrowly bounded corrections to this issue can be developed.
+
+## Local - Good
+
+Running locally, exit status is correct .
+```bash
+./ubiquitous_bash.sh ___factoryTest_direct
+./ubiquitous_bash.sh ___factoryTest_skip_recursion1
+./ubiquitous_bash.sh ___factoryTest_skip_recursion2
+# exit status 0
+
+./ubiquitous_bash.sh _true
+# exit status 0
+
+./ubiquitous_bash.sh _false
+# exit status 1
+```
+
+## Remote - Bad
+
+But when run under GitHub Actions, exit status 1 (failure) is reported , causing the step to fail .
+```yaml
+      - name: ___factoryTest
+        shell: bash
+        timeout-minutes: 120
+        run: |
+          ./ubiquitous_bash.sh ___factoryTest_direct
+```
+
+```
+Run ./ubiquitous_bash.sh ___factoryTest_direct
+  ./ubiquitous_bash.sh ___factoryTest_direct
+  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+ ___factoryTest_direct 
+ _factory_ops_recursion: from ___factoryTest_direct 
+ ___factoryTest_direct 
+ "$scriptAbsoluteLocation" ___factoryTest_sequence "$@" 
+ ___factoryTest_sequence 
+ mkdir -p /home/runner/work/ubiquitous_bash/ubiquitous_bash/w_9GVzZ97396wtG7Yjyy/repo 
+ _stop 
+Error: Process completed with exit code 1.
+```
+
+```
+Run ./ubiquitous_bash.sh ___factoryTest_skip_recursion1
+  ./ubiquitous_bash.sh ___factoryTest_skip_recursion1
+  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+ ___factoryTest_skip_recursion1 
+ "$scriptAbsoluteLocation" ___factoryTest_sequence "$@" 
+ ___factoryTest_sequence 
+ _factory_ops_recursion: from ___factoryTest_sequence 
+ ___factoryTest_sequence 
+ mkdir -p /home/runner/work/ubiquitous_bash/ubiquitous_bash/w_yZTxjgGZX2kKg3wWty/repo 
+ _stop 
+Error: Process completed with exit code 1.
+```
+
+## Remote - Good
+
+Other functions show correct exit status under GitHub Actions, not causing step to fail .
+```
+Run ./ubiquitous_bash.sh _true
+  ./ubiquitous_bash.sh _true
+  ./_true | sudo -n tee ./_local/_true.log && exit ${PIPESTATUS[0]}
+  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+
+Run ! ./ubiquitous_bash.sh _false
+  ! ./ubiquitous_bash.sh _false
+  ( ! ./_false ) | sudo -n tee ./_local/_false.log && exit ${PIPESTATUS[0]}
+  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+
+Run ./ubiquitous_bash.sh ___factoryTest_skip_recursion2
+  ./ubiquitous_bash.sh ___factoryTest_skip_recursion2
+  shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+  
+ ___factoryTest_skip_recursion2 
+ "$scriptAbsoluteLocation" ___factoryTest_skip_recursion2_sequence "$@" 
+```
+
+## Contradictions
+
+Local environment changes:
+- export CI=true
+- set -euo pipefail
+- bash --noprofile --norc -e -o pipefail -c 'command'
+
+Has still produced only the correct local pattern with such commands:
+```bash
+bash
+set -e
+./ubiquitous_bash.sh _true
+./ubiquitous_bash.sh ___factoryTest_direct
+echo $?
+#0
+./ubiquitous_bash.sh _false
+# exit status 1
+```
+
+Beware shell settings such as 'set -e' may not be inherited by shell scripts in non-convoluted situations. Determining how such an environment setting has become relevant is most important.
+
+## Suspicions
+
+Very convoluted mechanisms such as from 'factory-ops.sh' to include the scripts at runtime rather than only compile time for faster development and maintenance of 'factory' functions, are strongly implicated as the underlying cause.
+
+## Explanation
+
+Explaining which environment characteristic, reproducing the environment locally, or determining which relatively small segments of code are most sensitive to the environmental change - clarifying which environmental differences are accountable for what code causing the difference in the pattern of successes and failures seen between the local and remote environment - will demarcate the bounds of the least intrusive, most compatible, most maintainable, corrections to develop.
+
+Blaming this on some call to a function, command, etc, failing in this script, is not helpful. Unrelated possible issues with other commands, functions, etc, such as _safeRMR , checksum , are red herrings . Such functionality has a very long track record for robustness, including passing the full '_test' function in a GitHub Actions environment with all sanity checks.
+
+After reproducing the bad patterns of exit status, iteratively change the function which is inappropriately failing in the remote environment, directly edit and disable checksum, or recompile the shell script as necessary.
+
+Change all environment settings and inheritance of environment settings to show any specific environment sensitivities.
+
+## Codex
+
+WebUI Codex has experienced patterns of successes and failures exactly matching Remote environments , despite a local copy of the openai/codex-universal Docker container showing patterns of successes and failures exactly matching other Local environments . WebUI Codex has experienced the same patterns of successes and failures as GitHub Actions itself, despite local Linux computers and local copies of the openai/codex-universal Docker container showing the local patterns of successes and failures.
+
+WebUI Codex has been confused by this, generating wrappers which do not significantly change the environment before running the commands. CLI Codex has been confused by this, hallucinating wrong claims that wrapper scripts achieve the remote pattern of successes and failures, and generating wrappers which explicitly detect specific commands by name and output an exit status in response.
+
+Since it is necessary to run and observe the exit status of each of these commands to establish which pattern of successes and failures Codex will experience without a wrapper, please do so before other relevant steps as necessary.
+
+## Out-of-Order Tracing
+
+Tracing, errors, and other outputs may occur slightly out of order, possibly due to multi-threading or deferral until stepping out, etc.
+
+Tracing showing a failure on or near a line of code followed by tracing showing success at or near that line of code does not necessarily contradict the earlier failure. Consider accepting failures near possibly failing lines of code as plausible.
+
+## Sensitive Code
+
+Diff what code is present in functions, commands that have different exit status, etc, between the remote and local environments, that is not present in functions, commands, that do not have different exit status, between remote and local environments.
+
+Consider whether each of these lines of potentially sensitive code could be affected by error propogation differently under different environments, such as changing the current directory to a temporary directory, maybe causing a subsequent failure, such as during cleanup, which might only be caught as an error if environmental differences exist.
+
+## Intended Flow
+
+Enumerate the entire stepwise processing of plausible inputs through lines of code, loops, as separate complete analyses for the local and remote environments.
+
+Before offering any explanation, enumerate, compare, diff how that stepwise processing runs for local vs remote environments. 
+
+## Order-of-Operations
+
+Some environments (eg. MSWindows, but possibly some UNIX/Linux filesystems) do not allow or do not transparently defer deleting files, directories, in use. This can cause some environments to cause errors when files modify their own contents, or delete their own file, directory, or delete the current directory.
+
+## Environment-Inheritance Deep Dive
+
+Before proposing any fixes, you must **explicitly enumerate and compare** every relevant environment setting, inheritance boundary, etc, that could differ between the two runs (remote vs. local, or CI vs. laptop).  Think of inheritance in the broadest sense: variables, options, traps, functions, file descriptors, subshells, child processes, login vs. non-login shells, wrappers, etc.
+
+**1. Process-level environment**  
+   - Consider all possibly significant **exported** variables (e.g. `env | sort`) and highlight any that differ.
+   - Note unexported variables that may nonetheless influence behavior.
+
+**2. Interpreter invocation flags**  
+   - Compare how each shell/script is or may be launched (`bash -euo pipefail`, `-O posix`, `-C`, login-shell flags, etc.).
+   - Include any wrappers or shebang args that add or strip flags.
+
+**3. Shell-option inheritance**  
+   - Dump and diff `set -o` (or `shopt -p` in Bash) so you can see exactly which options (errexit, errtrace, functrace, inherit_errexit, xtrace, etc.) are different.
+   - Call out each "on vs. off" mismatch and ask yourself how that option affects error-handling, traps, or subshells.
+
+**4. Trap and function inheritance**  
+   - Show any `trap ... ERR` or `trap ... EXIT` definitions and whether they propagate into subshells or through `exec` vs. `source`.
+   - List shell functions that get exported (e.g. Bash's `export -f`) vs. ones that don't.
+
+**5. Subshell vs. child-process behavior**  
+   - Identify every pipeline, command-substitution, subshell `(...)` or grouped command `{ ...; }` in your failing code slice.
+   - Ask: "Will my shell options or traps carry over into each subshell or will they reset?"
+
+**6. File-descriptor and directory inheritance**  
+   - Compare working directories (`pwd`) and note if you've already `cd`'d into a folder that's about to be deleted.
+   - Check open file descriptors and close-on-exec flags if you're shuffling FDs around.
+
+**7. Interpreter version differences & bug-fix history**  
+   - Record or infer exact shell or interpreter versions (`bash --version`, `zsh --version`, `python --version`, etc.) on both sides.
+   - If a minor-patch bump is in play, glance at its changelog or release notes for any "inherit_errexit" or "errtrace"-style fixes.
+
+**8. Wrapper/Sourcing vs. Exec semantics**  
+   - Make explicit whether each script is being `source`d, `.`-ed, or `exec`-ed under another process.
+   - Differences here can silently drop traps or options.
+
+---
+
+**Task reminder:**  
+After you dump all of the above, **produce a side-by-side table** or bullet list of every single mismatch.  Then reason **step-by-step** how each one *could* lead to the very first non-zero exit in the failing trace-finally homing in on the one true root cause.
+
+Only *after* that exhaustive inheritance check should you propose the minimal code diff or environment tweak that eliminates the discrepancy.
+---
+
+
+
+# Diagnostic
+
+Please explain why this command fails inappropriately and suggest solutions which best preserve the intended functionality. Make any changes to the script necessary to iteratively diagnose.
+
+```bash
+bash --noprofile --norc -o pipefail ./script.sh _true
+
+```
+Succeeds.
+
+
+```bash
+bash --noprofile --norc -e -o pipefail ./script.sh _true
+
+```
+Fails (inappropriately).
+
+
+
+# Compliance
+
+```bash
+_stop() {
+    #...
+    echo "message" >&2
+    #...
+}
+
+```
+Output, even to STDERR, during code used for running any function in a ubiquitous_bash script, can potentially interfere with the expectations of other functions consuming such output automatically, or can add thousands of lines of repeated noise to logs reviewed by people for only a few actual errors among already several cosmetic errors.
+
+Although editing the 'ubiquitous_bash.sh' script directly is an acceptable technique for testing, diagnosing, experimenting, etc, Git Pull Requests should instead edit the underlying files compiled into ubiquitous_bash.sh .
+
+
+
 # Test (CLI Codex)
 
 ```bash
@@ -288,5 +515,17 @@ pwd
 ```
 
 
+
+
+
+
+
+# Reference (partially)
+
+```
+ATTRIBUTION-AI: ChatGPT o3 2025-06-13
+ Environment-Inheritance Deep Dive
+ Task reminder
+```
 
 

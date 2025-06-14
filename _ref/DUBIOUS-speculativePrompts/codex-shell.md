@@ -407,9 +407,9 @@ Please generate very abbreviated, abridged, minimal semi-pseudocode, enumerating
 ./src/file.sh
 ```
 
-Please regard the semi-pseudocode at  /workspace/ubiquitous_bash/virtualization/python/_doc-override_msw_python.md  , or similar locations for this file, as a tentative archetype how to abbreviate, abridge, minimize, etc, the code segments at  /workspace/ubiquitous_bash/virtualization/python/override_msw_python.sh  ,  /workspace/ubiquitous_bash/virtualization/python/override_nix_python.sh  , or similar locations for these files .
+Please regard the semi-pseudocode at  /workspace/ubiquitous_bash/virtualization/python/_doc-override_msw_python.md  , or similar locations for this file, as a tentative archetype how to abbreviate, abridge, minimize, etc, code segments such as at  /workspace/ubiquitous_bash/virtualization/python/override_msw_python.sh  ,  /workspace/ubiquitous_bash/virtualization/python/override_nix_python.sh  , or similar locations for these files .
 
-Please separately briefly chronicle significant, substantial, and serious, deficiencies (eg. gaps in mentioning crucial multi-threading functions called by the semi-pseudocode mentioned Standalone Asset Functions, missing produced assets writing within semi-pseudocode mentioned functions, missing Inter-Process-Communication file handling within semi-pseudocode mentioned functions, gaps in mentioning crucial multi-threading conditions and loops within semi-pseudocode), for each enumerated category, in this summary semi-pseudocode.
+Please separately briefly chronicle significant, substantial, and serious, deficiencies (eg. gaps in mentioning crucial functions called by the semi-pseudocode mentioned Standalone Action Functions, missing produced assets writing within semi-pseudocode mentioned functions, missing a call to at least the entry point function for backend configuration within semi-pseudocode mentioned functions, missing at least an allusion to backend selection if relevant within semi-pseudocode mentioned functions, gaps in mentioning crucial conditions and loops within semi-pseudocode, not mentioning overrides if present within semi-pseudocode), for each enumerated category, in this summary semi-pseudocode.
 
 Most importantly, exclaim any seriously misleading functional incongruities between the summary semi-pseudocode and the actual code segment! Especially ensure plausible exit status, outputs, etc, from plausible stepwise processing of plausible inputs to each semi-pseudocode function matches plausible exit status, outputs, etc, for each semi-pseudocode function.
 
@@ -523,7 +523,7 @@ Please generate very abbreviated, abridged, minimal semi-pseudocode, enumerating
 ./src/file.sh
 ```
 
-Please regard the semi-pseudocode at  /workspace/ubiquitous_bash/shortcuts/git/_doc-wget_githubRelease.md  , or similar locations for this file, as a tentative archetype how to abbreviate, abridge, minimize, etc, the code segments at  /workspace/ubiquitous_bash/shortcuts/git/wget_githubRelease_internal.sh  ,  /workspace/ubiquitous_bash/shortcuts/git/wget_githubRelease_tag.sh  , or similar locations for these files .
+Please regard the semi-pseudocode at  /workspace/ubiquitous_bash/shortcuts/git/_doc-wget_githubRelease.md  , or similar locations for this file, as a tentative archetype how to abbreviate, abridge, minimize, etc, code segments such as at  /workspace/ubiquitous_bash/shortcuts/git/wget_githubRelease_internal.sh  ,  /workspace/ubiquitous_bash/shortcuts/git/wget_githubRelease_tag.sh  , or similar locations for these files .
 
 Please separately briefly chronicle significant, substantial, and serious, deficiencies (eg. gaps in mentioning crucial multi-threading functions called by the semi-pseudocode mentioned Standalone Asset Functions, missing produced assets writing within semi-pseudocode mentioned functions, missing Inter-Process-Communication file handling within semi-pseudocode mentioned functions, gaps in mentioning crucial multi-threading conditions and loops within semi-pseudocode), for each enumerated category, in this summary semi-pseudocode.
 

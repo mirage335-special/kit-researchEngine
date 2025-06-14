@@ -295,7 +295,7 @@ Please wait for the command, function, etc, to complete entirely, and show the c
 
 # Propose Tasks - Sub-Test (WebUI Codex)
 
-Propose tasks to evaluate the sub-functions individually called by the command, function, etc , skipping over repetitive sanity, timing, inter-process communication, etc, tests, thoroughly exploring many of the sub-functions, etc.
+Propose tasks to evaluate the sub-functions individually called by the command, function, etc , skipping over repetitive sanity, timing, Inter-Process-Communication, etc, tests, thoroughly exploring many of the sub-functions, etc.
 
 ```bash
 ./ubiquitous_bash.sh _test
@@ -324,7 +324,7 @@ Please generate fresh usage documentation for a specific goal from source code a
 
 # Documentation - Explain Structure
 
-Please explain:
+Please explain for this code:
 - What is the general structure?
 - What are the important things to know?
 - What are some pointers for things to learn next?
@@ -333,7 +333,11 @@ Please explain:
 Please enumerate in the explanation:
 - Important function calls.
 - Multi-threaded forking of calls to functions, commands, etc, as concurrent processes.
-- Inter-Process Communication both to [colloborate] on [shared] data as well as to manage process termination, waiting, etc.
+- Inter-Process-Communication both to collaborate on shared data as well as to manage process termination, waiting, etc.
+
+```
+./src/file.sh
+```
 
 
 
@@ -373,6 +377,180 @@ Please generate Multi-Domain Context (MDC) by generating as annotation a generat
 ```
 ./src/file.sh
 ```
+
+
+
+
+
+
+
+# Pseudocode Summary 
+
+Summary semi-pseudocode for code segments is intended not for developing rewrites or new features but only to hastily remind experienced maintenance programmers of the most complex, confusing, logic of the code.
+
+Usually regarding:
+- Insufficiently or non-obvious usage documentation.
+- Backend selection.
+- Backend configuration (set, prepare, etc).
+- Intended flow.
+- Syntax.
+
+Please generate very abbreviated, abridged, minimal semi-pseudocode, enumerating only:
+- Standalone Action Functions (invoked by script or end-user to independently achieve an entire purpose such as produce an asset)
+- Produced Assets (download file, fine tuned model, etc)
+- Backend Configuration
+- Backend Selection
+- Important Conditions and Loops
+- Overrides (alternative functions calling binary program, functions with same name as binary function, changes to PATH variable, etc)
+
+Please separately briefly chronicle significant, substantial, and serious, deficiencies, for each enumerated category, in this summary semi-pseudocode.
+
+Most importantly, exclaim any seriously misleading functional incongruities between the summary semi-pseudocode and the actual code segment! Especially ensure plausible exit status, outputs, etc, from plausible stepwise processing of plausible inputs to each semi-pseudocode function matches plausible exit status, outputs, etc, for each semi-pseudocode function.
+
+```bash
+_msw_program() {
+    #export dependencies_msw_program=( "usualDependency" )
+    #export packages_msw_program=( "programDependency" )
+	_prepare_msw_program
+	_programBin "$@"
+}
+
+_test_msw_program() {
+    _prepare_msw_program
+}
+
+_prepare_msw_program() {
+    _set_msw_program
+    mkdir -p "$safeTmp"/program
+    _morsels_msw_installer_program
+    _install_dependencies_msw_program
+    _override_msw_program
+}
+
+_morsels_msw_installer_program() {
+    #export packages_msw_program=( "programDependency" )
+    local currentPackages_indicator_list=( "programDependency" "${packages_msw_program[@]}" )
+    local currentPackages_list=( "programDependency" )
+
+	for currentPackage in "${currentPackages_list[@]}"
+    do
+		[[ "$nonet" != "true" ]] && [[ "$nonet_available" != "true" ]] && installer download "$currentPackage" --dest "$(cygpath -w "$scriptAbsoluteFolder"/_bundle/morsels/installer)" > /dev/null >&2
+        
+        installer install --find-links="$(cygpath -w "$scriptAbsoluteFolder"/_bundle/morsels/pip)" "$currentPackage" > /dev/null >&2
+	done
+}
+
+
+_install_dependencies_msw_program() {
+	local currentPackages_list=( "veryUsualDependency" "veryUsualDependency" "${dependencies_msw_program[@]}" )
+
+	for currentPackage in "${currentPackages_list[@]}"
+	do
+		installer download "$currentPackage" --dest "$lib_dir_msw_program_wheels_relevant" > /dev/null >&2
+	done
+
+	for currentPackage in "${currentPackages_list[@]}"
+	do
+		installer install --find-links="$lib_dir_msw_program_packages_relevant" "$currentPackage" > /dev/null >&2
+	done
+}
+_override_msw_program() {
+    export PATH="$HOME"/core/installations/program:"$PATH"
+    program() {
+        local current_program_bin=$(type -P program)
+        _wrapper "$current_program_bin" --parameter "$@"
+    }
+    export -f program
+}
+_programBin() {
+    export PATH="$HOME"/core/installations/program:"$PATH"
+    local current_program_bin=$(type -P program)
+    _wrapper "$current_program_bin" --parameter "$@"
+}
+_set_msw_program() {
+    local current_binaries_path=$(cygpath -u "$LOCALAPPDATA")
+    export _PATH_programDir="$current_binaries_path"
+    export _programLib=$(find "$_PATH_programDir" -iname 'Lib' -type d -print -quit)
+    
+	local VIRTUAL_ENV_unix
+    [[ "$VIRTUAL_ENV" != "" ]] && VIRTUAL_ENV_unix=$(cygpath -u "$VIRTUAL_ENV")
+    VIRTUAL_ENV_unix="$VIRTUAL_ENV_unix"/Scripts
+    if [[ -e "$VIRTUAL_ENV_unix" ]]
+	then
+		export _programLib=$(find "$VIRTUAL_ENV_unix"/.. -iname 'Lib' -type d -print -quit)
+    fi
+
+    unset PROGRAMHOME
+    export PROGRAMSTARTUP="$_PROGRAMSTARTUP"
+}
+
+_demo_msw_program() {
+    _messagePlain_nominal 'demo: '${FUNCNAME[0]} > /dev/null >&2
+    sleep 0.6
+    "$@"
+    _bash
+}
+
+```
+
+
+# Pseudocode Summary - (MultiThreaded)
+
+Summary semi-pseudocode for code segments is intended not for developing rewrites or new features but only to hastily remind experienced maintenance programmers of the most complex, confusing, logic of the code.
+
+Usually regarding, for multi-threaded code:
+- Action functions where processing begins.
+- Produced assets.
+- Inter-Process-Communication mechanisms which may necessarily be non-deterministic.
+- Loop conditions.
+- Concurrency collisions.
+- Operating-System latency margins.
+- Inappropriate esoteric resource locking (eg. backgrounded process grabbing tty).
+
+Please generate very abbreviated, abridged, minimal semi-pseudocode, enumerating only:
+- Standalone Action Functions (invoked by script or end-user to independently achieve an entire purpose such as produce an asset)
+- Produced Assets (download file, fine tuned model, etc)
+- Inter-Process-Communication Files, Pipes, etc (existence/absence of produced asset files, PID files, lock files, *.busy , *.PASS , *.FAIL , etc)
+- Inter-Process-Communication Conditions and Loops
+
+Please separately briefly chronicle significant, substantial, and serious, deficiencies, for each enumerated category, in this summary semi-pseudocode.
+
+Most importantly, exclaim any seriously misleading functional incongruities between the summary semi-pseudocode and the actual code segment! Especially ensure plausible exit status, outputs, etc, from plausible stepwise processing of plausible inputs to each semi-pseudocode function matches plausible exit status, outputs, etc, for each semi-pseudocode function.
+
+```bash
+
+( set -o pipefail ; aria2c --disable-ipv6=true "${current_axel_args[@]}" -d "$currentOutDir" -o "$currentOutFile_relative" "$currentURL" 2> >(tail -n 40 >&2) )
+currentExitStatus_ipv4="$?"
+
+outputLOOP:
+while WAIT && ! [[ -e "$scriptAbsoluteFolder"/$(_axelTmp).busy ]] || ( ! [[ -e "$scriptAbsoluteFolder"/$(_axelTmp).PASS ]] && ! [[ -e "$scriptAbsoluteFolder"/$(_axelTmp).FAIL ]] )
+dd if="$scriptAbsoluteFolder"/$(_axelTmp) bs=1M
+[[ -e "$scriptAbsoluteFolder"/$(_axelTmp).PASS ]] && currentSkip="download"
+[[ -e "$scriptAbsoluteFolder"/$(_axelTmp).FAIL ]] && [[ "$currentSkip" != "skip" ]] && ( _messageError 'FAIL' >&2 ) > /dev/null && return 1
+_destroy_lock "$scriptAbsoluteFolder"/$(_axelTmp)
+_destroy_lock "$scriptAbsoluteFolder"/$(_axelTmp).busy
+
+downloadLOOP:
+while WAIT && ( ls -1 "$scriptAbsoluteFolder"/$(_axelTmp) > /dev/null 2>&1 ) || ( ls -1 "$scriptAbsoluteFolder"/$(_axelTmp).busy > /dev/null 2>&1 )
+_destroy_lock "$scriptAbsoluteFolder"/$(_axelTmp).PASS
+_destroy_lock "$scriptAbsoluteFolder"/$(_axelTmp).FAIL
+
+_wget_githubRelease_procedure-join:
+echo -n > "$currentAxelTmpFile".busy
+_wget_githubRelease_procedure "$currentAbsoluteRepo" "$currentReleaseLabel" "$currentFile" -O "$currentAxelTmpFile" "$@"
+[[ "$currentExitStatus" == "0" ]] && echo "$currentExitStatus" > "$currentAxelTmpFile".PASS
+if [[ "$currentExitStatus" != "0" ]]
+then
+	echo -n > "$currentAxelTmpFile"
+	echo "$currentExitStatus" > "$currentAxelTmpFile".FAIL
+fi
+while WAIT && [[ -e "$currentAxelTmpFile" ]] || [[ -e "$currentAxelTmpFile".busy ]] || [[ -e "$currentAxelTmpFile".PASS ]] || [[ -e "$currentAxelTmpFile".FAIL ]]
+[[ "$currentAxelTmpFile" != "" ]] && _destroy_lock "$currentAxelTmpFile".*
+
+```
+
+
+
 
 
 

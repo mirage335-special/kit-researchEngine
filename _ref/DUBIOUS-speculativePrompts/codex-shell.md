@@ -359,7 +359,7 @@ Please write an ASCII art function call graph for this code . Emphasize only obv
 
 # Documentation - MultiThreading
 
-Please explain from the intended flow of action functions where processing of this code begins, Inter-Process-Communication:
+Please tabulate, preferably in well organized tables, readable at a glance instead of prose, from the intended flow of action functions where processing of this code begins, Inter-Process-Communication:
 
 - Inter-Process-Communication mechanisms.
 

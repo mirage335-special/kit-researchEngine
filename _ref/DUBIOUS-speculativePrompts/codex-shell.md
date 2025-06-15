@@ -368,13 +368,17 @@ Please enumerate defined important Standalone Action Functions (invoked by scrip
 
 # Documentation - Call Graph
 
-Please write an ASCII art function call graph for this code . Emphasize only obviously custom functions encapsulating functionality - ignore standard commands, _start/_stop, _message, _getAbsoluteLocation, etc. Please keep it simple and editable, essential information only, similar to this format:
+Please write a function call graph for these specific functions of this code . Emphasize only obviously custom functions encapsulating functionality - ignore standard commands, _start/_stop, _message, _getAbsoluteLocation, etc. Please keep it simple and editable, essential information only, similar to this Markdown format:
 
 - a() 
   - b() 
     - c()
       - find/xargs
         - d()
+
+```
+_functionName
+```
 
 ```
 ./src/file.sh

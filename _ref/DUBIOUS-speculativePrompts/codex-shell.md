@@ -360,6 +360,8 @@ Please enumerate defined important Standalone Action Functions (invoked by scrip
 - Overall structure of the codepath taken.
 - Important function calls.
 
+Please format this by tabulating as a two-column table with function names and a brief Purpose / Role description.
+
 ```
 ./src/file.sh
 ```

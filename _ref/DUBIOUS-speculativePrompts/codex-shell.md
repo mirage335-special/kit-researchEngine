@@ -322,6 +322,16 @@ Please generate fresh usage documentation for a specific goal from source code a
 
 
 
+# Documentation - Explain Purpose
+
+Please briefly explain the purpose of this code.
+
+```
+./src/file.sh
+```
+
+
+
 # Documentation - Explain Structure
 
 Please explain for this code:
@@ -334,6 +344,21 @@ Please enumerate in the explanation:
 - Important function calls.
 - Multi-threaded forking of calls to functions, commands, etc, as concurrent processes.
 - Inter-Process-Communication both to collaborate on shared data as well as to manage process termination, waiting, etc.
+
+```
+./src/file.sh
+```
+
+
+
+# Documentation - Enumerate Functions
+
+Please enumerate defined important Standalone Action Functions (invoked by script or end-user to independently achieve an entire purpose such as produce an asset) inferred from:
+
+- Beginnings, etc, of intended flow of the intended purpose achieved by this source code, commands, configuration, etc.
+- Stepwise processing of plausible inputs through lines of code, loops, etc.
+- Overall structure of the codepath taken.
+- Important function calls.
 
 ```
 ./src/file.sh

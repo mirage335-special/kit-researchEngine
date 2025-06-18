@@ -503,6 +503,16 @@ _setup_models_extra-user() {
 	# Large inference models with a near-essential leap in capability but not typically installed locally by default include:
 	# Llama 3.1 Nemotron Ultra 253b v1
 	# Mistral Small 3.1 24b q3_k_s num_gpu 41
+	# Devstral-Small 2505 24b IQ4_XS num_gpu 41
+
+	# Magistral Small Vision .
+	# https://huggingface.co/OptimusePrime/Magistral-Small-2506-Vision
+	#
+	# REASONING from a local vision model could be similar to, but possibly slightly more versatile than, a prompt asking for a very long, detailed, explanation and transcription. Versatility directly at the vision model could possibly be important in robotics applications. In either case, many output tokens would be generated, so this should not be a very high-framerate nor low-power AI model.
+	#
+	# Please write a very long, very detailed, explanation, transcription, etc, of what the image seems, what different contexts are in the image, and of everything in each context of the image.
+	# ->
+	# Please summarize.
 
 	# 16GB VRAM Vision AI model (general purpose - vision encoder to language model)
 	# ATTENTION: TODO: More robust convention may be to place the 'g41' suffix after the upstream model name.

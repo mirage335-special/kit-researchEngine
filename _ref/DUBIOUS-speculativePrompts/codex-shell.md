@@ -1,5 +1,49 @@
 
 
+# Merge
+
+What is the most practical and sane way to merge these, minimizing and working through any Git merge conflicts?
+
+Are these commands sufficient to merge without losing functionality, etc?
+
+```bash
+
+git checkout main
+git pull origin main
+
+git checkout mirage335/llama_3_1_nemotron_ultra_253b_v1
+git merge main
+
+git push origin mirage335/llama_3_1_nemotron_ultra_253b_v1
+
+```
+
+```bash
+git checkout main
+git pull
+
+git checkout mirage335/llama_3_1_nemotron_ultra_253b_v1
+git merge main
+
+git checkout mirage335/llama_3_1_nemotron_ultra_253b_v1
+git rebase main
+```
+
+Please run commands, edit files, test, generate pull request, etc, if necessary.
+
+
+# Merge branches.
+
+Seems the 'main' branch has had some improvements relative to 'mirage335/llama_3_1_nemotron_ultra_253b_v1' .  Yet we have the very important pull requests 'PR 10382' , 'PR 10238' , as well as other improvements, merged in branch 'mirage335/llama_3_1_nemotron_ultra_253b_v1' .
+
+Please attempt a merge , while preserving these improvements , and explain the results.
+
+If you are asked a history question, you may browse a full copy of the same repository at /workspace/history/ollama .
+
+
+
+
+
 # App
 
 Please achieve the desired result or better from this command. Generate a correct command, and try it. This is not necessarily in a git repository, you are diagnosing an issue with the configuration, software, etc, of a real computer system.
@@ -644,6 +688,179 @@ pwd
 
 
 
+# Ensure necessary Pull Requests are present.
+
+Please ensure upstream 'github.com/ollama/ollama' pull requests 'PR 10382' , 'PR 10238' , are merged in branch 'mirage335/llama_3_1_nemotron_ultra_253b_v1' of this repository 'mirage335-colossus/ollama' .
+
+```
+https://github.com/ollama/ollama
+https://github.com/ollama/ollama/pull/10382
+https://github.com/ollama/ollama/pull/10238
+```
+
+If you are asked a history question, you may browse a full copy of the same repository at /workspace/history/ollama .
+
+
+# Advise Adapting to Build branch OllamaSetup.exe in CI .
+
+Please advise of the most practical, maybe minimalistic, appraoches to make the GitHub Actions workflows used by 'github.com/ollama/ollama' effective for branch 'mirage335/llama_3_1_nemotron_ultra_253b_v1' of this repository 'mirage335-colossus/ollama' .
+
+
+# Build branch OllamaSetup.exe in CI .
+
+Please create a practical, maintainable, 'build.yaml' GitHub Actions workflow derived from the 'release.yaml' GitHub actions workflow . Please create this new 'build.yaml' GitHub Actions workflow to:
+- Add 'workflow_dispatch' to build the binaries on demand.
+- Build and upload as release file ollama-linux-amd64.tgz .
+- Build and upload as release file ollama-linux-amd64-rocm.tgz .
+- Build and upload as release file OllamaSetup.exe .
+- Build and upload as release file OllamaSetup-Preview.exe .
+- Bypass signing, as signing keys are not available and should not be necessary in this case.
+- Do not build for MacOS.
+- Do not build ARM processor binaries or containers, etc.
+- Adapt any Docker push to only push to GitHub Container Registry (ghcr) as packages.
+
+Goal is to build an installable OllamaSetup.exe and similar binaries with support for 'Llama 3.1 Nemotron Ultra 253b v1' 'IQ2_XXS' quantization.
+
+
+# Backport 'main' Release to branch Build .
+
+Please backport improvements of `main` branch `release.yaml` to `drifkin/array-head-count-simple` branch derived `build.yaml` specialized to:
+
+- Add 'workflow_dispatch' to build the binaries on demand.
+- Build and upload as release file ollama-linux-amd64.tgz .
+- Build and upload as release file ollama-linux-amd64-rocm.tgz .
+- Build and upload as release file OllamaSetup.exe .
+- Build and upload as release file OllamaSetup-Preview.exe .
+- Bypass signing, as signing keys are not available and should not be necessary in this case.
+- Do not build for MacOS.
+- Do not build ARM processor binaries or containers, etc.
+- Adapt any Docker push to only push to GitHub Container Registry (ghcr) as packages.
+
+Goal is to build an installable OllamaSetup.exe and similar binaries with support for 'Llama 3.1 Nemotron Ultra 253b v1' 'IQ2_XXS' quantization.
+
+If you are asked a history question, you may browse a full copy of the same repository at /workspace/history/ollama .
+
+Please explain any improvements not backported .
+
+
+# Review Backporting Release to Build .
+
+Are any of the differences from `release.yaml` to `build.yaml` unnecessary to achieve these specializations?
+
+- Add 'workflow_dispatch' to build the binaries on demand.
+- Build and upload as release file ollama-linux-amd64.tgz .
+- Build and upload as release file ollama-linux-amd64-rocm.tgz .
+- Build and upload as release file OllamaSetup.exe .
+- Build and upload as release file OllamaSetup-Preview.exe .
+- Bypass signing, as signing keys are not available and should not be necessary in this case.
+- Do not build for MacOS.
+- Do not build ARM processor binaries or containers, etc.
+- Adapt any Docker push to only push to GitHub Container Registry (ghcr) as packages.
+
+Goal is to build an installable OllamaSetup.exe and similar binaries with support for 'Llama 3.1 Nemotron Ultra 253b v1' 'IQ2_XXS' quantization.
+
+If you are asked a history question, you may browse a full copy of the same repository at /workspace/history/ollama .
+
+Please explain.
+
+
+
+
+
+
+
+
+# Error CI
+
+Please suggest changes .
+
+Error from the `docker/build-push-action@v6` step of the `docker-build-push (linux, amd64, CGO_CFLAGS CGO_CXXFLAGS GOFLAGS )` job of the `build.yaml` GitHub Actions workflow script:
+
+```
+#11 importing cache manifest from ghcr.io/mirage335-colossus/ollama:latest
+#11 ERROR: failed to configure registry cache importer: ghcr.io/mirage335-colossus/ollama:latest: not found
+```
+
+Error from the `docker/build-push-action@v6` step of the `linux-build (linux, amd64, archive)` job of the `build.yaml` GitHub Actions workflow script:
+
+```
+#8 importing cache manifest from ghcr.io/mirage335-colossus/ollama:latest
+#8 ERROR: failed to configure registry cache importer: ghcr.io/mirage335-colossus/ollama:latest: not found
+```
+
+
+# Failing Build CI
+
+Jobs from `build.yaml`:
+
+| Result | Job |
+| --- | --- |
+| PASS | setup-environment |
+| PASS | windows-depends (windows, amd64, CPU) |
+| PASS | windows-depends (windows, amd64, CUDA 11, https://developer.download.nvidia.com/compute/cuda/11.3... |
+| PASS | windows-depends (windows, amd64, CUDA 12, https://developer.download.nvidia.com/compute/cuda/12.8... |
+| PASS | windows-depends (windows, amd64, ROCm 6, https://download.amd.com/developer/eula/rocm-hub/AMD-Sof... |
+| PASS | windows-build (windows, amd64) |
+| FAIL | linux-build (linux, amd64, archive) |
+| Cancelled | linux-build (linux, amd64, rocm) |
+| FAIL | docker-build-push (linux, amd64, CGO_CFLAGS CGO_CXXFLAGS GOFLAGS ) |
+| Cancelled | docker-build-push (linux, amd64, -rocm, CGO_CFLAGS CGO_CXXFLAGS GOFLAGS FLAVOR=rocm ) |
+| PASS | windows-package |
+| Skipped | docker-merge-push |
+| release | skipped |
+
+Error from the `docker/build-push-action@v6` step of the `linux-build (linux, amd64, archive)` job of the `build.yaml` GitHub Actions workflow script:
+
+```
+#7 importing cache manifest from ghcr.io/mirage335-colossus/ollama:latest
+#7 ERROR: failed to configure registry cache importer: failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://ghcr.io/token?scope=repository%3Amirage335-colossus%2Follama%3Apull&service=ghcr.io: 403 Forbidden 
+```
+
+Error from the `docker/build-push-action@v6` step of the `docker-build-push (linux, amd64, CGO_CFLAGS CGO_CXXFLAGS GOFLAGS )` job of the `build.yaml` GitHub Actions workflow script:
+
+```
+#11 importing cache manifest from ghcr.io/mirage335-colossus/ollama:latest
+#11 ERROR: failed to configure registry cache importer: ghcr.io/mirage335-colossus/ollama:latest: not found
+```
+
+Please explain why I did not get 'OllamaSetup.exe' uploaded as a release file, and provide changes to get that to happen.
+
+
+
+# Install Dependencies per GitHub Actions Error GitHub Copilot Explanation
+
+Please ensure the 'linux-build', 'docker-build-push', etc, jobs of the 'build.yaml' GitHub Actions YAML script, install all such necessary dependencies to prevent such errors.
+
+```
+error messages summary from GitHub Actions WebUI GitHub Copilot 'Explain error'
+```
+
+
+# Disable Cache
+
+Please change 'build.yaml' to add a boolean 'on: workflow_dispatch:' ''inputs:' field to run separate  'docker/build-push-action@v6' steps without cache, so the user can avoid build failures if this GitHub Actions YAML script has never been run previously. 
+
+Error from the `docker/build-push-action@v6` step of the `docker-build-push (linux, amd64, CGO_CFLAGS CGO_CXXFLAGS GOFLAGS )` job of the `build.yaml` GitHub Actions workflow script:
+
+```
+#11 importing cache manifest from ghcr.io/mirage335-colossus/ollama:latest
+#11 ERROR: failed to configure registry cache importer: ghcr.io/mirage335-colossus/ollama:latest: not found
+```
+
+Error from the `docker/build-push-action@v6` step of the `linux-build (linux, amd64, archive)` job of the `build.yaml` GitHub Actions workflow script:
+
+```
+#8 importing cache manifest from ghcr.io/mirage335-colossus/ollama:latest
+#8 ERROR: failed to configure registry cache importer: ghcr.io/mirage335-colossus/ollama:latest: not found
+```
+
+
+
+
+
+
+
+
 # Scrap
 
 Yeah, run the test, run this command, please actually run the command:
@@ -652,6 +869,10 @@ Go through the codebase...
 
 Propose tasks to improve codebase by suggesting and creating more exhaustive tests ... better CI coverage , in-the-field deployment environment completeness, etc, testing, etc.
 
+
+If you are asked a history question, you may browse a full copy of the same repository at /workspace/history/ollama .
+
+Goal is to build an installable OllamaSetup.exe with support for 'Llama 3.1 Nemotron Ultra 253b v1' 'IQ2_XXS' quantization.
 
 
 

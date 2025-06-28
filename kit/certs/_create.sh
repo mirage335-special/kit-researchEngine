@@ -717,7 +717,7 @@ _create_ssl() {
 	_create_ssl-server "$@"
 
 	# 'augment' ... very fast automation
-	# ie. Llama-augment
+	# ie. Llama-3-augment
 	currentServer=augment
 	_create_ssl-server "$@"
 }

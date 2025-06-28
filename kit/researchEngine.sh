@@ -88,11 +88,11 @@ _setup_researchEngine-kit() {
 	_service_researchEngine-docker-chroot-start
 
 	
-	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _hook_ollama_nohistory'
+	sudo -n --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-3-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _hook_ollama_nohistory'
 	
 	
 	_messageNormal '_setup_ollama'
-	sudo -n --preserve-env=GH_TOKEN --preserve-env=INPUT_GITHUB_TOKEN --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _setup_ollama'
+	sudo -n --preserve-env=GH_TOKEN --preserve-env=INPUT_GITHUB_TOKEN --preserve-env=kit_dir_researchEngine,currentUser_researchEngine,DOCKERHUB_USERNAME,DOCKERHUB_TOKEN -u "$currentUser_researchEngine" /bin/bash -l -c '! (type -p ollama > /dev/null 2>&1 && ollama ls | grep "Llama-3-augment" > /dev/null) && '"$scriptAbsoluteLocation"' _setup_researchEngine _setup_ollama'
 	
 	
 	_messageNormal 'Test Docker'
@@ -470,7 +470,7 @@ _setup_openwebui-portService() {
 _setup_models_extra-user() {
 	_service_ollama
 	
-	# WARNING: Unlike the reliable llama-augment, some of these models WILL infinite generate/loop . Relying on a '_timeout' may be possible, but is not recommended due to possible changes, regressions, etc, in upstream ollama .
+	# WARNING: Unlike the reliable llama-3-augment, some of these models WILL infinite generate/loop . Relying on a '_timeout' may be possible, but is not recommended due to possible changes, regressions, etc, in upstream ollama .
 
 	#_messagePlain_probe_cmd ollama pull llava-llama3
 	##_messagePlain_probe_cmd ollama run llava-llama3 "Please output the word true . Any other output accompanying the word true is acceptable but not desirable. The purpose of this prompt is merely to validate that the LLM software is entirely functional, so the word true will be very helpful whereas any output other than the word true will be unhelpful . Please output the word true ."
@@ -486,7 +486,7 @@ _setup_models_extra-user() {
 
 	_messagePlain_probe_cmd ollama pull hf.co/awhiteside/CodeRankEmbed-Q5_K_M-GGUF
 
-	# ATTENTION: Llama-augment seems to have much better logic and knowlege for specific tasks, expected more capable and more reliable than DeepSeekR1 'chain-of-reasoning' if within wrapper shell script for a similar purpose, and with far smaller model size at that. What the DeepSeekR1 model is preserved for is quickly defining such software control structures (ie. writing entire computer programs as ChatGPT o1 seems able to).
+	# ATTENTION: Llama-3-augment seems to have much better logic and knowlege for specific tasks, expected more capable and more reliable than DeepSeekR1 'chain-of-reasoning' if within wrapper shell script for a similar purpose, and with far smaller model size at that. What the DeepSeekR1 model is preserved for is quickly defining such software control structures (ie. writing entire computer programs as ChatGPT o1 seems able to).
 	# WARNING: Retain a copy of the '32b' model as well if possible, as 'chain-of-reasoning' seems to amplify the slight differences, with the smaller model output often missing one or more important concepts.
 	# DeepSeekR1 seems to degrade rapidly below '14b' parameter models. The '8b' parameter model should NOT be preserved, at least not without both very extensive fine tuning and high certainty of that fine tuning covering all useful specialities.
 	# WARNING: Effect of quantization on DeepSeekR1 may be worse than other models, due to possibly using more of the available numerical precision during lower numerical precision training. May, or may NOT, explain some of the apparent difference in concepts missing from the output of the '14b' parameter model relative to the '32b' parameter model. Apparently, thorough benchmarks comparing outputs of these models at different quantizations do not seem available yet as of 2025-02-07 .

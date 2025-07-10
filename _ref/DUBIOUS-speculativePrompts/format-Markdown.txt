@@ -1,0 +1,150 @@
+Please rewrite this text with indentation, etc, for better clarity to the purpose of the original plain text, and in Markdown format showing such formatting in Markdown format.
+
+- Proceed with correcting Markdown formatting for usefulness, consistency, and correct rendering, despite hints of already being in Markdown format, as input formatting may be sloppy.
+
+- Preserve already correct bold, italics, etc, unless plausibly inappropriate.
+
+- Preserve original quoting, block quoting, etc, unless plausibly inappropriate.
+
+- Preserve cross-referencing by not changing the numbers and letters of numeration .
+
+- Preserve hierarchy by increasing relative and absolute indentation rather than decreasing indentation.
+
+- Ensure the Markdown formatted output uses such indentation and spacing techniques that the vast majority of Markdown renderers, previews, etc, will all show deliberate indentation, spacing, etc.
+
+- Avoid distracting, confusing, etc, HTML or '&nbsp;' , in the Markdown output, that would be difficult or confusing to read from the raw plain text of the output Markdown, and also will not have any visual effect in some Markdown renders, previews, etc.
+
+- Avoid separating lines of text that were just lines of text intended together as instead bullet points.
+
+- Inline numerations within paragraphs indicated by (i), (ii), etc, should remain inline in the sentence and not be converted into bulleted lists, unless already presented explicitly as bullet points.
+
+- If necessary it may be reasonable to bullet point top level headings that per the content and formatting were obviously separate points beginning on a new line. As an example, top-level definitions with numbered prefixes could be bulleted, sentences in subsequent paragraph prose should not be bulleted. Interrupt the  '[digit][period][regular-space]'  pattern with instead UTF-8 compatible character codes inserted as  '[digit][U+200B][period][U+00A0]'  . Bold and italics, etc, formatting, should still be preserved rather than reintepreted, unless very plausibly very inappropriate.
+
+- Avoid causing Markdown output to render sentences on new lines simply because the input had two spaces between the sentences, this is often a latent mistake, latent ambiguity, etc, from copy/paste between revisions.
+
+- Word wrap at 80 columns in the output such that plain text viewers will show the output wrapped at 80 columns but Markdown renders will show whatever word wrap length is appropriate to the page width, etc.
+
+Please output raw Markdown, without encapsulating the Markdown in triple backtick quoting.
+
+---
+
+As an example, this was converted.
+
+1.01 “PhraseToDefineA” A phrase that gets a slightly expanded dictionary definition for definitiveness.  Also
+     mentioning this phrase appears only in one situation described in § 1.1 .
+
+1.02 “Phrase To Define B” Another phrase that gets a slightly
+     expanded dictionary definition for definitiveness. A
+     sub-phrase of this phrase is further clarified by meeting
+     a few criteria:
+        (a) this stuff;  
+        (b) that stuff; 
+        (c) some stuff;
+        (d) strange stuff; and  
+        (e) an unassuming bunch of stuff in the corner of the room comprising eclectic assortments.
+
+
+- **1​.​01 “PhraseToDefineA”**  
+    A phrase that gets a slightly expanded dictionary definition for
+    definitiveness. Also mentioning this phrase appears only in one situation
+    described in § 1.1 .
+
+- **1​.​02 “Phrase To Define B”**  
+    Another phrase that gets a slightly expanded dictionary definition for
+    definitiveness. A sub-phrase of this phrase is further clarified by meeting
+    a few criteria:
+    
+    - (a) this stuff;
+    - (b) that stuff;
+    - (c) some stuff;
+    - (d) strange stuff; and
+    - (e) an unassuming bunch of stuff in the corner of the room comprising
+    eclectic assortments.
+
+---
+
+As an example, this was converted.
+
+1.01 “PhraseToDefine” (“PTD”) A phrase that gets a slightly expanded  
+     dictionary definition for definitiveness with the phrase being (i) interesting  
+     in some way, and (ii) is not interesting in another way.
+
+
+- **1​.​01 “PhraseToDefine” (“PTD”)**  
+    A phrase that gets a slightly expanded dictionary definition for
+    definitiveness with the phrase being (i) interesting dictionary definition
+    for definitiveness with the phrase being (i) interesting in some way, and
+    (ii) is not interesting in another way.
+
+---
+
+As an example, this was converted.
+
+1.01-bis  **“PhraseToDefine”** (“PTD”)
+
+*For certain purposes only.*  Under a bunch of these specified conditions without affecting
+a bunch of other stuff, something is acknowledged  
+(i) this and  
+(ii) that  
+*may* something or other.  
+Regarding or disregarding such stuff as anything else may mean something otherwise interesting.
+
+
+- **1​.​01 “PhraseToDefine” (“PTD”)**  
+    *For certain purposes only.* Under a bunch of these specified conditions
+    without affecting a bunch of other stuff, something is acknowledged.
+    
+    - (i) this and
+    - (ii) that
+
+    *may* something or other.  
+    Regarding or disregarding such stuff as anything else may mean something
+    otherwise interesting.
+
+---
+
+As an example, this was converted.
+
+1.01 “PhraseToDefine” (“PTD”) A phrase that gets a slightly expanded  
+     dictionary definition for definitiveness meeting criteria
+     • (i) interesting;  
+     • (ii) interesting in another way; and  
+     • (iii) interesting in yet another way
+           • speaking to whatever else makes this interesting in yet another way.
+
+
+- **1​.​01 “PhraseToDefine” (“PTD”)**  
+    A phrase that gets a slightly expanded dictionary definition for
+    definitiveness meeting criteria  
+    - (i) interesting;
+    - (ii) interesting in another way; and
+    - (iii) interesting in yet another way
+      - speaking to whatever else makes this interesting in yet another way
+      that makes this interesting.
+
+---
+
+As an example, this was converted.
+
+Just some **prose *text*** to nevermind, some description stuff, maybe written too long
+without much of _anything_.  Now there is some stuff about this prose text that is
+interesting.
+
+*With some more prose text.*
+
+
+Just some **prose *text*** to never, some description stuff, maybe written too
+long without much of *anything*. Now there is some stuff about this prose text
+that is interesting.
+
+*With some more prose text.*
+
+---
+
+Appropriateness may be based on apparent subject matter of the text. Assume possible mis-interpretation of a legal document is cause for most concern, unless there is plausibly a much greater concern with the text.
+
+---
+
+
+
+

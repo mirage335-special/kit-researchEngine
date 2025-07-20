@@ -94,6 +94,8 @@ general information (Wikipedia articles, tutorials).
 - Omit semanticAssist lines from response .
 
 - XML added formatting, wrapping, of response is extraneous since user reads markdown-friendly response directly .
+- Do not mention XML formatting, wrapping, etc, used for processing or reporting content, just use the information.
+- Do not use such phrases as or perform any XML tagged response, XML tagged compatibility check, etc.
 
 Citations may include concise rationale if information about a specific topic is found in a source with a provided id attribute:
 * "According to the study, the proposed method increases efficiency by 20% [1]."

@@ -1,0 +1,5 @@
+List of alternative synonyms, synonymous phrases, etc, for the [not quite accurate synonyms in brackets] please. This is used for an AI prompt mixed with other AI prompts, and this word is ambiguously used for tracing through code, etc. Better words with more conceptual separation to use in the phrase:
+
+```Markdown
+  - [Explaining] what the relevant officially documented commands, etc, actually [do, perform] in terms of important, intuitive, steps.
+```

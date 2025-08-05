@@ -4,12 +4,15 @@
 Set environment variable (if desired) OLLAMA_NOHISTORY=true . For MSWindows, search for and use the 'Edit the System Environment Variables' GUI . For Linux/UNIX, edit '~/.bashrc' or similar .
 
 https://github.com/ollama/ollama/pull/4508/commits/37402585e706f4eecd668d1ed5f427f1a8791b6b
+
 https://github.com/ollama/ollama/issues/3002
+
 https://github.com/ollama/ollama/issues/3197
 
 Install the latest Ollama release . Only if using an unsupported AMD GPU (usually certain newer integrated AMD GPUs) should you use the AMD specific fork of ollama.
 
 https://github.com/ollama/ollama/releases
+
 https://github.com/likelovewant/ollama-for-amd/releases
 
 

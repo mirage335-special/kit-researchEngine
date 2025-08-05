@@ -20,9 +20,10 @@ https://docs.docker.com/desktop/install/windows-install/
 
 Choosing WSL2 backend for Docker has some track record of success, and is thus recommended.
 
+```
 <Log Off / Restart after proverbial Setup.exe>
 <Accept Docker Subscription Service Agreement…. 250 employees OR $10million in annual revenue>
-
+```
 
 
 # Install extendedInterface .

@@ -50,13 +50,13 @@ visit:
 https://raw.githubusercontent.com/mirage335-colossus/ConsumerEconomyLicense/refs/heads/main/LICENSE-CEL-1.00.md
 https://raw.githubusercontent.com/mirage335-colossus/ConsumerEconomyLicense/refs/heads/main/SUMMARY-CEL-1.00.md
 
-Right click  * Run as Administrator *  'C:\core\cognition\Llama-3-virtuoso\_fetch_local.bat' . Explicitly read and accept the ConsumerEconomyLicense again when asked.
+Right click  * Run as Administrator *  `'C:\core\cognition\Llama-3-virtuoso\_fetch_local.bat'` . Explicitly read and accept the ConsumerEconomyLicense again when asked.
 
 
 
 # Install  SearXNG , OpenWebUI ,  'augment' , 'developer' assistance AI models.
 
-Doble click  'C:\core\extendedInterface\_install_researchEngine-MSWindows.bat' .
+Doble click  `'C:\core\extendedInterface\_install_researchEngine-MSWindows.bat'` .
 
 
 
@@ -66,7 +66,8 @@ Doble click  'C:\core\extendedInterface\_install_researchEngine-MSWindows.bat' .
 ## Command-Line Environment
 
 FEATURE: Much more capable command line with '_c' calculator shortcut command and '_d' AI powered command-line and programming help shortcut command.
-C:\_bash.bat   (bash command prompt)
+
+`C:\_bash.bat`   (bash command prompt)
 
 ## SearXNG
 
@@ -93,7 +94,8 @@ FEATURE: Bookmark http://localhost:3000/ .
 FEATURE: OpenWebUI SearXNG integration . Use  http://host.docker.internal:8080/search?q=<query>  for the SearXNG URL , set search results 6 , set concurrent to 12 . Do NOT bypass SSL , enable SSL. Search may be sped up with 'Bypass Web Loader' . An improved 'Query Generation Prompt' is available at 'C:/core/infrastructure/extendedInterface/_lib/ubiquitous_bash/_lib/kit/app/researchEngine/_ref/DUBIOUS-speculativePrompts-task/query-openwebui.txt' . Similar improvements are available in similar places (eg. to improve Retrieval Augmented Generation for document search). DeepSeek-R1-0528 is recommended as the model when doing 'Web Search' for best results.
 
 FEATURE: Add-ons for OpenWebUI are available, especially to better support recent OpenAI API capabilities - o3 , o3-pro , o1-pro , o3-DeepResearch , o4-mini-DeepResearch . These have been used successfully as recently as 2025-08-05 .
-C:\core\infrastructure\extendedInterface\_lib\ubiquitous_bash\_lib\kit\app\researchEngine\_import\functions-openwebui
+
+`'C:\core\infrastructure\extendedInterface\_lib\ubiquitous_bash\_lib\kit\app\researchEngine\_import\functions-openwebui'`
 
 
 

@@ -1,0 +1,100 @@
+
+# Install Ollama (with Vision) on MSW .
+
+Set environment variable (if desired) OLLAMA_NOHISTORY=true . For MSWindows, search for and use the 'Edit the System Environment Variables' GUI . For Linux/UNIX, edit '~/.bashrc' or similar .
+
+https://github.com/ollama/ollama/pull/4508/commits/37402585e706f4eecd668d1ed5f427f1a8791b6b
+https://github.com/ollama/ollama/issues/3002
+https://github.com/ollama/ollama/issues/3197
+
+Install the latest Ollama release . Only if using an unsupported AMD GPU (usually certain newer integrated AMD GPUs) should you use the AMD specific fork of ollama.
+
+https://github.com/ollama/ollama/releases
+https://github.com/likelovewant/ollama-for-amd/releases
+
+
+
+# Install Docker .
+
+https://docs.docker.com/desktop/install/windows-install/
+
+Choosing WSL2 backend for Docker has some track record of success, and is thus recommended.
+
+<Log Off / Restart after proverbial Setup.exe>
+<Accept Docker Subscription Service Agreement…. 250 employees OR $10million in annual revenue>
+
+
+
+# Install extendedInterface .
+
+Download and run the latest 'extIface.exe' installer from the most recent 'internal' labeled release .
+
+https://github.com/mirage335-colossus/extendedInterface
+
+
+
+# Install Llama-3-virtuoso .
+
+Accept the ConsumerEconomyLicense , then install "Llama-3-virtuoso" , by extracting the directory (from, after accepting the licensing, downloading the zip file, git clone, etc) to 'C:\core\cognition\Llama-3-virtuoso' .
+
+https://github.com/mirage335-colossus/Llama-3-virtuoso
+
+Use of any part of this software, model, or dataset is governed by the
+ConsumerEconomy License (CEL-1.00). See LICENSE-CEL-1.00.md (or
+LICENSE-CEL-1.00.txt), SUMMARY-CEL-1.00.md (or SUMMARY-CEL-1.00.txt) or
+visit:
+https://raw.githubusercontent.com/mirage335-colossus/ConsumerEconomyLicense/refs/heads/main/LICENSE-CEL-1.00.md
+https://raw.githubusercontent.com/mirage335-colossus/ConsumerEconomyLicense/refs/heads/main/SUMMARY-CEL-1.00.md
+
+Right click  * Run as Administrator *  'C:\core\cognition\Llama-3-virtuoso\_fetch_local.bat' . Explicitly read and accept the ConsumerEconomyLicense again when asked.
+
+
+
+# Install  SearXNG , OpenWebUI ,  'augment' , 'developer' assistance AI models.
+
+Doble click  'C:\core\extendedInterface\_install_researchEngine-MSWindows.bat' .
+
+
+
+
+# Usage - New Features
+
+## Command-Line Environment
+
+FEATURE: Much more capable command line with '_c' calculator shortcut command and '_d' AI powered command-line and programming help shortcut command.
+C:\_bash.bat   (bash command prompt)
+
+## SearXNG
+
+FEATURE: Bookmark http://localhost:8080/ , and configure preferences as desired.
+
+FEATURE: Firefox - from the page http://localhost:8080/ , right click the address bar, add the new search engine.
+
+FEATURE: Edge -  Settings -> Privacy, search, and services -> Services -> Address bar and search  ... add the URL 'http://localhost:8080/search?q=%s' to add the new search engine. Change new tab page as desired with 'Custom New Tab URL' https://microsoftedge.microsoft.com/addons/detail/custom-new-tab-url/oeibmbobgpgnbnlbaffdgebpeepfbnhi .
+
+## OpenWebUI
+
+Standard OpenAI (ie. ChatGPT) API keys, OpenRouter API keys, and Ollama API, can be configured in OpenWebUI per available documentation.
+
+Configure OpenWebUI to use http://host.docker.internal:11434 for the Ollama API .
+
+As the Task model,  Llama 3.3 Valkyrie 49B v1  , is STRONGLY RECOMMENDED , and can be obtained through Ollama locally or OpenRouter .
+
+Recommended AI models include  OpenAI/ChatGPT o3 with Web Search enabled  ,  DeepSeek-R1-0528  ,  Llama 3.1 Nemotron Ultra 253b v1  ,  openai/codex-mini  ,  Kimi-K2  ,  x-ai/grok-4  ,  Devstral-Small-2507-virtuoso  , Llama-3_3-Nemotron-Super-49B-v1-virtuoso  ,  Llama-3_3-Valkyrie-49B-v1-INSTRUCT  ,  Llama-3_3-Valkyrie-49B-v1  ,  Magistral-Small-2506-virtuoso  ,  Mistral-Small-3_2-24B-Instruct-2506-virtuoso  ,  Phi-4-mini-reasoning-plus-virtuoso  ,  Qwen-2_5-VL-7B-Instruct-virtuoso  .
+
+WARNING: DANGER: Beware any models labeled 'abliterated' or similar are NOT intended for end-users. These are usually intended for embedded, safety, etc, purposes, and if used directly, may generate offensive content.
+
+FEATURE: Bookmark http://localhost:3000/ . 
+
+FEATURE: OpenWebUI SearXNG integration . Use  http://host.docker.internal:8080/search?q=<query>  for the SearXNG URL , set search results 6 , set concurrent to 12 . Do NOT bypass SSL , enable SSL. Search may be sped up with 'Bypass Web Loader' . An improved 'Query Generation Prompt' is available at 'C:/core/infrastructure/extendedInterface/_lib/ubiquitous_bash/_lib/kit/app/researchEngine/_ref/DUBIOUS-speculativePrompts-task/query-openwebui.txt' . Similar improvements are available in similar places (eg. to improve Retrieval Augmented Generation for document search). DeepSeek-R1-0528 is recommended as the model when doing 'Web Search' for best results.
+
+FEATURE: Add-ons for OpenWebUI are available, especially to better support recent OpenAI API capabilities - o3 , o3-pro , o1-pro , o3-DeepResearch , o4-mini-DeepResearch . These have been used successfully as recently as 2025-08-05 .
+C:\core\infrastructure\extendedInterface\_lib\ubiquitous_bash\_lib\kit\app\researchEngine\_import\functions-openwebui
+
+
+
+
+
+
+
+

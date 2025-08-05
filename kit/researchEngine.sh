@@ -814,3 +814,207 @@ EOF
 
 	#_service_researchEngine-docker-chroot-stop
 }
+
+
+
+
+
+
+
+
+
+
+
+_install_researchEngine-MSWindows() {
+
+	_messageNormal 'Test: Docker'
+	docker run hello-world
+
+
+	_messageNormal 'Installing augment and developer help models.'
+	"$scriptAbsoluteLocation" _setup_ollama
+	#"$scriptAbsoluteLocation" _setup_ollama_model_augment_sequence
+	"$scriptAbsoluteLocation" _setup_ollama_model_dev_sequence
+
+	_messageNormal 'Installing authentication of optional inference servers.'
+	# May be placeholders. Inference servers to use, etc.
+	mkdir -p /cygdrive/c/core/data/certs
+	cp -f /cygdrive/c/core/infrastructure/extendedInterface/_lib/ubiquitous_bash/_lib/kit/app/researchEngine/kit/certs/*.crt /cygdrive/c/core/data/certs/
+
+
+	_messageNormal 'Installing SearXNG.'
+	# Install SearXNG (much more powerful search engine)
+
+
+	_messagePlain_nominal 'Install SearXNG: pull docker container'
+
+	# https://en.wikipedia.org/wiki/SearXNG
+
+	mkdir -p /cygdrive/c/core/data/searxng
+
+	#(
+		#cd /cygdrive/c/core/data/searxng
+		#_fetch_searxng-config_settings './settings.yml'
+		#cp -f /cygdrive/c/core/infrastructure/extendedInterface/_lib/ubiquitous_bash/_lib/kit/app/researchEngine/_import/etc--searxng/settings.yml.patch
+		#cd
+	#)
+
+	docker rm -f searxng
+
+	docker pull searxng/searxng:latest
+	
+	docker run -d -p 127.0.0.1:8080:8080 -v /c/core/data/searxng:/etc/searxng --name searxng --restart always searxng/searxng:latest
+
+	sleep 120
+
+	docker stop searxng
+
+	sleep 45
+
+	(
+		_messagePlain_nominal 'Install SearXNG: default settings.yml'
+
+		cd /cygdrive/c/core/data/searxng
+
+		[[ -e ./settings.yml ]] && cp -f ./settings.yml ./settings.yml.bak_$(_uid)
+
+		_fetch_searxng-config_settings './settings.yml'
+		cp -f /cygdrive/c/core/infrastructure/extendedInterface/_lib/ubiquitous_bash/_lib/kit/app/researchEngine/_import/etc--searxng/settings.yml.patch /cygdrive/c/core/data/searxng/settings.yml.patch
+
+		rm -f settings.yml.rej
+		if [[ -e ./settings.yml.patch ]] && yes | patch -p1 ./settings.yml "$kit_dir_researchEngine"/_import/etc--searxng/settings.yml.patch && [[ ! -e ./settings.yml.rej ]]
+		then
+			_messagePlain_good 'patch: success: patch exit status'
+		elif [[ -e ./settings.yml.rej ]]
+		then
+			_messagePlain_bad 'patch: fail: present: rej file'
+			docker rm -f searxng
+			#_messageError 'FAIL'
+			_messageFAIL
+		else
+			if ! [[ -e ./settings.yml.patch ]]
+			then
+			_messagePlain_bad 'patch: fail: missing: patch file'
+			docker rm -f searxng
+			_messageFAIL
+			fi
+			_messagePlain_bad 'patch: fail: patch exit status'
+			docker rm -f searxng
+			_messageFAIL
+		fi
+		cd
+	)
+
+	_messagePlain_nominal 'Install SearXNG: restart docker container'
+	docker restart searxng
+
+
+
+
+	_messageNormal 'Installing OpenWebUI.'
+
+	# https://docs.openwebui.com/getting-started/quick-start
+	# https://openwebui.com/
+	# https://github.com/open-webui
+
+	mkdir -p /cygdrive/c/core/data/openwebui
+
+	docker rm -f open-webui
+
+	# TODO: Attempt to pull from 'ingredients'.
+	#_set_ingredients
+
+	if [[ "$ub_researchEngine_nvidia" != "true" ]]
+	then
+		docker pull ghcr.io/open-webui/open-webui:main
+
+		rm -f /cygdrive/c/core/data/openwebui/._run.sh
+		{
+			echo '#!/usr/bin/env bash'
+			echo 'set -e'
+			echo 'update-ca-certificates'
+			echo 'exec "$@"'
+		} >> /cygdrive/c/core/data/openwebui/._run.sh
+		chmod +x /cygdrive/c/core/data/openwebui/._run.sh
+		
+		local entrypoint cmd workdir
+		entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
+		cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
+		workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
+		echo '[ -n '"$workdir"' ] && cd '"$workdir" >> /cygdrive/c/core/data/openwebui/._run.sh
+		echo "exec ${entrypoint} ${cmd}" >> /cygdrive/c/core/data/openwebui/._run.sh
+		
+		type dos2unix > /dev/null 2>&1 && dos2unix /cygdrive/c/core/data/openwebui/._run.sh
+		
+		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui/._run.sh
+
+		#--entrypoint "/app/backend/data/._run.sh"
+		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	fi
+
+	if [[ "$ub_researchEngine_nvidia" == "true" ]]
+	then
+		docker pull ghcr.io/open-webui/open-webui:cuda
+	
+		rm -f /cygdrive/c/core/data/openwebui/._run.sh
+		{
+			echo '#!/usr/bin/env bash'
+			echo 'set -e'
+			echo 'update-ca-certificates'
+			echo 'exec "$@"'
+		} >> /cygdrive/c/core/data/openwebui/._run.sh
+		chmod +x /cygdrive/c/core/data/openwebui/._run.sh
+		
+		local entrypoint cmd workdir
+		entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:cuda)
+		cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:cuda)
+		workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:cuda)
+		echo '[ -n '"$workdir"' ] && cd '"$workdir" >> /cygdrive/c/core/data/openwebui/._run.sh
+		echo "exec ${entrypoint} ${cmd}" >> /cygdrive/c/core/data/openwebui/._run.sh
+		
+		type dos2unix > /dev/null 2>&1 && dos2unix /cygdrive/c/core/data/openwebui/._run.sh
+
+
+		if _if_cygwin
+		then
+			# ATTRIBUTION-AI: ChatGPT o3  Deep Research  2025-05-28 .
+			#wsl -d docker-desktop sysctl -w net.core.bpf_jit_harden=1
+			wsl -d docker-desktop sh -c "echo 'net.core.bpf_jit_harden=1' > /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf"
+			#wsl -d docker-desktop sysctl --system
+			wsl -d docker-desktop sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+
+			# ATTRIBUTION-AI: ChatGPT o3  2025-05-28 .
+			if _if_cygwin && ! wsl -d docker-desktop --user root cat /etc/wsl.conf | grep 'bpf_jit_harden' > /dev/null 2>&1
+			then
+			wsl -d docker-desktop --user root tee -a /etc/wsl.conf <<'EOF'
+[boot]
+command = /sbin/sysctl -w net.core.bpf_jit_harden=1
+EOF
+			fi
+
+			true
+		fi
+		if ! _if_cygwin
+		then
+			#echo 'net.core.bpf_jit_harden=1' | sudo -n tee /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf > /dev/null
+			##sudo -n sysctl --system
+			#sudo -n sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+			true
+		fi
+
+		
+		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui/._run.sh
+
+		#--entrypoint "/app/backend/data/._run.sh"
+		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+	fi
+
+	_messageNormal 'good: DONE'
+	sleep 3
+}
+
+_install_researchEngine-MSWindows-nvidia() {
+	local ub_researchEngine_nvidia=true
+	_install_researchEngine-MSWindows "$@"
+}
+

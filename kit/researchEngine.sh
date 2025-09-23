@@ -1015,6 +1015,121 @@ EOF
 
 
 
+
+
+
+
+
+
+	# Not recommended. Not much difference between this and single-user.
+	if false
+	then
+
+	_messageNormal 'Installing OpenWebUI - multi-user.'
+
+	# https://docs.openwebui.com/getting-started/quick-start
+	# https://openwebui.com/
+	# https://github.com/open-webui
+
+	mkdir -p /cygdrive/c/core/data/openwebui-multiuser
+
+	docker rm -f open-webui-multiuser
+
+	# TODO: Attempt to pull from 'ingredients'.
+	#_set_ingredients
+
+	if [[ "$ub_researchEngine_nvidia" != "true" ]]
+	then
+		docker pull ghcr.io/open-webui/open-webui:main
+
+		rm -f /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		{
+			echo '#!/usr/bin/env bash'
+			echo 'set -e'
+			echo 'update-ca-certificates'
+			echo 'exec "$@"'
+		} >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		chmod +x /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		
+		local entrypoint cmd workdir
+		entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
+		cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
+		workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
+		echo '[ -n '"$workdir"' ] && cd '"$workdir" >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		echo "exec ${entrypoint} ${cmd}" >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		
+		type dos2unix > /dev/null 2>&1 && dos2unix /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		
+		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+
+		#--entrypoint "/app/backend/data/._run.sh"
+		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	fi
+
+	if [[ "$ub_researchEngine_nvidia" == "true" ]]
+	then
+		docker pull ghcr.io/open-webui/open-webui:cuda
+	
+		rm -f /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		{
+			echo '#!/usr/bin/env bash'
+			echo 'set -e'
+			echo 'update-ca-certificates'
+			echo 'exec "$@"'
+		} >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		chmod +x /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		
+		local entrypoint cmd workdir
+		entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:cuda)
+		cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:cuda)
+		workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:cuda)
+		echo '[ -n '"$workdir"' ] && cd '"$workdir" >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		echo "exec ${entrypoint} ${cmd}" >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+		
+		type dos2unix > /dev/null 2>&1 && dos2unix /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+
+
+		if _if_cygwin
+		then
+			# ATTRIBUTION-AI: ChatGPT o3  Deep Research  2025-05-28 .
+			#wsl -d docker-desktop sysctl -w net.core.bpf_jit_harden=1
+			wsl -d docker-desktop sh -c "echo 'net.core.bpf_jit_harden=1' > /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf"
+			#wsl -d docker-desktop sysctl --system
+			wsl -d docker-desktop sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+
+			# ATTRIBUTION-AI: ChatGPT o3  2025-05-28 .
+			if _if_cygwin && ! wsl -d docker-desktop --user root cat /etc/wsl.conf | grep 'bpf_jit_harden' > /dev/null 2>&1
+			then
+			wsl -d docker-desktop --user root tee -a /etc/wsl.conf <<'EOF'
+[boot]
+command = /sbin/sysctl -w net.core.bpf_jit_harden=1
+EOF
+			fi
+
+			true
+		fi
+		if ! _if_cygwin
+		then
+			#echo 'net.core.bpf_jit_harden=1' | sudo -n tee /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf > /dev/null
+			##sudo -n sysctl --system
+			#sudo -n sysctl -p /etc/sysctl.d/99-nvidia-workaround-bpf_jit_harden.conf
+			true
+		fi
+
+		
+		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
+
+		#--entrypoint "/app/backend/data/._run.sh"
+		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+	fi
+
+	fi
+
+
+
+
+
+
 	# Not recommended. 'AnythingLLM' does not apparently easily offer:
 	# - Model-specific steps in agent flows.
 	# - Showing which model responded in a chat.

@@ -1009,6 +1009,67 @@ EOF
 		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 	fi
 
+
+
+
+
+
+
+	# Not recommended. 'AnythingLLM' does not apparently easily offer:
+	# - Model-specific steps in agent flows.
+	# - Showing which model responded in a chat.
+	# - ChatGPT/OpenAI API o3-deep-research with web search, etc.
+
+	# https://docs.anythingllm.com/installation-docker/local-docker
+	# https://docs.anythingllm.com/installation-docker/overview
+	_messageNormal 'Installing AnythingLLM.'
+
+	mkdir -p /cygdrive/c/core/data/anythingllm
+
+	docker rm -f anythingllm
+
+	docker pull mintplexlabs/anythingllm
+
+	mkdir -p /cygdrive/c/core/data/anythingllm/certs
+	cat /cygdrive/c/core/data/certs/*.crt > /cygdrive/c/core/data/anythingllm/certs/extra-cas.pem
+
+	rm -f /cygdrive/c/core/data/anythingllm/._run.sh
+	{
+		echo '#!/usr/bin/env bash'
+		echo 'set -e'
+
+		echo 'export DISABLE_TELEMETRY=true'
+
+		echo '[ -f "$STORAGE_DIR/.env" ] || touch "$STORAGE_DIR/.env"'
+		echo 'ln -sf "$STORAGE_DIR/.env" /app/server/.env'
+
+		#echo 'update-ca-certificates'
+		#echo 'exec "$@"'
+	} >> /cygdrive/c/core/data/anythingllm/._run.sh
+	chmod +x /cygdrive/c/core/data/anythingllm/._run.sh
+	
+	local entrypoint cmd workdir
+	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' mintplexlabs/anythingllm)
+	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' mintplexlabs/anythingllm)
+	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' mintplexlabs/anythingllm)
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> /cygdrive/c/core/data/anythingllm/._run.sh
+	echo "exec ${entrypoint} ${cmd}" >> /cygdrive/c/core/data/anythingllm/._run.sh
+	
+	type dos2unix > /dev/null 2>&1 && dos2unix /cygdrive/c/core/data/anythingllm/._run.sh
+
+
+	touch "/cygdrive/c/core/data/anythingllm/.env"
+	! grep 'DISABLE_TELEMETRY' /cygdrive/c/core/data/anythingllm/.env > /dev/null 2>&1 && echo 'DISABLE_TELEMETRY=true' >> /cygdrive/c/core/data/anythingllm/.env
+	
+	#docker run -d -p 3001:3001 --cap-add SYS_ADMIN -v /cygdrive/c/core/data/anythingllm:/app/server/storage -v /cygdrive/c/core/data/anythingllm/.env:/app/server/.env -e STORAGE_DIR="/app/server/storage" mintplexlabs/anythingllm
+
+	#--gpus all
+	#--entrypoint "/app/server/storage/._run.sh" mintplexlabs/anythingllm
+	#mintplexlabs/anythingllm
+	#-v /cygdrive/c/core/data/anythingllm/.env:/app/server/.env
+	docker run -d -p 127.0.0.1:3001:3001 --cap-add SYS_ADMIN -v /c/core/data/anythingllm:/app/server/storage -e STORAGE_DIR="/app/server/storage" -e NODE_EXTRA_CA_CERTS="/app/server/storage/certs/extra-cas.pem" -e OPENAI_API_KEY="$OPENAI_API_KEY" -e OLLAMA_NOHISTORY=true -e DISABLE_TELEMETRY=true --add-host=host.docker.internal:host-gateway -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name anythingllm --restart always --entrypoint "/app/server/storage/._run.sh" mintplexlabs/anythingllm
+
+
 	_messageNormal 'good: DONE'
 	sleep 3
 }

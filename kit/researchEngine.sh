@@ -1019,6 +1019,8 @@ EOF
 	# - Model-specific steps in agent flows.
 	# - Showing which model responded in a chat.
 	# - ChatGPT/OpenAI API o3-deep-research with web search, etc.
+	if false
+	then
 
 	# https://docs.anythingllm.com/installation-docker/local-docker
 	# https://docs.anythingllm.com/installation-docker/overview
@@ -1068,6 +1070,8 @@ EOF
 	#mintplexlabs/anythingllm
 	#-v /cygdrive/c/core/data/anythingllm/.env:/app/server/.env
 	docker run -d -p 127.0.0.1:3001:3001 --cap-add SYS_ADMIN -v /c/core/data/anythingllm:/app/server/storage -e STORAGE_DIR="/app/server/storage" -e NODE_EXTRA_CA_CERTS="/app/server/storage/certs/extra-cas.pem" -e OPENAI_API_KEY="$OPENAI_API_KEY" -e OLLAMA_NOHISTORY=true -e DISABLE_TELEMETRY=true --add-host=host.docker.internal:host-gateway -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name anythingllm --restart always --entrypoint "/app/server/storage/._run.sh" mintplexlabs/anythingllm
+
+	fi
 
 
 	_messageNormal 'good: DONE'

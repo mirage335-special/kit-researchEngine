@@ -49,11 +49,15 @@ class Pipe:
     def __init__(self):
         self.valves = self.Valves()
         self.openai_response_models = [
+            "o3-pro",
             "o1-pro",
             "gpt-4.5-preview",
             "o1",
             "chatgpt-4o-latest",
             "o3-mini",
+            "o3-deep-research",
+            "o4-mini-deep-research",
+            "gpt-5",
         ]
         self.not_supported_efforts_models = ["chatgpt-4o-latest", "gpt-4.5-preview"]
 

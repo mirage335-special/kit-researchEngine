@@ -11,7 +11,11 @@
 # https://github.com/jrkropp/open-webui-developer-toolkit/blob/main/LICENSE
 # https://github.com/jrkropp/open-webui-developer-toolkit/blob/alpha-preview/LICENSE
 #
-# Not regarded as essential.
+# Not regarded as essential for local model use.
+# Increasingly regarded as essential for use of OpenWebUI, especially with external models.
+
+
+# https://github.com/jrkropp/open-webui-developer-toolkit/blob/alpha-preview/functions/pipes/openai_responses_manifold/openai_responses_manifold.py
 
 
 """
@@ -22,7 +26,7 @@ author_url: https://github.com/jrkropp
 git_url: https://github.com/jrkropp/open-webui-developer-toolkit/blob/main/functions/pipes/openai_responses_manifold/openai_responses_manifold.py
 description: Brings OpenAI Response API support to Open WebUI, enabling features not possible via Completions API.
 required_open_webui_version: 0.6.3
-version: 0.8.17
+version: 0.9.3
 license: MIT
 """
 
@@ -58,6 +62,7 @@ from typing import (
     Optional,
     Union,
 )
+from urllib.parse import urlparse
 
 # Third-party imports
 import aiohttp
@@ -67,79 +72,170 @@ from pydantic import BaseModel, Field, model_validator
 # Open WebUI internals
 from open_webui.models.chats import Chats
 from open_webui.models.models import ModelForm, Models
+from open_webui.utils.misc import get_last_user_message
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. Constants & Global Configuration
 # ─────────────────────────────────────────────────────────────────────────────
-# Feature flags and other module level constants
-FEATURE_SUPPORT = {
-    "web_search_tool": {
-        "gpt-4.1",
-        "gpt-4.1-mini",
-        "gpt-4o",
-        "gpt-4o-mini",
-        "o3",
-        "o3-pro",
-        "o4-mini",
-        "o3-deep-research",
-        "o4-mini-deep-research",
-        "gpt-5",
-    },  # OpenAI's built-in web search tool.
-    "image_gen_tool": {
-        "gpt-4.1",
-        "gpt-4.1-mini",
-        "gpt-4o",
-        "gpt-4o-mini",
-        "gpt-4.1-nano",
-        "o3",
-        "gpt-5",
-    },  # OpenAI's built-in image generation tool.
-    "function_calling": {
-        "gpt-4.1",
-        "gpt-4.1-mini",
-        "gpt-4o",
-        "gpt-4o-mini",
-        "gpt-4.1-nano",
-        "o3",
-        "o4-mini",
-        "o3-mini",
-        "o3-pro",
-        "o3-deep-research",
-        "o4-mini-deep-research",
-        "gpt-5",
-    },  # OpenAI's native function calling support.
-    "reasoning": {
-        "o3",
-        "o4-mini",
-        "o3-mini",
-        "o3-pro",
-        "o3-deep-research",
-        "o4-mini-deep-research",
-        "gpt-5",
-    },  # OpenAI's reasoning models.
-    "reasoning_summary": {
-        "o3",
-        "o4-mini",
-        "o4-mini-high",
-        "o3-mini",
-        "o3-mini-high",
-        "o3-pro",
-        "o3-deep-research",
-        "o4-mini-deep-research",
-        "gpt-5",
-    },  # OpenAI's reasoning summary feature.  May require OpenAI org verification before use.
-    # NOTE: Deep Research models are not yet supported in pipe.  Work in-progress.
-    "deep_research": {
-        "o3-deep-research",
-        "o4-mini-deep-research",
-        "gpt-5-deep-research",
-    },  # OpenAI's deep research models.
-}
+class ModelFamily:
+    """One place for base capabilities + alias mapping (with effort defaults)."""
 
-DETAILS_RE = re.compile(
-    r"<details\b[^>]*>.*?</details>|!\[.*?]\(.*?\)",
-    re.S | re.I,
-)
+    _DATE_RE = re.compile(r"-\d{4}-\d{2}-\d{2}$")
+    _PREFIX = "openai_responses."
+
+    # Base models → capabilities.
+    _SPECS: Dict[str, Dict[str, Any]] = {
+        "gpt-5-auto": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "web_search_tool",
+                "image_gen_tool",
+                "verbosity",
+            }
+        },
+        "gpt-5": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "web_search_tool",
+                "image_gen_tool",
+                "verbosity",
+            }
+        },
+        "gpt-5-mini": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "image_gen_tool",
+                "verbosity",
+            }
+        },
+        "gpt-5-nano": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "image_gen_tool",
+                "verbosity",
+            }
+        },
+        "gpt-4.1": {
+            "features": {"function_calling", "web_search_tool", "image_gen_tool"}
+        },
+        "gpt-4.1-mini": {
+            "features": {"function_calling", "web_search_tool", "image_gen_tool"}
+        },
+        "gpt-4.1-nano": {"features": {"function_calling", "image_gen_tool"}},
+        "gpt-4o": {
+            "features": {"function_calling", "web_search_tool", "image_gen_tool"}
+        },
+        "gpt-4o-mini": {
+            "features": {"function_calling", "web_search_tool", "image_gen_tool"}
+        },
+        "o3": {"features": {"function_calling", "reasoning", "reasoning_summary"}},
+        "o3-mini": {"features": {"function_calling", "reasoning", "reasoning_summary"}},
+        "o3-pro": {"features": {"function_calling", "reasoning"}},
+        "o4-mini": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "web_search_tool",
+            }
+        },
+        "o3-deep-research": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "deep_research",
+            }
+        },
+        "o4-mini-deep-research": {
+            "features": {
+                "function_calling",
+                "reasoning",
+                "reasoning_summary",
+                "deep_research",
+            }
+        },
+        "gpt-5-chat-latest": {"features": {}},
+        "chatgpt-4o-latest": {"features": {}},
+    }
+
+    # Aliases/pseudos: keep base + implied params together.
+    # Note: params follow the CompletionsBody model and are later transformed to ResponsesBody format
+    _ALIASES: Dict[str, Dict[str, Any]] = {
+        "gpt-5-thinking": {"base": "gpt-5"},
+        "gpt-5-thinking-minimal": {
+            "base": "gpt-5",
+            "params": {"reasoning": {"effort": "minimal"}},
+        },
+        "gpt-5-thinking-high": {
+            "base": "gpt-5",
+            "params": {"reasoning": {"effort": "high"}},
+        },
+        "gpt-5-thinking-mini": {"base": "gpt-5-mini"},
+        "gpt-5-thinking-mini-minimal": {
+            "base": "gpt-5-mini",
+            "params": {"reasoning": {"effort": "minimal"}},
+        },
+        "gpt-5-thinking-nano": {"base": "gpt-5-nano"},
+        "gpt-5-thinking-nano-minimal": {
+            "base": "gpt-5-nano",
+            "params": {"reasoning": {"effort": "minimal"}},
+        },
+        # Back-compat
+        "o3-mini-high": {
+            "base": "o3-mini",
+            "params": {"reasoning": {"effort": "high"}},
+        },
+        "o4-mini-high": {
+            "base": "o4-mini",
+            "params": {"reasoning": {"effort": "high"}},
+        },
+        "gpt-5-main": {"base": "gpt-5"},
+        "gpt-5-main-mini": {"base": "gpt-5-mini"},
+        "gpt-5-thinking-pro": {
+            "base": "gpt-5",
+            "params": {"reasoning": {"effort": "high"}},
+        },
+    }
+
+    # ── tiny, intuitive helpers ──────────────────────────────────────────────
+    @classmethod
+    def _norm(cls, model_id: str) -> str:
+        m = (model_id or "").strip()
+        if m.startswith(cls._PREFIX):
+            m = m[len(cls._PREFIX) :]
+        return cls._DATE_RE.sub("", m.lower())
+
+    @classmethod
+    def base(cls, model_id: str) -> str:
+        """Canonical base id (aliases resolved; prefix/date stripped)."""
+        key = cls._norm(model_id)
+        base = cls._ALIASES.get(key, {}).get("base")
+        return cls._norm(base or key)
+
+    @classmethod
+    def params(cls, model_id: str) -> Dict[str, Any]:
+        """Alias-implied defaults (e.g., {'reasoning_effort':'high'}). Empty for base ids."""
+        key = cls._norm(model_id)
+        return dict(cls._ALIASES.get(key, {}).get("params", {}))
+
+    @classmethod
+    def features(cls, model_id: str) -> frozenset[str]:
+        """Capabilities for the base model behind this id/alias."""
+        return frozenset(cls._SPECS.get(cls.base(model_id), {}).get("features", set()))
+
+    @classmethod
+    def supports(cls, feature: str, model_id: str) -> bool:
+        return feature in cls.features(model_id)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -157,21 +253,6 @@ class CompletionsBody(BaseModel):
 
     class Config:
         extra = "allow"  # Pass through additional OpenAI parameters automatically
-
-    # Sanitize the ``model`` field after validation.
-    @model_validator(mode="after")
-    def normalize_model(self) -> "CompletionsBody":
-        """Normalize model: strip 'openai_responses.' prefix and map '-high' pseudo-models."""
-
-        # Strip prefix if present
-        self.model = self.model.removeprefix("openai_responses.")
-
-        # Normalize pseudo-model IDs
-        if self.model in {"o3-mini-high", "o4-mini-high"}:
-            self.model = self.model.removesuffix("-high")
-            self.reasoning_effort = "high"
-
-        return self
 
 
 class ResponsesBody(BaseModel):
@@ -203,95 +284,99 @@ class ResponsesBody(BaseModel):
     class Config:
         extra = "allow"  # Allow additional OpenAI parameters automatically (future-proofing)
 
-    @staticmethod
-    def transform_tools(
-        tools: dict | list | None = None,
-        *,
-        strict: bool = False,
-    ) -> list[dict]:
+    @model_validator(mode="after")
+    def _apply_alias_defaults(self) -> "ResponsesBody":
         """
-        Canonicalise any mixture of tool specs to the OpenAI Responses-API list.
+        Normalize the model ID to its base and apply alias defaults from ModelFamily.
 
-        • Accepts a WebUI __tools__ *dict* or a plain *list*.
-        • Flattens only:
-            - __tools__ entries  {"spec": {...}}
-            - Chat-Completions wrappers {"type":"function","function": {...}}
-        • Leaves every other tool (e.g. {"type":"web_search", …}) untouched.
-        • Duplicate keys:
-            - functions   → by *name*
-            - non-functions→ by *type*
-        later items win.
+        Example:
+            model="gpt-5-thinking-high" → model="gpt-5", reasoning={"effort": "high"}
         """
-        if not tools:
+        orig_model = self.model or ""
+        base_model = ModelFamily.base(orig_model)
+        alias_defaults = ModelFamily.params(orig_model) or {}
+
+        # No alias? keep as-is
+        if base_model == orig_model and not alias_defaults:
+            return self
+
+        # Work on a deep copy of current state
+        data = json.loads(self.model_dump_json(exclude_none=False))
+        data["model"] = base_model
+
+        def _deep_overlay(dst: dict, src: dict) -> dict:
+            for k, v in src.items():
+                if isinstance(v, dict):
+                    node = dst.get(k)
+                    if isinstance(node, dict):
+                        _deep_overlay(node, v)
+                    else:
+                        dst[k] = json.loads(json.dumps(v))  # deep copy
+                elif isinstance(v, list):
+                    cur = dst.get(k)
+                    if isinstance(cur, list):
+                        seen = set()
+                        out = []
+
+                        def _key(x):
+                            try:
+                                return ("json", json.dumps(x, sort_keys=True))
+                            except Exception:
+                                return ("id", id(x))
+
+                        for item in cur + v:
+                            kk = _key(item)
+                            if kk not in seen:
+                                seen.add(kk)
+                                out.append(item)
+                        dst[k] = out
+                    else:
+                        dst[k] = list(v)
+                else:
+                    dst[k] = v
+            return dst
+
+        if alias_defaults:
+            _deep_overlay(data, alias_defaults)
+
+        # Write merged data back onto the model
+        for k, v in data.items():
+            setattr(self, k, v)
+        return self
+
+    @staticmethod
+    def transform_owui_tools(
+        __tools__: Dict[str, dict] | None, *, strict: bool = False
+    ) -> List[dict]:
+        """
+        Convert Open WebUI __tools__ registry (dict of entries with {"spec": {...}}) into
+        OpenAI Responses-API tool specs: {"type": "function", "name", ...}.
+
+        """
+        if not __tools__:
             return []
 
-        # 1. normalise input to an iterable of dicts -----------------------
-        iterable = tools.values() if isinstance(tools, dict) else tools
+        tools: List[dict] = []
+        for item in __tools__.values():
+            spec = item.get("spec") or {}
+            name = spec.get("name")
+            if not name:
+                continue  # skip malformed entries
 
-        native, converted = [], []
+            params = spec.get("parameters") or {"type": "object", "properties": {}}
 
-        for item in iterable:
-            if not isinstance(item, dict):
-                continue
-
-            # a) __tools__ entry
-            if "spec" in item:
-                spec = item["spec"]
-                if isinstance(spec, dict):
-                    converted.append(
-                        {
-                            "type": "function",
-                            "name": spec.get("name", ""),
-                            "description": spec.get("description", ""),
-                            "parameters": spec.get("parameters", {}),
-                        }
-                    )
-                continue
-
-            # b) Chat-Completions wrapper
-            if item.get("type") == "function" and "function" in item:
-                fn = item["function"]
-                if isinstance(fn, dict):
-                    converted.append(
-                        {
-                            "type": "function",
-                            "name": fn.get("name", ""),
-                            "description": fn.get("description", ""),
-                            "parameters": fn.get("parameters", {}),
-                        }
-                    )
-                continue
-
-            # c) Anything else (including web_search) → keep verbatim
-            native.append(dict(item))
-
-        # 2. strict-mode hardening for the bits we just converted ----------
-        if strict:
-            for tool in converted:
-                params = tool.setdefault("parameters", {})
-                props = params.setdefault("properties", {})
-                params["required"] = list(props)
-                params["additionalProperties"] = False
-                for schema in props.values():
-                    t = schema.get("type")
-                    schema["type"] = (
-                        [t, "null"]
-                        if isinstance(t, str)
-                        else (
-                            t + ["null"]
-                            if isinstance(t, list) and "null" not in t
-                            else t
-                        )
-                    )
+            tool = {
+                "type": "function",
+                "name": name,
+                "description": spec.get("description") or name,
+                "parameters": _strictify_schema(params) if strict else params,
+            }
+            if strict:
                 tool["strict"] = True
 
-        # 3. deduplicate ---------------------------------------------------
-        canonical: dict[str, dict] = {}
-        for t in native + converted:  # later wins
-            key = t["name"] if t.get("type") == "function" else t["type"]
-            canonical[key] = t
+            tools.append(tool)
 
-        return list(canonical.values())
+        return tools
 
     # -----------------------------------------------------------------------
     # Helper: turn the JSON string into valid MCP tool dicts
@@ -359,24 +444,24 @@ class ResponsesBody(BaseModel):
         """
         Build an OpenAI Responses-API `input` array from Open WebUI-style messages.
 
-        If `chat_id` and `openwebui_model_id` is provided AND messages contain empty-link
-        encoded item references, the function looks up the persisted items from database
-        and embeds them in the correct order.
+        Parameters `chat_id` and `openwebui_model_id` are optional. When both are
+        supplied and the messages contain empty-link encoded item references, the
+        function fetches persisted items from the database and injects them in the
+        correct order. When either parameter is missing, the messages are simply
+        converted without attempting to fetch persisted items.
 
         Returns
         -------
         List[dict] : The fully-formed `input` list for the OpenAI Responses API.
         """
-
-        if (chat_id is None) != (openwebui_model_id is None):
-            raise ValueError(
-                "If either 'chat_id' or 'openwebui_model_id' is provided, both must be specified."
-            )
+        DETAILS_RE = re.compile(
+            r"<details\b[^>]*>.*?</details>|!\[.*?]\(.*?\)", re.S | re.I
+        )
 
         required_item_ids: set[str] = set()
 
-        # Gather all markers from assistant messages (if chat_id is provided)
-        if chat_id:
+        # Gather all markers from assistant messages (if both IDs are provided)
+        if chat_id and openwebui_model_id:
             for m in messages:
                 if (
                     m.get("role") == "assistant"
@@ -386,9 +471,9 @@ class ResponsesBody(BaseModel):
                     for mk in extract_markers(m["content"], parsed=True):
                         required_item_ids.add(mk["ulid"])
 
-        # Fetch persisted items if chat_id is provided and there are encoded item IDs
+        # Fetch persisted items if both IDs are provided and there are encoded item IDs
         items_lookup: dict[str, dict] = {}
-        if chat_id and required_item_ids:
+        if chat_id and openwebui_model_id and required_item_ids:
             items_lookup = fetch_openai_response_items(
                 chat_id,
                 list(required_item_ids),
@@ -460,12 +545,8 @@ class ResponsesBody(BaseModel):
                     if segment["type"] == "marker":
                         mk = parse_marker(segment["marker"])
                         item = items_lookup.get(mk["ulid"])
-                        if item:
+                        if item is not None:
                             openai_input.append(item)
-                        else:
-                            logging.warning(
-                                f"Missing persisted item for ID: {mk['ulid']}"
-                            )
                     elif segment["type"] == "text" and segment["text"].strip():
                         openai_input.append(
                             {
@@ -529,6 +610,9 @@ class ResponsesBody(BaseModel):
             # Fields that are dropped and manually handled in step 2.
             "reasoning_effort",
             "max_tokens",
+            # Fields that are dropped and manually handled later in the pipe()
+            "tools",
+            "extra_tools",  # Not a real OpenAI parm,. Upstream filters may use it to add tools. The are appended to body["tools"] later in the pipe()
         }
         sanitized_params = {}
         for key, value in completions_dict.items():
@@ -584,6 +668,7 @@ class ResponsesBody(BaseModel):
 class Pipe:
     # 4.1 Configuration Schemas
     class Valves(BaseModel):
+        # Connection & Auth
         BASE_URL: str = Field(
             default=(
                 (os.getenv("OPENAI_API_BASE_URL") or "").strip()
@@ -595,14 +680,65 @@ class Pipe:
             default=(os.getenv("OPENAI_API_KEY") or "").strip() or "sk-xxxxx",
             description="Your OpenAI API key. Defaults to the value of the OPENAI_API_KEY environment variable.",
         )
+
+        # Models
         MODEL_ID: str = Field(
-            default="gpt-4.1, gpt-4o",
-            description="Comma separated OpenAI model IDs. Each ID becomes a model entry in WebUI. Supports the pseudo models 'o3-mini-high' and 'o4-mini-high', which map to 'o3-mini' and 'o4-mini' with reasoning effort forced to high.",
+            default="gpt-5-auto, gpt-5-chat-latest, gpt-5-thinking, gpt-5-thinking-high, gpt-5-thinking-minimal, gpt-4.1-nano, chatgpt-4o-latest, o3, gpt-4o",
+            description=(
+                "Comma separated OpenAI model IDs. Each ID becomes a model entry in WebUI. "
+                "Supports all official OpenAI model IDs and pseudo IDs (see README.md for full list)."
+            ),
         )
-        ENABLE_REASONING_SUMMARY: Literal["auto", "concise", "detailed", None] = Field(
+
+        # Reasoning & summaries
+        REASONING_SUMMARY: Literal["auto", "concise", "detailed", "disabled"] = Field(
+            default="disabled",
+            description="REQUIRES VERIFIED OPENAI ORG. Visible reasoning summary (auto | concise | detailed | disabled). Works on gpt-5, o3, o4-mini; ignored otherwise. Docs: https://platform.openai.com/docs/api-reference/responses/create#responses-create-reasoning",
+        )
+        PERSIST_REASONING_TOKENS: Literal["response", "conversation", "disabled"] = (
+            Field(
+                default="disabled",
+                description="REQUIRES VERIFIED OPENAI ORG. If verified, highly recommend using 'response' or 'conversation' for best results. If `disabled` (default) = never request encrypted reasoning tokens; if `response` = request tokens so the model can carry reasoning across tool calls for the current response; If `conversation` = also persist tokens for future messages in this chat (higher token usage; quality may vary).",
+            )
+        )
+
+        # Tool execution behavior
+        PERSIST_TOOL_RESULTS: bool = Field(
+            default=True,
+            description="Persist tool call results across conversation turns. When disabled, tool results are not stored in the chat history.",
+        )
+
+        PARALLEL_TOOL_CALLS: bool = Field(
+            default=True,
+            description="Whether tool calls can be parallelized. Defaults to True if not set. Read more: https://platform.openai.com/docs/api-reference/responses/create#responses-create-parallel_tool_calls",
+        )
+        ENABLE_STRICT_TOOL_CALLING: bool = Field(
+            default=True,
+            description=(
+                "When True, converts Open WebUI registry tools to strict JSON Schema for OpenAI tools, "
+                "enforcing explicit types, required fields, and disallowing additionalProperties."
+            ),
+        )
+        MAX_TOOL_CALLS: Optional[int] = Field(
             default=None,
-            description="Reasoning summary style for o-series models (supported by: o3, o4-mini). Ignored for unsupported models. Read more: https://platform.openai.com/docs/api-reference/responses/create#responses-create-reasoning",
+            description=(
+                "Maximum number of individual tool or function calls the model can make "
+                "within a single response. Applies to the total number of calls across "
+                "all built-in tools. Further tool-call attempts beyond this limit will be ignored."
+            ),
         )
+        MAX_FUNCTION_CALL_LOOPS: int = Field(
+            default=10,
+            description=(
+                "Maximum number of full execution cycles (loops) allowed per request. "
+                "Each loop involves the model generating one or more function/tool calls, "
+                "executing all requested functions, and feeding the results back into the model. "
+                "Looping stops when this limit is reached or when the model no longer requests "
+                "additional tool or function calls."
+            ),
+        )
+
+        # Web search
         ENABLE_WEB_SEARCH_TOOL: bool = Field(
             default=False,
             description="Enable OpenAI's built-in 'web_search_preview' tool when supported (gpt-4.1, gpt-4.1-mini, gpt-4o, gpt-4o-mini, o3, o4-mini, o4-mini-high).  NOTE: This appears to disable parallel tool calling. Read more: https://platform.openai.com/docs/guides/tools-web-search?api-mode=responses",
@@ -615,36 +751,8 @@ class Pipe:
             default=None,
             description='User location for web search context. Leave blank to disable. Must be in valid JSON format according to OpenAI spec.  E.g., {"type": "approximate","country": "US","city": "San Francisco","region": "CA"}.',
         )
-        PARALLEL_TOOL_CALLS: bool = Field(
-            default=True,
-            description="Whether tool calls can be parallelized. Defaults to True if not set. Read more: https://platform.openai.com/docs/api-reference/responses/create#responses-create-parallel_tool_calls",
-        )
-        TRUNCATION: Literal["auto", "disabled"] = Field(
-            default="auto",
-            description="Truncation strategy for model responses. 'auto' drops middle context items if the conversation exceeds the context window; 'disabled' returns a 400 error instead.",
-        )
-        MAX_TOOL_CALLS: Optional[int] = Field(
-            default=None,
-            description=(
-                "Maximum number of individual tool or function calls the model can make "
-                "within a single response. Applies to the total number of calls across "
-                "all built-in tools. Further tool-call attempts beyond this limit will be ignored."
-            ),
-        )
-        MAX_FUNCTION_CALL_LOOPS: int = Field(
-            default=5,
-            description=(
-                "Maximum number of full execution cycles (loops) allowed per request. "
-                "Each loop involves the model generating one or more function/tool calls, "
-                "executing all requested functions, and feeding the results back into the model. "
-                "Looping stops when this limit is reached or when the model no longer requests "
-                "additional tool or function calls."
-            ),
-        )
-        PERSIST_TOOL_RESULTS: bool = Field(
-            default=True,
-            description="Persist tool call results across conversation turns. When disabled, tool results are not stored in the chat history.",
-        )
+
+        # Integrations
         REMOTE_MCP_SERVERS_JSON: Optional[str] = Field(
             default=None,
             description=(
@@ -657,14 +765,23 @@ class Pipe:
                 '[{"server_label":"deepwiki","server_url":"https://mcp.deepwiki.com/mcp","require_approval":"never","allowed_tools": ["ask_question"]}]'
             ),
         )
-        USER_ID_FIELD: Literal["id", "email"] = Field(
+
+        TRUNCATION: Literal["auto", "disabled"] = Field(
+            default="auto",
+            description="Truncation strategy for model responses. 'auto' drops middle context items if the conversation exceeds the context window; 'disabled' returns a 400 error instead.",
+        )
+
+        # Privacy & caching
+        PROMPT_CACHE_KEY: Literal["id", "email"] = Field(
             default="id",
             description=(
                 "Controls which user identifier is sent in the 'user' parameter to OpenAI. "
                 "Passing a unique identifier enables OpenAI response caching (improves speed and reduces cost). "
-                "Choose 'id' to use the OpenWebUI user ID (privacy-friendly), or 'email' to use the user's email address."
+                "Choose 'id' to use the OpenWebUI user ID (default; privacy-friendly), or 'email' to use the user's email address."
             ),
         )
+
+        # Logging
         LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = Field(
             default=os.getenv("GLOBAL_LOG_LEVEL", "INFO").upper(),
             description="Select logging level.  Recommend INFO or WARNING for production use. DEBUG is useful for development and debugging.",
@@ -725,19 +842,19 @@ class Pipe:
             "id", ""
         )  # Full model ID, e.g. "openai_responses.gpt-4o"
         user_identifier = __user__[
-            valves.USER_ID_FIELD
+            valves.PROMPT_CACHE_KEY
         ]  # Use 'id' or 'email' as configured
         features = __metadata__.get("features", {}).get(
             "openai_responses", {}
         )  # Custom location that this manifold uses to store feature flags
 
-        # Set up session logger with session_id and log level
+        # STEP 0: Set up session logger with session_id and log level
         SessionLogger.session_id.set(__metadata__.get("session_id", None))
         SessionLogger.log_level.set(
             getattr(logging, valves.LOG_LEVEL.upper(), logging.INFO)
         )
 
-        # Transform request body (Completions API -> Responses API).
+        # STEP 1: Transform request body (Completions API -> Responses API).
         completions_body = CompletionsBody.model_validate(body)
         responses_body = ResponsesBody.from_completions(
             completions_body=completions_body,
@@ -760,89 +877,123 @@ class Pipe:
             ),
         )
 
-        # Normalize to family-level model name (e.g., 'o3' from 'o3-2025-04-16') to be used for feature detection.
-        model_family = re.sub(r"-\d{4}-\d{2}-\d{2}$", "", responses_body.model)
-
-        # Detect if task model (generate title, generate tags, etc.), handle it separately
+        # STEP 2: Detect if task model (generate title, generate tags, etc.), handle it separately
         if __task__:
             self.logger.info("Detected task model: %s", __task__)
             return await self._run_task_model_request(
                 responses_body.model_dump(), valves
             )  # Placeholder for task handling logic
 
-        # Add Open WebUI Tools (if any) to the ResponsesBody.
-        # TODO: Also detect body['tools'] and merge them with __tools__.  This would allow users to pass tools in the request body from filters, etc.
-        if __tools__:
-            responses_body.tools = ResponsesBody.transform_tools(
-                tools=__tools__, strict=True
+        # STEP 3: Build OpenAI Tools JSON (from __tools__, valves, and completions_body.extra_tools)
+        __tools__ = (
+            await __tools__ if inspect.isawaitable(__tools__) else __tools__
+        )  # Await coroutine if needed (required for newer versions of Open WebUI)
+        tools = build_tools(
+            responses_body,
+            valves,
+            __tools__=__tools__,
+            features=features,
+            extra_tools=getattr(completions_body, "extra_tools", None),
+        )
+
+        # STEP 4: Auto-enable native function calling if tools are used but `native` function calling is not enabled in Open WebUI model settings.
+        if tools and ModelFamily.supports("function_calling", openwebui_model_id):
+            model = Models.get_model_by_id(openwebui_model_id)
+            if model:
+                params = dict(model.params or {})
+                if params.get("function_calling") != "native":
+                    await self._emit_notification(
+                        __event_emitter__,
+                        content=f"Enabling native function calling for model: {openwebui_model_id}. Please re-run your query.",
+                        level="info",
+                    )
+                    params["function_calling"] = "native"
+                    form_data = model.model_dump()
+                    form_data["params"] = params
+                    Models.update_model_by_id(
+                        openwebui_model_id, ModelForm(**form_data)
+                    )
+
+        # STEP 5: Handle GPT-5-Auto routing
+        if openwebui_model_id.endswith(".gpt-5-auto"):
+            responses_body = await self._route_gpt5_auto(
+                router_model="gpt-4.1-mini",
+                responses_body=responses_body,
+                tools=tools,
+                valves=valves,
+                event_emitter=__event_emitter__,
             )
 
-        # Add web_search tool, if supported and enabled.
-        if model_family in FEATURE_SUPPORT["web_search_tool"] and (
-            valves.ENABLE_WEB_SEARCH_TOOL or features.get("web_search", False)
-        ):
-            responses_body.tools = responses_body.tools or []
-            responses_body.tools.append(
-                {
-                    "type": "web_search_preview",
-                    "search_context_size": valves.WEB_SEARCH_CONTEXT_SIZE,
-                    **(
-                        {"user_location": json.loads(valves.WEB_SEARCH_USER_LOCATION)}
-                        if valves.WEB_SEARCH_USER_LOCATION
-                        else {}
-                    ),  # Consider using Open WebUI User's location if available instead.
-                }
-            )
+        # STEP 6: Add tools to responses body, if supported
+        if ModelFamily.supports("function_calling", responses_body.model):
+            responses_body.tools = tools
 
-        # Append remote MCP servers (experimental)
-        if valves.REMOTE_MCP_SERVERS_JSON:
-            mcp_tools = ResponsesBody._build_mcp_tools(valves.REMOTE_MCP_SERVERS_JSON)
-            if mcp_tools:
-                responses_body.tools = (responses_body.tools or []) + mcp_tools
-
-        # Check if tools are enabled but native function calling is disabled
-        # If so, update the OpenWebUI model parameter to enable native function calling for future requests.
-        if __tools__ and __metadata__.get("function_calling") != "native":
-            supports_function_calling = (
-                model_family in FEATURE_SUPPORT["function_calling"]
-            )
-
-            if supports_function_calling:
-                await self._emit_notification(
-                    __event_emitter__,
-                    content=f"Enabling native function calling for model: {responses_body.model}. Please re-run your query.",
-                    level="info",
-                )
-                update_openwebui_model_param(
-                    openwebui_model_id, "function_calling", "native"
-                )
-            else:
-                await self._emit_error(
-                    __event_emitter__,
-                    f"The selected model '{responses_body.model}' does not support tools. "
-                    f"Disable tools or choose a supported model (e.g., {', '.join(FEATURE_SUPPORT['function_calling'])}).",
-                )
-                return
-
-        # Enable reasoning summary, if supported and enabled
+        # STEP 7: Enable reasoning summary if enabled and supported
         if (
-            model_family in FEATURE_SUPPORT["reasoning_summary"]
-            and valves.ENABLE_REASONING_SUMMARY
+            ModelFamily.supports("reasoning_summary", responses_body.model)
+            and valves.REASONING_SUMMARY != "disabled"
         ):
-            responses_body.reasoning = responses_body.reasoning or {}
-            responses_body.reasoning["summary"] = valves.ENABLE_REASONING_SUMMARY
+            # Ensure reasoning param is a mutable dict so we can safely assign to it
+            reasoning_params = dict(responses_body.reasoning or {})
+            reasoning_params["summary"] = valves.REASONING_SUMMARY
+            responses_body.reasoning = reasoning_params
 
-        # Enable persistence of encrypted reasoning tokens, if supported and store=False
-        # TODO make this configurable via valves since some orgs might not be approved for encrypted content
-        # Note storing encrypted contents is only supported when store = False
+        # STEP 8: Always request encrypted reasoning for in-turn carry (multi-tool) unless disabled
         if (
-            model_family in FEATURE_SUPPORT["reasoning"]
+            ModelFamily.supports("reasoning", responses_body.model)
+            and valves.PERSIST_REASONING_TOKENS != "disabled"
             and responses_body.store is False
         ):
             responses_body.include = responses_body.include or []
-            responses_body.include.append("reasoning.encrypted_content")
+            if "reasoning.encrypted_content" not in responses_body.include:
+                responses_body.include.append("reasoning.encrypted_content")
 
-        # Log the transformed request body
+        # STEP 9: Map WebUI "Add Details" / "More Concise" → text.verbosity (if supported by model), then strip the stub
+        input_items = (
+            responses_body.input if isinstance(responses_body.input, list) else None
+        )
+        if input_items:
+            last_item = input_items[-1]
+            content_blocks = (
+                last_item.get("content") if last_item.get("role") == "user" else None
+            )
+            first_block = (
+                content_blocks[0]
+                if isinstance(content_blocks, list) and content_blocks
+                else {}
+            )
+            last_user_text = (first_block.get("text") or "").strip().lower()
+
+            directive_to_verbosity = {"add details": "high", "more concise": "low"}
+            verbosity_value = directive_to_verbosity.get(last_user_text)
+
+            if verbosity_value:
+                # Check model support
+                if ModelFamily.supports("verbosity", responses_body.model):
+                    # Set/overwrite verbosity (do NOT remove the stub message)
+                    current_text_params = dict(
+                        getattr(responses_body, "text", {}) or {}
+                    )
+                    current_text_params["verbosity"] = verbosity_value
+                    responses_body.text = current_text_params
+
+                    # Remove the stub user message so the model doesn't see it
+                    input_items.pop()  # or: del input_items[-1]
+
+                    # Notify the user in the UI
+                    await self._emit_notification(
+                        __event_emitter__,
+                        f"Regenerating with verbosity set to {verbosity_value}.",
+                        level="info",
+                    )
+
+                    self.logger.debug(
+                        "Set text.verbosity=%s based on regenerate directive '%s'",
+                        verbosity_value,
+                        last_user_text,
+                    )
+
+        # STEP 10: Log the transformed request body
         self.logger.debug(
             "Transformed ResponsesBody: %s",
             json.dumps(
@@ -852,7 +1003,7 @@ class Pipe:
             ),
         )
 
-        # Send to OpenAI Responses API
+        # STEP 11: Send to OpenAI Responses API
         if responses_body.stream:
             # Return async generator for partial text
             return await self._run_streaming_loop(
@@ -880,6 +1031,8 @@ class Pipe:
         openwebui_model = metadata.get("model", {}).get("id", "")
         assistant_message = ""
         total_usage: dict[str, Any] = {}
+        ordinal_by_url: dict[str, int] = {}
+        emitted_citations: list[dict] = []
 
         status_indicator = ExpandableStatusIndicator(
             event_emitter
@@ -888,14 +1041,26 @@ class Pipe:
 
         # Emit initial "thinking" block:
         # If reasoning model, write "Thinking…" to the expandable status emitter.
-        model_family = re.sub(r"-\d{4}-\d{2}-\d{2}$", "", body.model)
-        if model_family in FEATURE_SUPPORT["reasoning"]:
+        if ModelFamily.supports("reasoning", body.model):
             assistant_message = await status_indicator.add(
                 assistant_message,
                 status_title="Thinking…",
                 status_content="Reading the question and building a plan to answer it. This may take a moment.",
             )
 
+        model_router_result = getattr(body, "model_router_result", None)
+        if model_router_result:
+            delattr(body, "model_router_result")
+            model = model_router_result.get("model", "")
+            reasoning_effort = model_router_result.get("reasoning_effort", "")
+
+            assistant_message = await status_indicator.add(
+                assistant_message,
+                status_title=f"Routing to {model} (effort: {reasoning_effort})",
+                status_content=f"Explanation: {model_router_result.get('explanation', '')}",
+            )
+
+        # Send OpenAI Responses API request, parse and emit response
         try:
             for loop_idx in range(valves.MAX_FUNCTION_CALL_LOOPS):
                 final_response: dict[str, Any] | None = None
@@ -906,7 +1071,7 @@ class Pipe:
                 ):
                     etype = event.get("type")
 
-                    # efficienct check if debug logging is enabled. If so, log the event name
+                    # Efficient check if debug logging is enabled. If so, log the event name
                     if self.logger.isEnabledFor(logging.DEBUG):
                         self.logger.debug("Received event: %s", etype)
                         # if doesn't end in .delta, log the full event
@@ -916,6 +1081,7 @@ class Pipe:
                                 json.dumps(event, indent=2, ensure_ascii=False),
                             )
 
+                    # ─── Emit partial delta assistant message
                     if etype == "response.output_text.delta":
                         delta = event.get("delta", "")
                         if delta:
@@ -928,28 +1094,78 @@ class Pipe:
                             )
                         continue
 
-                    # Placeholder for annotation emitting
-                    # Note: If we emit annotation numbers (e.g., [1]), we will need to remove them before passing through the model as it will break caching.
-                    if etype == "response.output_text.annotation.added":
-                        continue
-
+                    # ─── Reasoning summary -> status indicator (done only) ───────────────────────
                     if etype == "response.reasoning_summary_text.done":
-                        text = event.get("text", "")
+                        text = (event.get("text") or "").strip()
                         if text:
-                            # Extract bolded title from the last pair of **...**
+                            # Use last bolded header as the title, else fallback
                             title_match = re.findall(r"\*\*(.+?)\*\*", text)
                             title = (
                                 title_match[-1].strip() if title_match else "Thinking…"
                             )
 
-                            # Remove bolded titles from the content to avoid duplication
+                            # Remove bold markers from body
                             content = re.sub(r"\*\*(.+?)\*\*", "", text).strip()
 
                             assistant_message = await status_indicator.add(
                                 assistant_message,
-                                status_title="🧠 " + title,
+                                status_title=f"🧠 {title}",
                                 status_content=content,
                             )
+                        continue
+
+                    # ─── Emit annotation
+                    if etype == "response.output_text.annotation.added":
+                        ann = event["annotation"]
+                        url = ann.get("url", "").removesuffix("?utm_source=openai")
+                        title = ann.get("title", "").strip()
+                        domain = urlparse(url).netloc.lower().lstrip("www.")
+
+                        # Have we already cited this URL?
+                        already_cited = url in ordinal_by_url
+
+                        if already_cited:
+                            # Reuse the original citation number
+                            citation_number = ordinal_by_url[url]
+                        else:
+                            # Assign next available number to this new citation URL
+                            citation_number = len(ordinal_by_url) + 1
+                            ordinal_by_url[url] = citation_number
+
+                            # Emit the citation event now, because it's new
+                            citation_payload = {
+                                "source": {"name": domain, "url": url},
+                                "document": [title],  # or snippet if you have it
+                                "metadata": [
+                                    {
+                                        "source": url,
+                                        "date_accessed": datetime.date.today().isoformat(),
+                                    }
+                                ],
+                            }
+                            await event_emitter(
+                                {"type": "source", "data": citation_payload}
+                            )
+                            emitted_citations.append(citation_payload)
+
+                        # Insert the citation marker into the message text
+                        assistant_message += f" [{citation_number}]"
+
+                        # Remove the markdown link originally printed by the model
+                        assistant_message = re.sub(
+                            rf"\(\s*\[\s*{re.escape(domain)}\s*\]\([^)]+\)\s*\)",
+                            " ",
+                            assistant_message,
+                            count=1,
+                        ).strip()
+
+                        # Send updated assistant message chunk to UI
+                        await event_emitter(
+                            {
+                                "type": "chat:message",
+                                "data": {"content": assistant_message},
+                            }
+                        )
                         continue
 
                     # ─── Emit status updates for in-progress items ──────────────────────
@@ -982,8 +1198,19 @@ class Pipe:
                         if item_type in ("message"):
                             continue
 
-                        # persist the item if it is not a message (function_call, reasoning, etc.)
-                        if valves.PERSIST_TOOL_RESULTS and item_type != "message":
+                        # Persist all non-message items.
+                        # If it's a reasoning item, only persist when PERSIST_REASONING_TOKENS is chat
+                        should_persist = False
+                        if item_type == "reasoning":
+                            should_persist = (
+                                valves.PERSIST_REASONING_TOKENS == "conversation"
+                            )  # Only persist reasoning when explicitly allowed for this turn
+                        elif item_type != "message":
+                            should_persist = (
+                                valves.PERSIST_TOOL_RESULTS
+                            )  # Persist all other non-message items (tool calls, web_search_call, etc.)
+
+                        if should_persist:
                             hidden_uid_marker = persist_openai_response_items(
                                 metadata.get("chat_id"),
                                 metadata.get("message_id"),
@@ -1013,7 +1240,9 @@ class Pipe:
                             args_formatted = ", ".join(
                                 f"{k}={json.dumps(v)}" for k, v in arguments.items()
                             )
-                            content = f"```python\n{item_name}({args_formatted})\n```"
+                            content = wrap_code_block(
+                                f"{item_name}({args_formatted})", "python"
+                            )
 
                         elif item_type == "web_search_call":
                             title = "🔍 Hmm, let me quickly check online…"
@@ -1055,9 +1284,12 @@ class Pipe:
 
                         continue
 
+                    # ─── Capture final response (incl. all non-visible items like reasoning tokens for future turns)
                     if etype == "response.completed":
                         final_response = event.get("response", {})
-                        body.input.extend(final_response.get("output", []))
+                        body.input.extend(
+                            final_response.get("output", [])
+                        )  # This includes all non-visible items (e.g. reasoning, web_search_call, tool calls, etc..) and appends to body.input so they are included in future turns (if any)
                         break
 
                 if final_response is None:
@@ -1065,6 +1297,7 @@ class Pipe:
                         "No final response received from OpenAI Responses API."
                     )
 
+                # Extract usage information from OpenAI response and pass-through to Open WebUI
                 usage = final_response.get("usage", {})
                 if usage:
                     usage["turn_count"] = 1
@@ -1078,6 +1311,7 @@ class Pipe:
                         event_emitter, content="", usage=total_usage, done=False
                     )
 
+                # Execute tool calls (if any), persist results (if valve enabled), and append to body.input.
                 calls = [
                     i for i in final_response["output"] if i["type"] == "function_call"
                 ]
@@ -1100,12 +1334,13 @@ class Pipe:
                                 }
                             )
 
-                    # Add status indicator with result
+                    # Add status indicator with sanitized result
                     for output in function_outputs:
+                        result_text = wrap_code_block(output.get("output", ""))
                         assistant_message = await status_indicator.add(
                             assistant_message,
                             status_title="🛠️ Received tool result",
-                            status_content=f"```python\n{output.get('output', '')}\n```",
+                            status_content=result_text,
                         )
                     body.input.extend(function_outputs)
                 else:
@@ -1143,6 +1378,13 @@ class Pipe:
             logs_by_msg_id.clear()
             SessionLogger.logs.pop(SessionLogger.session_id.get(), None)
 
+            chat_id = metadata.get("chat_id")
+            message_id = metadata.get("message_id")
+            if chat_id and message_id and emitted_citations:
+                Chats.upsert_message_to_chat_by_id_and_message_id(
+                    chat_id, message_id, {"sources": emitted_citations}
+                )
+
             # Return the final output to ensure persistence.
             return assistant_message
 
@@ -1179,8 +1421,7 @@ class Pipe:
         status_indicator = ExpandableStatusIndicator(event_emitter)
         status_indicator._done = False
 
-        model_family = re.sub(r"-\d{4}-\d{2}-\d{2}$", "", body.model)
-        if model_family in FEATURE_SUPPORT["reasoning"]:
+        if ModelFamily.supports("reasoning", body.model):
             assistant_message = await status_indicator.add(
                 assistant_message,
                 status_title="Thinking…",
@@ -1234,15 +1475,6 @@ class Pipe:
                         )
                         assistant_message += snippet
                         reasoning_map.clear()
-                        if valves.PERSIST_TOOL_RESULTS:
-                            hidden_uid_marker = persist_openai_response_items(
-                                metadata.get("chat_id"),
-                                metadata.get("message_id"),
-                                [item],
-                                metadata.get("model", {}).get("id"),
-                            )
-                            self.logger.debug("Persisted item: %s", hidden_uid_marker)
-                            assistant_message += hidden_uid_marker
 
                     else:
                         if valves.PERSIST_TOOL_RESULTS:
@@ -1264,7 +1496,10 @@ class Pipe:
                             args_formatted = ", ".join(
                                 f"{k}={json.dumps(v)}" for k, v in arguments.items()
                             )
-                            content = f"```python\n{item.get('name', 'unnamed_tool')}({args_formatted})\n```"
+                            content = wrap_code_block(
+                                f"{item.get('name', 'unnamed_tool')}({args_formatted})",
+                                "python",
+                            )
                         elif item_type == "web_search_call":
                             title = "🔍 Hmm, let me quickly check online…"
                             action = item.get("action", {})
@@ -1324,12 +1559,13 @@ class Pipe:
                         self.logger.debug("Persisted item: %s", hidden_uid_marker)
                         assistant_message += hidden_uid_marker
 
-                    # Add status indicator with result
+                    # Add status indicator with sanitized result
                     for output in function_outputs:
+                        result_text = wrap_code_block(output.get("output", ""))
                         assistant_message = await status_indicator.add(
                             assistant_message,
                             status_title="🛠️ Received tool result",
-                            status_content=f"```python\n{output.get('output', '')}\n```",
+                            status_content=result_text,
                         )
                     body.input.extend(function_outputs)
                 else:
@@ -1698,6 +1934,108 @@ class Pipe:
             {"type": "notification", "data": {"type": level, "content": content}}
         )
 
+    async def _route_gpt5_auto(
+        self,
+        router_model: str,
+        responses_body: ResponsesBody,
+        tools: list[dict[str, Any]],
+        valves: "Pipe.Valves",
+        event_emitter: Callable[[Dict[str, Any]], Awaitable[None]] | None = None,
+    ) -> ResponsesBody:
+        """Route using first output message only (assumes no tool events)."""
+
+        # --- keep your existing router_body UNCHANGED ---
+        router_body = {
+            "model": "gpt-5-mini",
+            "reasoning": {"effort": "minimal"},
+            "instructions": '# Role and Objective\nServe as a **routing helper** for selecting the most appropriate GPT-5 model for user messages, evaluating tool necessity and task complexity.\n\n---\n\n# Instructions\n- If a message may require the use of **any available tool**, select a model with **function calling** capabilities.\n- When tools are not necessary, favor the **fastest** or **most capable** model according to the complexity of the request.\n\n---\n\n# Available Models and Capabilities\n## Models\n\n- **gpt-5-chat-latest**\n  - Fast, general-purpose, and creative.\n  - Best for writing, drafting, and chat-based interactions.\n  - ⚠️ Does **not** support tool calling—select only when tools are not required.\n\n- **gpt-5-mini**\n  - Lightweight, supports tool usage, and is rapidly responsive.\n  - Suited for **simple tasks that may use tools** but don’t demand extensive reasoning.\n  - ✅ Function calling supported—offers a strong balance between speed and utility.\n\n- **gpt-5**\n  - Strong at reasoning and complex, multi-step analysis.\n  - Designed for **complex or deeply analytical tasks**.\n  - ✅ Supports function calling and advanced operations—choose for tool-reliant or high-complexity reasoning needs.\n\n---\n\n# Routing Checklist\n- Assess whether tool integration could improve the response.\n- Evaluate how much reasoning or problem-solving is required.\n- Match model to requirements:\n  - No tool usage required → use `gpt-5-chat-latest`\n  - Tools required, simple task → use `gpt-5-mini`\n  - Tools required, complex task → use `gpt-5`\n- When in doubt, prioritize a tool-capable model (prefer `gpt-5`).\n- Ask for more information if requirements are ambiguous.\n\n---\n\n# Output Format\nRespond only with a JSON object containing your model selection and a concise explanation. If the requirements are unclear, include an appropriate error message in the JSON response.\n\n---\n\n# Examples\n- **What’s the weather in Vancouver right now?**\n  ```json\n  {\n    "model": "gpt-5-mini",\n    "explanation": "Quick tool lookup; simple enough for a fast model."\n  }\n  ```\n\n- **Compare the newest M3 laptops and cite sources.**\n  ```json\n  {\n    "model": "gpt-5",\n    "explanation": "Research and synthesis with tools requires reasoning depth."\n  }\n  ```\n\n- **Summarize this email draft and make it more formal.**\n  ```json\n  {\n    "model": "gpt-5-chat-latest",\n    "explanation": "Polishing text only; no tools needed."\n  }\n  ```\n\n- **Summarize this uploaded PDF into bullet points.**\n  ```json\n  {\n    "model": "gpt-5",\n    "explanation": "Document parsing may require tools; complex enough for gpt-5."\n  }\n  ```\n\n- **Translate this paragraph into Spanish.**\n  ```json\n  {\n    "model": "gpt-5-chat-latest",\n    "explanation": "Simple translation; tools not required."\n  }\n  ```\n\n- **List my upcoming meetings tomorrow.**\n  ```json\n  {\n    "model": "gpt-5-mini",\n    "explanation": "Calendar tool lookup is simple; mini is efficient."\n  }\n  ```',
+            "input": responses_body.input,
+            "prompt_cache_key": "openai_responses_gpt5-router",
+            "text": {
+                "format": {
+                    "type": "json_schema",
+                    "name": "gpt5_router",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "model": {
+                                "type": "string",
+                                "enum": ["gpt-5-chat-latest", "gpt-5", "gpt-5-mini"],
+                                "description": "The selected GPT-5 model from the available options.",
+                            },
+                            "reasoning_effort": {
+                                "type": "string",
+                                "enum": ["minimal", "low", "medium", "high"],
+                                "description": "The estimated amount of reasoning effort required for the request.",
+                            },
+                            "explanation": {
+                                "type": "string",
+                                "description": "Short 3-5 word rationale for why this model was selected.",
+                                "minLength": 3,
+                                "maxLength": 500,
+                            },
+                        },
+                        "required": ["model", "explanation", "reasoning_effort"],
+                        "additionalProperties": False,
+                    },
+                    "verbosity": "medium",
+                },
+            },
+        }
+        # -------------------------------------------------
+
+        try:
+            response = await self.send_openai_responses_nonstreaming_request(
+                router_body,
+                api_key=valves.API_KEY,
+                base_url=valves.BASE_URL,
+            )
+        except Exception as exc:  # pragma: no cover
+            self.logger.warning("GPT-5 router request failed: %s", exc)
+            return responses_body
+
+        # Simple shape: output[0].content[0].text
+        try:
+            text = next(
+                (
+                    b["text"]
+                    for o in reversed(response["output"])
+                    if o["type"] == "message"
+                    for b in o["content"]
+                    if b["type"] == "output_text"
+                ),
+                "",
+            )
+        except Exception as exc:  # pragma: no cover
+            self.logger.warning(
+                "Router response missing expected fields: %s; payload keys=%s",
+                exc,
+                list(response.keys()),
+            )
+            return responses_body
+
+        # Parse JSON (with a tiny fallback to the first {...} block)
+        try:
+            router_json: Dict[str, Any] = json.loads(text)
+        except Exception:
+            start, end = text.find("{"), text.rfind("}")
+            router_json = (
+                json.loads(text[start : end + 1])
+                if start != -1 and end != -1 and end > start
+                else {}
+            )
+
+        if router_json:
+            responses_body.model = router_json.get("model")
+            if ModelFamily.supports("reasoning", responses_body.model):
+                reasoning = dict(responses_body.reasoning or {})
+                reasoning["effort"] = router_json.get("reasoning_effort")
+                responses_body.reasoning = reasoning
+
+            responses_body.model_router_result = router_json
+        return responses_body
+
     # 4.8 Internal Static Helpers
     def _merge_valves(self, global_valves, user_valves) -> "Pipe.Valves":
         """Merge user-level valves into the global defaults.
@@ -1718,11 +2056,16 @@ class Pipe:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 5. Utility Classes (Shared utilities)
+# 5. Utility & Helper Layer (organized, consistent docstrings)
+#    NOTE: Logic is unchanged. Only docstrings/comments/sectioning were improved.
 # ─────────────────────────────────────────────────────────────────────────────
-# Support classes used across the pipe implementation
+
+# 5.1 Logging & Diagnostics
+# -------------------------
+
 # In-memory store for debug logs keyed by message ID
 logs_by_msg_id: dict[str, list[str]] = defaultdict(list)
+
 # Context variable tracking the current message being processed
 current_session_id: ContextVar[str | None] = ContextVar(
     "current_session_id", default=None
@@ -1730,20 +2073,40 @@ current_session_id: ContextVar[str | None] = ContextVar(
 
 
 class SessionLogger:
+    """Per-request logger that captures console output and an in-memory log buffer.
+
+    The logger is bound to a logical *session* via contextvars so that log lines
+    can be collected and emitted (e.g., as citations) for the current request.
+
+    Attributes:
+        session_id: ContextVar storing the current logical session ID.
+        log_level:  ContextVar storing the minimum level to emit for this session.
+        logs:       Map of session_id -> fixed-size deque of formatted log strings.
+    """
+
     session_id = ContextVar("session_id", default=None)
     log_level = ContextVar("log_level", default=logging.INFO)
     logs = defaultdict(lambda: deque(maxlen=2000))
 
     @classmethod
     def get_logger(cls, name=__name__):
-        """Return a logger wired to the current ``SessionLogger`` context."""
+        """Create a logger wired to the current SessionLogger context.
+
+        Args:
+            name: Logger name; defaults to the current module name.
+
+        Returns:
+            logging.Logger: A configured logger that writes both to stdout and
+            the in-memory `SessionLogger.logs` buffer. The buffer is keyed by
+            the current `SessionLogger.session_id`.
+        """
         logger = logging.getLogger(name)
         logger.handlers.clear()
         logger.filters.clear()
         logger.setLevel(logging.DEBUG)
         logger.propagate = False
 
-        # Single combined filter
+        # Single combined filter: attach session_id and respect per-session level.
         def filter(record):
             record.session_id = cls.session_id.get()
             return record.levelno >= cls.log_level.get()
@@ -1757,7 +2120,7 @@ class SessionLogger:
         )
         logger.addHandler(console)
 
-        # Memory handler
+        # Memory handler (appends formatted lines into logs[session_id])
         mem = logging.Handler()
         mem.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
         mem.emit = lambda r: (
@@ -1768,72 +2131,27 @@ class SessionLogger:
         return logger
 
 
+# 5.2 UI Status - Expandable progress block helper
+# ------------------------------------------------
+
+
 class ExpandableStatusIndicator:
-    """
-    Real‑time, **expandable progress log** for chat assistants
-    ========================================================
+    """Maintain a single expandable `<details type="status">` progress block.
 
-    This helper maintains **one** collapsible `<details type="status">` block at
-    the *top* of the assistant’s message.  It lets you incrementally append or
-    edit bullet‑style status lines while automatically re‑emitting the full
-    message to the UI.
+    This helper keeps **one** collapsible status block at the top of the assistant
+    message. You can append top-level bullets and optional sub-bullets, and it
+    will re-render the full assistant message via the provided event emitter.
 
-    ───────────────────────────────
-    Basic example
-    ───────────────────────────────
-    ```python
-    assistant_message = "Let's work step‑by‑step.\n"
+    Thread-safety: **Not** thread-safe; one instance should service one coroutine.
 
-    status = ExpandableStatusIndicator(event_emitter=__event_emitter__)
-
-    assistant_message = await status.add(
-        assistant_message, "Analyzing input"
-    )
-    assistant_message = await status.add(
-        assistant_message, "Retrieving context", "Querying sources…"
-    )
-    assistant_message = await status.update_last_status(
-        assistant_message, new_content="Retrieved 3 documents"
-    )
-    assistant_message = await status.finish(assistant_message)
-    ```
-    Each call *returns* the updated `assistant_message`; always keep the latest
-    string for further processing or output.
-
-    ───────────────────────────────
-    Public API
-    ───────────────────────────────
-    ▸ `add(assistant_message, title, content=None, *, emit=True) -> str`
-        Add a new top‑level bullet; if *title* matches the last bullet,
-        *content* becomes a sub‑bullet instead.
-
-    ▸ `update_last_status(assistant_message, *, new_title=None,
-                          new_content=None, emit=True) -> str`
-        Replace the last bullet’s title and/or its sub‑bullets.
-
-    ▸ `finish(assistant_message, *, emit=True) -> str`
-        Append “Finished in X s”, set `done="true"` and freeze the instance.
-        Subsequent `add`/`update_last_status` calls raise `RuntimeError`.
-
-    ▸ `reset()`
-        Clear bullets and restart the internal timer.
-
-    Constructor
-    ───────────
-    `ExpandableStatusIndicator(event_emitter=None, *, expanded=False)`
-
-    * `event_emitter` must be an **async** callable accepting
-      `{"type": "chat:message", "data": {"content": <str>}}`.
-      When supplied (and `emit=True`), every status change is pushed to the UI.
-    * `expanded` (default **False**) starts the details block open when true.
-
-    Design guarantees
-    ─────────────────
-    • The status block is always the **first** element in the message.
-    • Only **one** status block is ever inserted/updated (identified by the
-      `type="status"` attribute).
-    • Thread‑unsafe on purpose – one instance should service one coroutine.
-
+    Example:
+        ```python
+        status = ExpandableStatusIndicator(event_emitter=__event_emitter__)
+        msg = await status.add("", "Analyzing input")
+        msg = await status.add(msg, "Retrieving context", "Querying sources…")
+        msg = await status.update_last_status(msg, new_content="Retrieved 3 documents")
+        msg = await status.finish(msg)
+        ```
     """
 
     # Regex reused for fast replacement of the existing block.
@@ -1845,14 +2163,21 @@ class ExpandableStatusIndicator:
         self,
         event_emitter: Optional[Callable[[dict[str, Any]], Awaitable[None]]] = None,
     ) -> None:
+        """Initialize a status indicator.
+
+        Args:
+            event_emitter: Async callable to push updated assistant text:
+                `{"type": "chat:message", "data": {"content": <str>}}`.
+        """
         self._event_emitter = event_emitter
         self._items: List[Tuple[str, List[str]]] = []
         self._started = time.perf_counter()
         self._done: bool = False
 
-    # --------------------------------------------------------------------- #
-    # Public async API                                                      #
-    # --------------------------------------------------------------------- #
+    # ------------------------------------------------------------------ #
+    # Public async API                                                   #
+    # ------------------------------------------------------------------ #
+
     async def add(
         self,
         assistant_message: str,
@@ -1861,7 +2186,23 @@ class ExpandableStatusIndicator:
         *,
         emit: bool = True,
     ) -> str:
-        """Append a new status bullet (or extend the last one if title repeats)."""
+        """Append a bullet (and optional sub-bullet) to the status block.
+
+        If the last bullet has the same title, `status_content` is appended as
+        a sub-bullet under that title.
+
+        Args:
+            assistant_message: Current assistant message string to update.
+            status_title:      Top-level bullet title.
+            status_content:    Optional sub-bullet text.
+            emit:              If True, immediately emit the updated message.
+
+        Returns:
+            str: Updated assistant message including the status block.
+
+        Raises:
+            RuntimeError: If the indicator has already been finished.
+        """
         self._assert_not_finished("add")
 
         if not self._items or self._items[-1][0] != status_title:
@@ -1880,7 +2221,20 @@ class ExpandableStatusIndicator:
         new_content: Optional[str] = None,
         emit: bool = True,
     ) -> str:
-        """Replace the most recent status bullet’s title and/or its content."""
+        """Replace the most recent bullet's title and/or its sub-bullets.
+
+        Args:
+            assistant_message: Current assistant message string to update.
+            new_title:         Replacement title for the last bullet.
+            new_content:       Replacement content (single sub-bullet).
+            emit:              If True, immediately emit the updated message.
+
+        Returns:
+            str: Updated assistant message including the status block.
+
+        Raises:
+            RuntimeError: If the indicator has already been finished.
+        """
         self._assert_not_finished("update_last_status")
 
         if not self._items:
@@ -1903,6 +2257,15 @@ class ExpandableStatusIndicator:
         *,
         emit: bool = True,
     ) -> str:
+        """Mark the indicator as finished and append a timing footer.
+
+        Args:
+            assistant_message: Current assistant message string to update.
+            emit:              If True, immediately emit the updated message.
+
+        Returns:
+            str: Updated assistant message including the final status block.
+        """
         if self._done:
             return assistant_message
         elapsed = time.perf_counter() - self._started
@@ -1913,16 +2276,34 @@ class ExpandableStatusIndicator:
     # ------------------------------------------------------------------ #
     # Rendering helpers                                                  #
     # ------------------------------------------------------------------ #
+
     def _assert_not_finished(self, method: str) -> None:
+        """Raise if a mutating call is made after `finish()`.
+
+        Args:
+            method: Name of the method being invoked (for error clarity).
+
+        Raises:
+            RuntimeError: If `finish()` has already been called.
+        """
         if self._done:
             raise RuntimeError(
                 f"Cannot call {method}(): status indicator is already finished."
             )
 
     async def _render(self, assistant_message: str, emit: bool) -> str:
+        """Render (or replace) the status block at the top of the message.
+
+        Args:
+            assistant_message: Current assistant message string to update.
+            emit:              If True, immediately emit the updated message.
+
+        Returns:
+            str: Updated assistant message including the status block.
+        """
         block = self._render_status_block()
         full_msg = (
-            self._BLOCK_RE.sub(block, assistant_message, 1)
+            self._BLOCK_RE.sub(lambda _: block, assistant_message, 1)
             if self._BLOCK_RE.search(assistant_message)
             else f"{block}{assistant_message}"
         )
@@ -1933,17 +2314,19 @@ class ExpandableStatusIndicator:
         return full_msg
 
     def _render_status_block(self) -> str:
+        """Construct the markdown for the status `<details>` block.
+
+        Returns:
+            str: A `<details type="status">` block with bullets and sub-bullets.
+        """
         lines: List[str] = []
 
         for title, subs in self._items:
-            lines.append(f"- **{title}**")  # top-level bullet
-
+            lines.append(f"- **{title}**")
             for sub in subs:
-                # Indent entire sub-item by 2 spaces; prepend "- " exactly once.
                 sub_lines = sub.splitlines()
                 if sub_lines:
-                    lines.append(f"  - {sub_lines[0]}")  # first line with dash
-                    # All subsequent lines indented 4 spaces to align with markdown
+                    lines.append(f"  - {sub_lines[0]}")
                     if len(sub_lines) > 1:
                         lines.extend(
                             textwrap.indent(
@@ -1963,22 +2346,39 @@ class ExpandableStatusIndicator:
 # ─────────────────────────────────────────────────────────────────────────────
 # 6. Framework Integration Helpers (Open WebUI DB operations)
 # ─────────────────────────────────────────────────────────────────────────────
-# Utility functions that interface with Open WebUI's data models
+
+
 def persist_openai_response_items(
     chat_id: str,
     message_id: str,
     items: List[Dict[str, Any]],
     openwebui_model_id: str,
 ) -> str:
-    """Persist items and return their wrapped marker string.
+    """Persist response items to the chat record and return marker strings.
 
-    :param chat_id: Chat identifier used to locate the conversation.
-    :param message_id: Message ID the items belong to.
-    :param items: Sequence of payloads to store.
-    :param openwebui_model_id: Fully qualified model ID the items originate from.
-    :return: Concatenated empty-link encoded item IDs for later retrieval.
+    Each item is stored under the chat's `openai_responses_pipe.items` map and
+    indexed by `messages_index[message_id].item_ids`. For each stored item, a
+    hidden, empty-link marker is returned so it can be embedded into assistant
+    text and later resolved by ID.
+
+    Args:
+        chat_id:            Chat identifier used to locate the conversation.
+        message_id:         The assistant message ID the items belong to.
+        items:              Sequence of payloads to store (tool calls, reasoning, etc.).
+        openwebui_model_id: Fully qualified model ID the items originate from.
+
+    Returns:
+        str: Concatenated hidden markers (empty-link encoded ULIDs). Returns an
+        empty string if nothing was persisted or the chat is missing.
+
+    Notes:
+        The storage layout is:
+            chat.chat["openai_responses_pipe"] = {
+                "__v": 3,
+                "items":         {<ulid>: {"model":..., "created_at":..., "payload":..., "message_id":...}},
+                "messages_index":{<message_id>: {"role":"assistant","done":True,"item_ids":[<ulid>, ...]}}
+            }
     """
-
     if not items:
         return ""
 
@@ -2017,15 +2417,22 @@ def persist_openai_response_items(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 7. General-Purpose Utility Functions (Data transforms & patches)
+# 7. General-Purpose Utilities (data transforms & patches)
 # ─────────────────────────────────────────────────────────────────────────────
-# Helper functions shared by multiple parts of the pipe
+
+
 def merge_usage_stats(total, new):
     """Recursively merge nested usage statistics.
 
-    :param total: Accumulator dictionary to update.
-    :param new: Newly reported usage block to merge in.
-    :return: The updated ``total`` dictionary.
+    For numeric values, sums are accumulated; for dicts, the function recurses;
+    other values overwrite the prior value when non-None.
+
+    Args:
+        total: Accumulator dictionary to update.
+        new:   Newly reported usage block to merge into `total`.
+
+    Returns:
+        dict: The updated accumulator dictionary (`total`).
     """
     for k, v in new.items():
         if isinstance(v, dict):
@@ -2033,45 +2440,37 @@ def merge_usage_stats(total, new):
         elif isinstance(v, (int, float)):
             total[k] = total.get(k, 0) + v
         else:
-            # Skip or explicitly set non-numeric values
             total[k] = v if v is not None else total.get(k, 0)
     return total
 
 
-def update_openwebui_model_param(openwebui_model_id: str, field: str, value: Any):
-    """Update a model's parameter when the stored value differs.
+def wrap_code_block(text: str, language: str = "python") -> str:
+    """Wrap text in a fenced Markdown code block.
 
-    :param openwebui_model_id: Identifier of the model to update.
-    :param field: Parameter field name to modify.
-    :param value: New value to store in ``field``.
-    :return: ``None``
+    The fence length adapts to the longest backtick run within the text to avoid
+    prematurely closing the block.
+
+    Args:
+        text:     The code or content to wrap.
+        language: Markdown fence language tag.
+
+    Returns:
+        str: Markdown code block.
     """
-    model = Models.get_model_by_id(openwebui_model_id)
-    if not model:
-        return
-
-    form_data = model.model_dump()
-    form_data["params"] = dict(model.params or {})
-    if form_data["params"].get(field) == value:
-        return
-
-    form_data["params"][field] = value
-
-    form = ModelForm(**form_data)
-    Models.update_model_by_id(openwebui_model_id, form)
+    longest = max((len(m.group(0)) for m in re.finditer(r"`+", text)), default=0)
+    fence = "`" * max(3, longest + 1)
+    return f"{fence}{language}\n{text}\n{fence}"
 
 
 def remove_details_tags_by_type(text: str, removal_types: list[str]) -> str:
-    """Strip ``<details>`` blocks matching the specified ``type`` values.
+    """Remove `<details>` blocks by `type` attribute from a string.
 
-    Example::
+    Args:
+        text:           Source text that may include `<details>` blocks.
+        removal_types:  A list of `type` attribute values to strip.
 
-        remove_details_tags_by_type("Hello <details type='reasoning'>stuff</details>", ["reasoning"])
-        # -> "Hello "
-
-    :param text: Source text containing optional ``<details>`` tags.
-    :param removal_types: ``type`` attribute values to remove.
-    :return: ``text`` with matching blocks removed.
+    Returns:
+        str: Text with matching `<details type="...">...</details>` blocks removed.
     """
     # Safely escape the types in case they have special regex chars
     pattern_types = "|".join(map(re.escape, removal_types))
@@ -2080,12 +2479,15 @@ def remove_details_tags_by_type(text: str, removal_types: list[str]) -> str:
     return re.sub(pattern, "", text, flags=re.IGNORECASE | re.DOTALL)
 
 
-#####################
+# ─────────────────────────────────────────────────────────────────────────────
+# 8. Persistent Item Markers (ULIDs & encoding helpers)
+# ─────────────────────────────────────────────────────────────────────────────
 
-# Helper utilities for persistent item markers
+# Constants for ULID-like IDs used in hidden markers.
 ULID_LENGTH = 16
 CROCKFORD_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 
+# Sentinel and compiled regex for detecting embedded markers in assistant text.
 _SENTINEL = "[openai_responses:v2:"
 _RE = re.compile(
     rf"\[openai_responses:v2:(?P<kind>[a-z0-9_]{{2,30}}):"
@@ -2095,14 +2497,21 @@ _RE = re.compile(
 
 
 def _qs(d: dict[str, str]) -> str:
+    """Encode a dict as a simple query-string (no URL-encoding)."""
     return "&".join(f"{k}={v}" for k, v in d.items()) if d else ""
 
 
 def _parse_qs(q: str) -> dict[str, str]:
+    """Parse a simple `a=b&c=d` string into a dict (no URL-decoding)."""
     return dict(p.split("=", 1) for p in q.split("&")) if q else {}
 
 
 def generate_item_id() -> str:
+    """Generate a short ULID-like ID using the Crockford alphabet.
+
+    Returns:
+        str: A random uppercase identifier of length `ULID_LENGTH`.
+    """
     return "".join(secrets.choice(CROCKFORD_ALPHABET) for _ in range(ULID_LENGTH))
 
 
@@ -2113,6 +2522,22 @@ def create_marker(
     model_id: str | None = None,
     metadata: dict[str, str] | None = None,
 ) -> str:
+    """Construct a bare marker payload (no square-bracket wrapping).
+
+    The format is: `openai_responses:v2:<item_type>:<ULID>[?<k=v&...>]`.
+
+    Args:
+        item_type:  2–30 chars of `[a-z0-9_]` that describes the item kind.
+        ulid:       Optional pre-generated ULID; a new one is created if omitted.
+        model_id:   Optional model ID; when provided, recorded in query metadata.
+        metadata:   Optional additional metadata appended as `k=v` pairs.
+
+    Returns:
+        str: The marker string (without the `[ ... ]: #` wrapper).
+
+    Raises:
+        ValueError: If `item_type` does not match `[a-z0-9_]{2,30}`.
+    """
     if not re.fullmatch(r"[a-z0-9_]{2,30}", item_type):
         raise ValueError("item_type must be 2-30 chars of [a-z0-9_]")
     meta = {**(metadata or {})}
@@ -2123,14 +2548,41 @@ def create_marker(
 
 
 def wrap_marker(marker: str) -> str:
+    """Wrap a marker in an empty link so it is invisible in rendered markdown.
+
+    Args:
+        marker: Raw marker string returned by `create_marker()`.
+
+    Returns:
+        str: `\n[<marker>]: #\n` so it can be injected into assistant text.
+    """
     return f"\n[{marker}]: #\n"
 
 
 def contains_marker(text: str) -> bool:
+    """Fast check: does the text contain any v2 marker sentinel?
+
+    Args:
+        text: Text to scan.
+
+    Returns:
+        bool: True if the sentinel substring is present; otherwise False.
+    """
     return _SENTINEL in text
 
 
 def parse_marker(marker: str) -> dict:
+    """Parse a raw marker string into its components.
+
+    Args:
+        marker: Marker string produced by `create_marker()` (no brackets).
+
+    Returns:
+        dict: { "version": "v2", "item_type": ..., "ulid": ..., "metadata": {...} }
+
+    Raises:
+        ValueError: If the string does not start with `openai_responses:v2:`.
+    """
     if not marker.startswith("openai_responses:v2:"):
         raise ValueError("not a v2 marker")
     _, _, kind, rest = marker.split(":", 3)
@@ -2139,6 +2591,15 @@ def parse_marker(marker: str) -> dict:
 
 
 def extract_markers(text: str, *, parsed: bool = False) -> list:
+    """Extract all embedded markers from text.
+
+    Args:
+        text:   Source text to scan.
+        parsed: If True, return parsed dicts; otherwise raw marker strings.
+
+    Returns:
+        list: List of markers (raw strings or parsed dicts).
+    """
     found = []
     for m in _RE.finditer(text):
         raw = f"openai_responses:v2:{m.group('kind')}:{m.group('ulid')}"
@@ -2149,6 +2610,19 @@ def extract_markers(text: str, *, parsed: bool = False) -> list:
 
 
 def split_text_by_markers(text: str) -> list[dict]:
+    """Split text into a sequence of literal segments and marker segments.
+
+    Args:
+        text: Source text possibly containing embedded markers.
+
+    Returns:
+        list[dict]: A list like:
+            [
+              {"type": "text",   "text": "..."},
+              {"type": "marker", "marker": "openai_responses:v2:..."},
+              ...
+            ]
+    """
     segments = []
     last = 0
     for m in _RE.finditer(text):
@@ -2170,14 +2644,20 @@ def fetch_openai_response_items(
     *,
     openwebui_model_id: Optional[str] = None,
 ) -> Dict[str, Dict[str, Any]]:
-    """Return a mapping of ``item_id`` to its persisted payload.
+    """Load persisted items by ULID for a given chat, with optional model filter.
 
-    :param chat_id: Chat identifier used to look up stored items.
-    :param item_ids: ULIDs previously embedded in the message text.
-    :param openwebui_model_id: Only include items originating from this model.
-    :return: Mapping of ULID to the stored item payload.
+    Only items originating from the current model are returned when
+    `openwebui_model_id` is provided. This avoids leaking incompatible artifacts
+    (e.g., encrypted reasoning tokens) across models.
+
+    Args:
+        chat_id:             Chat identifier used to look up stored items.
+        item_ids:            ULIDs previously embedded in the message text.
+        openwebui_model_id:  If provided, only return items for this model ID.
+
+    Returns:
+        dict: Mapping of `item_id` -> persisted payload dict.
     """
-
     chat_model = Chats.get_chat_by_id(chat_id)
     if not chat_model:
         return {}
@@ -2188,12 +2668,210 @@ def fetch_openai_response_items(
         item = items_store.get(item_id)
         if not item:
             continue
-        # Only include previously persisted items that match the current model ID.
-        # OpenAI requires this to avoid items produced by one model leaking into subsequent requests for a different model.
-        # e.g., Encrypted reasoning tokens from o4-mini are not compatible with gpt-4o.
-        # TODO: Do some more sophisticated filtering here, e.g. check model features and allow items that are compatible with the current model.
+        # Only include items that match the current model ID (if specified).
         if openwebui_model_id:
             if item.get("model", "") != openwebui_model_id:
                 continue
         lookup[item_id] = item.get("payload", {})
     return lookup
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 9. Tool & Schema Utilities (internal)
+# ─────────────────────────────────────────────────────────────────────────────
+def build_tools(
+    responses_body: "ResponsesBody",
+    valves: "Pipe.Valves",
+    __tools__: Optional[Dict[str, Any]] = None,
+    *,
+    features: Optional[Dict[str, Any]] = None,
+    extra_tools: Optional[List[Dict[str, Any]]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Build the OpenAI Responses-API tool spec list for this request.
+
+    - Returns [] if the target model doesn't support function calling.
+    - Includes Open WebUI registry tools (strictified if enabled).
+    - Adds OpenAI web_search_preview (if allowed + supported + not minimal effort).
+    - Adds MCP tools from REMOTE_MCP_SERVERS_JSON.
+    - Appends any caller-provided extra_tools (already-valid OpenAI tool specs).
+    - Deduplicates by (type,name) identity; last one wins.
+
+    NOTE: This builds the *schema* to send to OpenAI. For executing function
+    calls at runtime, you can keep passing the raw `__tools__` registry into
+    your streaming/non-streaming loops; those functions expect name→callable.
+    """
+    logger = logging.getLogger(__name__)
+    features = features or {}
+
+    # 1) If model can't do function calling, no tools
+    if not ModelFamily.supports("function_calling", responses_body.model):
+        return []
+
+    tools: List[Dict[str, Any]] = []
+
+    # 2) Baseline: Open WebUI registry tools → OpenAI tool specs
+    if isinstance(__tools__, dict) and __tools__:
+        tools.extend(
+            ResponsesBody.transform_owui_tools(
+                __tools__,
+                strict=valves.ENABLE_STRICT_TOOL_CALLING,
+            )
+        )
+
+    # 3) Optional OpenAI web search tool (guarded + not for minimal effort)
+    allow_web = (
+        ModelFamily.supports("web_search_tool", responses_body.model)
+        and (valves.ENABLE_WEB_SEARCH_TOOL or features.get("web_search_preview", False))
+        and ((responses_body.reasoning or {}).get("effort", "").lower() != "minimal")
+    )
+    if allow_web:
+        web_search_tool: Dict[str, Any] = {
+            "type": "web_search_preview",
+            "search_context_size": valves.WEB_SEARCH_CONTEXT_SIZE,
+        }
+        if valves.WEB_SEARCH_USER_LOCATION:
+            try:
+                web_search_tool["user_location"] = json.loads(
+                    valves.WEB_SEARCH_USER_LOCATION
+                )
+            except (
+                Exception
+            ) as exc:  # don't fail the request if user_location is malformed
+                logger.warning(
+                    "WEB_SEARCH_USER_LOCATION is not valid JSON; ignoring: %s", exc
+                )
+        tools.append(web_search_tool)
+
+    # 4) Optional MCP servers
+    if valves.REMOTE_MCP_SERVERS_JSON:
+        tools.extend(ResponsesBody._build_mcp_tools(valves.REMOTE_MCP_SERVERS_JSON))
+
+    # 5) Optional extra tools (already OpenAI-format)
+    if isinstance(extra_tools, list) and extra_tools:
+        tools.extend(extra_tools)
+
+    return _dedupe_tools(tools)
+
+
+def _strictify_schema(schema):
+    """
+    Minimal, predictable transformer to make a JSON schema strict-compatible.
+
+    Rules for every object node (root + nested):
+      - additionalProperties := false
+      - required := all property keys
+      - fields that were optional become nullable (add "null" to their type)
+
+    We traverse properties, items (dict or list), and anyOf/oneOf branches.
+    We do NOT rewrite anyOf/oneOf; we only enforce object rules inside them.
+
+    Returns a new dict. Non-dict inputs return {}.
+    """
+    import json
+
+    if not isinstance(schema, dict):
+        return {}
+
+    # Defensive deep copy
+    s = json.loads(json.dumps(schema))
+
+    # Ensure root is an object; if not, wrap under {"value": ...}
+    root_t = s.get("type")
+    if not (
+        root_t == "object"
+        or (isinstance(root_t, list) and "object" in root_t)
+        or "properties" in s
+    ):
+        s = {
+            "type": "object",
+            "properties": {"value": s},
+            "required": ["value"],
+            "additionalProperties": False,
+        }
+
+    stack = [s]
+    while stack:
+        node = stack.pop()
+        if not isinstance(node, dict):
+            continue
+
+        # Treat as object if it declares object type or has properties
+        t = node.get("type")
+        is_object = (
+            ("properties" in node)
+            or (t == "object")
+            or (isinstance(t, list) and "object" in t)
+        )
+        if is_object:
+            props = node.get("properties")
+            if not isinstance(props, dict):
+                props = {}
+                node["properties"] = props
+
+            original_required = set(node.get("required") or [])
+
+            # Close object and mark all props required
+            node["additionalProperties"] = False
+            node["required"] = list(props.keys())
+
+            # Previously-optional → nullable
+            for name, p in props.items():
+                if not isinstance(p, dict):
+                    continue
+                if name not in original_required:
+                    ptype = p.get("type")
+                    if isinstance(ptype, str) and ptype != "null":
+                        p["type"] = [ptype, "null"]
+                    elif isinstance(ptype, list) and "null" not in ptype:
+                        p["type"] = ptype + ["null"]
+                stack.append(p)
+
+        # Dive into array schemas
+        items = node.get("items")
+        if isinstance(items, dict):
+            stack.append(items)
+        elif isinstance(items, list):  # tuple validation
+            for it in items:
+                if isinstance(it, dict):
+                    stack.append(it)
+
+        # Traverse union branches (no rewrites, just enforce inside)
+        for key in ("anyOf", "oneOf"):
+            branches = node.get(key)
+            if isinstance(branches, list):
+                for br in branches:
+                    if isinstance(br, dict):
+                        stack.append(br)
+
+    return s
+
+
+def _dedupe_tools(tools: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    """(Internal) Deduplicate a tool list with simple, stable identity keys.
+
+    Identity:
+      - Function tools → key = ("function", <name>)
+      - Non-function tools → key = (<type>, None)
+
+    Later entries win (last write wins).
+
+    Args:
+        tools: List of tool dicts (OpenAI Responses schema).
+
+    Returns:
+        list: Deduplicated list, preserving only the last occurrence per identity.
+    """
+    if not tools:
+        return []
+    canonical: Dict[tuple, Dict[str, Any]] = {}
+    for t in tools:
+        if not isinstance(t, dict):
+            continue
+        if t.get("type") == "function":
+            key = ("function", t.get("name"))
+        else:
+            key = (t.get("type"), None)
+        if key[0]:
+            canonical[key] = t
+    return list(canonical.values())

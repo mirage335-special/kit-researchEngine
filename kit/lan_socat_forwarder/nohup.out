@@ -1,0 +1,27 @@
+2025/09/28 17:33:55 socat[7161] N listening on AF=2 0.0.0.0:8080
+2025/09/28 17:33:55 socat[7184] N listening on AF=2 0.0.0.0:3100
+2025/09/28 17:33:55 socat[7188] N listening on AF=2 0.0.0.0:3000
+      0 [main] bash (40124) child_copy: cygheap read copy failed, 0x800000000..0x800025EF0, done 0, windows pid 40124, Win32 error 299
+   8129 [main] bash 478 child_copy: dll data read copy failed, 0x7FFCC6C78000..0x7FFCC6C91CB0, done 0, windows pid 40124, Win32 error 299
+   8902 [main] bash 478 C:\core\infrastructure\ubcp\cygwin\bin\bash.exe: *** fatal error in forked process - couldn't create signal pipe, Win32 error 5
+:3100
+2025/09/28 17:33:55 socat[7189] N successfully connected from local address AF=2 127.0.0.1:58781
+2025/09/28 17:33:55 socat[7189] N starting data transfer loop with FDs [6,6] and [5,5]
+2025/09/28 17:33:55 socat[7189] N write(5, 0xa00008bb0, 531) completed
+2025/09/28 17:33:55 socat[7184] N forked off child process 7190
+2025/09/28 17:33:55 socat[7184] N listening on AF=2 0.0.0.0:3100
+2025/09/28 17:33:55 socat[7189] N write(6, 0xa00008bb0, 566) completed
+2025/09/28 17:33:55 socat[7190] N opening connection to AF=2 127.0.0.1:3100
+2025/09/28 17:33:55 socat[7190] N successfully connected from local address AF=2 127.0.0.1:58782
+2025/09/28 17:33:55 socat[7190] N starting data transfer loop with FDs [6,6] and [5,5]
+2025/09/28 17:33:55 socat[7189] N write(5, 0xa00008bb0, 393) completed
+2025/09/28 17:33:55 socat[7189] N write(6, 0xa00008bb0, 744) completed
+2025/09/28 17:33:57 socat[7189] N write(5, 0xa00008bb0, 531) completed
+2025/09/28 17:33:57 socat[7189] N write(6, 0xa00008bb0, 566) completed
+2025/09/28 17:33:57 socat[7189] N write(5, 0xa00008bb0, 393) completed
+2025/09/28 17:33:57 socat[7189] N write(6, 0xa00008bb0, 744) completed
+2025/09/28 17:34:01 socat[7184] N childdied(): handling signal 20
+2025/09/28 17:34:01 socat[7184] N childdied(): handling signal 20
+      0 [main] bash (10956) child_copy: cygheap read copy failed, 0x800000000..0x800025EF0, done 0, windows pid 10956, Win32 error 299
+   5937 [main] bash 479 child_copy: dll data read copy failed, 0x7FFCC6C78000..0x7FFCC6C91CB0, done 0, windows pid 10956, Win32 error 299
+   6667 [main] bash 479 C:\core\infrastructure\ubcp\cygwin\bin\bash.exe: *** fatal error in forked process - couldn't create signal pipe, Win32 error 5

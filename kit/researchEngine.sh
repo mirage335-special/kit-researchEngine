@@ -817,6 +817,26 @@ EOF
 
 
 
+_upgrade_researchEngine_trillium() {
+	#_service_researchEngine-docker-chroot-start
+	
+	_set_researchEngine
+
+	_messageNormal 'Trillium'
+
+	# https://github.com/TriliumNext/Trilium/blob/main/docs/User%20Guide/User%20Guide/Installation%20&%20Setup/Server%20Installation/1.%20Installing%20the%20server/Using%20Docker.md
+	# https://github.com/TriliumNext/Trilium/tree/main
+
+	_if_cygwin && mkdir -p "$ub_researchEngine_data"trillium
+
+	docker rm -f trillium
+
+	# docker pull triliumnext/trilium:v0.98.1
+	docker pull triliumnext/trilium:latest
+	
+	docker run -d -p 127.0.0.1:3100:8080 -v "$ub_researchEngine_data_docker"trillium:/home/node/trilium-data --name trillium --restart always triliumnext/trilium:latest
+}
+
 
 
 
@@ -829,7 +849,6 @@ _install_researchEngine-MSWindows() {
 
 	_messageNormal 'Test: Docker'
 	docker run hello-world
-
 
 	_messageNormal 'Installing augment and developer help models.'
 	"$scriptAbsoluteLocation" _setup_ollama
@@ -1013,9 +1032,24 @@ EOF
 
 
 
+	_messageNormal 'Installing Trillium.'
 
 
+	# https://github.com/TriliumNext/Trilium/blob/main/docs/User%20Guide/User%20Guide/Installation%20&%20Setup/Server%20Installation/1.%20Installing%20the%20server/Using%20Docker.md
+	# https://github.com/TriliumNext/Trilium/tree/main
 
+	mkdir -p /cygdrive/c/core/data/trillium
+
+	docker rm -f trillium
+
+	# docker pull triliumnext/trilium:v0.98.1
+	docker pull triliumnext/trilium:latest
+	
+	#if _if_cygwin ...
+	docker run -d -p 127.0.0.1:3100:8080 -v /c/core/data/trillium:/home/node/trilium-data --name trillium --restart always triliumnext/trilium:latest
+	
+
+	
 
 
 

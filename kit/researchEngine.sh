@@ -190,7 +190,8 @@ _fetch_searxng-config_settings() {
 	_currentBackend-sudo mv -f "$1" "$1".accompanying 2>/dev/null
 	
 	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/refs/heads/master/searx/settings.yml'
-	curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
+	#curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/28d1240fce945a48a2c61c29fff83336410c4c77/searx/settings.yml'
+	curl --output "$1" 'https://raw.githubusercontent.com/searxng/searxng/1520a8d545e436e43c0ea0aff916cc4cc9ba5494/searx/settings.yml'
 
 	local current_searxng_random
 	if ! _if_cygwin

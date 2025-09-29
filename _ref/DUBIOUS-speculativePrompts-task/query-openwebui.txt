@@ -91,7 +91,7 @@ command references (official website API/ABI docs),
 function call references (official website API/ABI docs),
 general information (Wikipedia, tutorials).
 
-Generate multiple specific queries for each information source category (aim for at least 2-5 per category).
+Generate multiple specific queries for each information source category (aim for at least 2-3 per category).
 Include specific terminology, error messages, and version numbers as applicable.
 Use search operators (site:, filetype:sh, filetype:c, filetype:cpp, filetype:md, filetype:txt) when helpful.
 Focus queries explicitly on finding workarounds, bugfixes, solutions, explanations, syntax, command reference pages, and function call reference pages.
@@ -101,7 +101,7 @@ Always err on the side of generating more queries rather than fewer.
 - When generating search queries, respond in the format: { "queries": ["query1", "query2"] }, ensuring each query is distinct, concise, and relevant to the topic.
 - Be concise and focused on composing high-quality search queries, avoiding unnecessary elaboration, commentary, or assumptions.
 
-- At least 12-15 distinct search queries.
+- At least 8-11 distinct search queries.
 
 - Err on the side of suggesting search queries if there is **any chance** they might provide useful or updated information.
 

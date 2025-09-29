@@ -929,7 +929,9 @@ _install_researchEngine-MSWindows() {
 
 
 
-
+# Optional.
+#if false
+#then
 	_messageNormal 'Installing OpenWebUI.'
 
 	# https://docs.openwebui.com/getting-started/quick-start
@@ -1027,37 +1029,8 @@ EOF
 		#--entrypoint "/app/backend/data/._run.sh"
 		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 	fi
-
-
-
-
-
-	_messageNormal 'Installing Trillium.'
-
-
-	# https://github.com/TriliumNext/Trilium/blob/main/docs/User%20Guide/User%20Guide/Installation%20&%20Setup/Server%20Installation/1.%20Installing%20the%20server/Using%20Docker.md
-	# https://github.com/TriliumNext/Trilium/tree/main
-
-	mkdir -p /cygdrive/c/core/data/trillium
-
-	docker rm -f trillium
-
-	# docker pull triliumnext/trilium:v0.98.1
-	docker pull triliumnext/trilium:latest
+#fi
 	
-	#if _if_cygwin ...
-	docker run -d -p 127.0.0.1:3100:8080 -v /c/core/data/trillium:/home/node/trilium-data --name trillium --restart always triliumnext/trilium:latest
-	
-
-	
-
-
-
-
-
-	# Not recommended. Not much difference between this and single-user.
-	if false
-	then
 
 	_messageNormal 'Installing OpenWebUI - multi-user.'
 
@@ -1157,7 +1130,30 @@ EOF
 		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 	fi
 
-	fi
+
+
+
+
+
+
+	_messageNormal 'Installing Trillium.'
+
+
+	# https://github.com/TriliumNext/Trilium/blob/main/docs/User%20Guide/User%20Guide/Installation%20&%20Setup/Server%20Installation/1.%20Installing%20the%20server/Using%20Docker.md
+	# https://github.com/TriliumNext/Trilium/tree/main
+
+	mkdir -p /cygdrive/c/core/data/trillium
+
+	docker rm -f trillium
+
+	# docker pull triliumnext/trilium:v0.98.1
+	docker pull triliumnext/trilium:latest
+	
+	#if _if_cygwin ...
+	docker run -d -p 127.0.0.1:3100:8080 -v /c/core/data/trillium:/home/node/trilium-data --name trillium --restart always triliumnext/trilium:latest
+	
+
+	
 
 
 

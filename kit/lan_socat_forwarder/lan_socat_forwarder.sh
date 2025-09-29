@@ -746,7 +746,7 @@ _forward-lan-start() {
 
 	_messageNormal '_forward-lan-start'
 
-	local -a currentPORTlist=(8080 3100 3000)
+	local -a currentPORTlist=(8080 3100 3005)
 
 	local currentSocatArgs=""
 	#currentSocatArgs=",range=xxx.xxx.xxx.0/24,bind=<addr>"
@@ -805,7 +805,7 @@ _forward-tailscale-disable() {
 
 	tailscale serve --https=8080 off
 	tailscale serve --https=3100 off
-	tailscale serve --https=3000 off
+	tailscale serve --https=3005 off
 
 	tailscale serve status
 
@@ -820,7 +820,7 @@ _forward-tailscale-enable() {
 
 	tailscale serve --bg --https=8080 localhost:8080
 	tailscale serve --bg --https=3100 localhost:3100
-	tailscale serve --bg --https=3000 localhost:3000
+	tailscale serve --bg --https=3005 localhost:3005
 
 	tailscale serve status
 

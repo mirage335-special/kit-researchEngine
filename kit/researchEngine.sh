@@ -695,44 +695,44 @@ _upgrade_researchEngine_openwebui() {
 	
 	_set_researchEngine
 	
-	_messageNormal 'OpenWebUI'
+	_messageNormal 'OpenWebUI - multi-user'
 	_messagePlain_nominal 'OpenWebUI: docker'
 
-	mkdir -p "$ub_researchEngine_data"openwebui
+	mkdir -p "$ub_researchEngine_data"openwebui-multiuser
 
 	mkdir -p "$ub_researchEngine_data"certs
 	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
 
-	docker rm -f open-webui
+	docker rm -f open-webui-multiuser
 	
 	# TODO: Attempt to pull from 'ingredients'.
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:main
 
-	rm -f "$ub_researchEngine_data"openwebui/._run.sh
+	rm -f "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 	{
 		echo '#!/usr/bin/env bash'
 		echo 'set -e'
 		echo 'update-ca-certificates'
 		echo 'exec "$@"'
-	} >> "$ub_researchEngine_data"openwebui/._run.sh
-	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
+	} >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
+	chmod +x "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 	
 	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
-	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
-	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui-multiuser/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui-multiuser/._run.sh"
 	
-	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 
 	
-	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh
+	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 
 	#_service_researchEngine-docker-chroot-stop
 }
@@ -742,41 +742,41 @@ _upgrade_researchEngine_openwebui-nvidia() {
 	
 	_set_researchEngine
 
-	_messageNormal 'OpenWebUI'
+	_messageNormal 'OpenWebUI - multi-user'
 
 	! _if_cygwin && _mustGetSudo
 
 
 	_messagePlain_nominal 'OpenWebUI: docker'
 
-	mkdir -p "$ub_researchEngine_data"openwebui
+	mkdir -p "$ub_researchEngine_data"openwebui-multiuser
 
 	mkdir -p "$ub_researchEngine_data"certs
 	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
 	
-	docker rm -f open-webui
+	docker rm -f open-webui-multiuser
 	
 	# TODO: Attempt to pull from 'ingredients'.
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:cuda
 	
-	rm -f "$ub_researchEngine_data"openwebui/._run.sh
+	rm -f "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 	{
 		echo '#!/usr/bin/env bash'
 		echo 'set -e'
 		echo 'update-ca-certificates'
 		echo 'exec "$@"'
-	} >> "$ub_researchEngine_data"openwebui/._run.sh
-	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
+	} >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
+	chmod +x "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 	
 	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:cuda)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:cuda)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:cuda)
-	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
-	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui-multiuser/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui-multiuser/._run.sh"
 	
-	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 
 	if _if_cygwin
@@ -807,10 +807,10 @@ EOF
 	fi
 
 	
-	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh
+	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 
 	#_service_researchEngine-docker-chroot-stop
 }

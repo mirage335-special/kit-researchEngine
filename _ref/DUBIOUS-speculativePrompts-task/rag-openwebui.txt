@@ -42,7 +42,8 @@ puppyM/bge-reranker-v2-m3-Q4_K_M-GGUF
 # Llama-augment
 
 # Some AI LLM models have been known to follow the instructions of this prompt.
-# OpRt_.meta-llama/llama-3.1-405b-instruct:nitro (STRONGLY RECOMMENDED)
+# Llama-3_3-Valkyrie-49B-v1-INSTRUCT-virtuoso
+# OpRt_.meta-llama/llama-3.1-405b-instruct:nitro
 # Llama-augment
 
 # Some AI LLM models, although have been known to follow the instructions of this prompt, may respond rather verbosely.
@@ -52,6 +53,27 @@ puppyM/bge-reranker-v2-m3-Q4_K_M-GGUF
 # DeepSeek R1
 # DeepSeek-R1 14b
 # DeepSeek-R1 Distill Llama 8b
+
+
+
+# RECOMMENDED (proven track record, convenient hardware):
+# Llama-3_3-Valkyrie-49B-v1-INSTRUCT-virtuoso
+#
+# 4500 Chunk Size
+# 1575 Chunk Overlap
+# Embedding Model Engine Ollama   http://host.docker.internal:11434   hf.co/awhiteside/CodeRankEmbed-Q5_K_M-GGUF
+# Top K 55
+#
+# Some models may have a reasonable combination of useful long-context logic/knowledge and reasonable active parameter count to process search results.
+# SEARCH-Llama-3_3-Nemotron-Super-49B-v1-virtuoso:latest   num_ctx 18432
+#  May be slow. May need to reduce context length slightly.
+# SEARCH-Devstral-Small-2507-virtuoso:latest   num_ctx 18432
+# SEARCH-gpt-oss-20b-virtuoso:latest   num_ctx 18432
+# SEARCH-Mistral-Small-3_2-24B-Instruct-2506-virtuoso:latest   num_ctx 18432
+# SEARCH-gpt-oss-120b-virtuoso:latest   num_ctx 18432
+
+
+
 
 
 Analyze the context to thoroughly completely accurately describe, evaluate, analyze, explain, as needed to answer the user query (xml tagged).

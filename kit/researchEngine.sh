@@ -733,7 +733,7 @@ _upgrade_researchEngine_openwebui() {
 	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 
 	#_service_researchEngine-docker-chroot-stop
 }
@@ -811,7 +811,7 @@ EOF
 	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 
 	#_service_researchEngine-docker-chroot-stop
 }

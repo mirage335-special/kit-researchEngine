@@ -336,41 +336,41 @@ _setup_openwebui-user() {
 	
 	_messagePlain_nominal 'OpenWebUI: docker'
 
-	mkdir -p "$ub_researchEngine_data"openwebui
+	mkdir -p "$ub_researchEngine_data"openwebui-multiuser
 
 	mkdir -p "$ub_researchEngine_data"certs
 	cp -f "$kit_dir_researchEngine"/kit/certs/*.crt "$ub_researchEngine_data"certs/
 
-	docker rm -f open-webui
+	docker rm -f open-webui-multiuser
 	
 	# TODO: Attempt to pull from 'ingredients'.
 	_set_ingredients
 	docker pull ghcr.io/open-webui/open-webui:main
 
-	rm -f "$ub_researchEngine_data"openwebui/._run.sh
+	rm -f "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 	{
 		echo '#!/usr/bin/env bash'
 		echo 'set -e'
 		echo 'update-ca-certificates'
 		echo 'exec "$@"'
-	} >> "$ub_researchEngine_data"openwebui/._run.sh
-	chmod +x "$ub_researchEngine_data"openwebui/._run.sh
+	} >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
+	chmod +x "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 	
 	local entrypoint cmd workdir
 	entrypoint=$(docker inspect -f '{{join .Config.Entrypoint " "}}' ghcr.io/open-webui/open-webui:main)
 	cmd=$(docker inspect -f '{{join .Config.Cmd " "}}' ghcr.io/open-webui/open-webui:main)
 	workdir=$(docker inspect -f '{{.Config.WorkingDir}}' ghcr.io/open-webui/open-webui:main)
-	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui/._run.sh"
-	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui/._run.sh"
+	echo '[ -n '"$workdir"' ] && cd '"$workdir" >> "${ub_researchEngine_data}openwebui-multiuser/._run.sh"
+	echo "exec ${entrypoint} ${cmd}" >> "${ub_researchEngine_data}openwebui-multiuser/._run.sh"
 	
-	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui/._run.sh
+	type dos2unix > /dev/null 2>&1 && dos2unix "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 
 	
-	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui/._run.sh
+	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 
 
 
@@ -840,6 +840,46 @@ _upgrade_researchEngine_trillium() {
 
 
 
+_upgrade_researchEngine_postgresql() {
+	#_service_researchEngine-docker-chroot-start
+	
+	_set_researchEngine
+
+	_messageNormal 'postgresql'
+
+
+	_if_cygwin && mkdir -p "$ub_researchEngine_data"postgresql
+
+	docker rm -f postgresql
+
+	docker pull postgres:latest
+
+	# Python
+	#Path.home()
+	local current_postgresql_random
+	if [[ ! -e "$HOME"/.postgresql_password.txt ]]
+	then
+		if ! _if_cygwin
+		then
+			current_postgresql_random=$(cat /dev/urandom 2> /dev/null | base64 2> /dev/null | tr -dc 'a-zA-Z0-9' 2> /dev/null | head -c 24)
+			echo "$current_postgresql_random" > "$HOME"/.postgresql_password.txt
+		fi
+		if _if_cygwin
+		then
+			current_postgresql_random=$(cat /dev/random 2> /dev/null | base64 2> /dev/null | tr -dc 'a-zA-Z0-9' 2> /dev/null | head -c 24)
+			echo "$current_postgresql_random" > "$HOME"/.postgresql_password.txt
+			echo "$current_postgresql_random" > "$USERPROFILE"/.postgresql_password.txt
+		fi
+	fi
+	[[ ! -s "$HOME"/.postgresql_password.txt ]] && _messageError 'FAIL: empty: PostgreSQL password' && _stop 1
+	[[ -e "$HOME"/.postgresql_password.txt ]] && current_postgresql_random=$(cat "$HOME"/.postgresql_password.txt | head -c 24)
+	[[ "$current_postgresql_random" == "" ]] && _messageError 'FAIL: empty: PostgreSQL password' && _stop 1
+
+	
+	#if _if_cygwin ...
+	docker run -d -p 127.0.0.1:3500:5432 -v "$ub_researchEngine_data_docker"postgresql:/var/lib/postgresql --name postgresql --restart always -e POSTGRES_PASSWORD="$current_postgresql_random" -e PGDATA=/var/lib/postgresql/18/docker postgres:latest
+}
+
 
 
 
@@ -1157,6 +1197,40 @@ EOF
 	
 
 
+
+	_messageNormal 'Installing PostgreSQL.'
+
+
+	mkdir -p /cygdrive/c/core/data/postgresql
+
+	docker rm -f postgresql
+
+	docker pull postgres:latest
+
+	# Python
+	#Path.home()
+	local current_postgresql_random
+	if [[ ! -e "$HOME"/.postgresql_password.txt ]]
+	then
+		if ! _if_cygwin
+		then
+			current_postgresql_random=$(cat /dev/urandom 2> /dev/null | base64 2> /dev/null | tr -dc 'a-zA-Z0-9' 2> /dev/null | head -c 24)
+			echo "$current_postgresql_random" > "$HOME"/.postgresql_password.txt
+		fi
+		if _if_cygwin
+		then
+			current_postgresql_random=$(cat /dev/random 2> /dev/null | base64 2> /dev/null | tr -dc 'a-zA-Z0-9' 2> /dev/null | head -c 24)
+			echo "$current_postgresql_random" > "$HOME"/.postgresql_password.txt
+			echo "$current_postgresql_random" > "$USERPROFILE"/.postgresql_password.txt
+		fi
+	fi
+	[[ ! -s "$HOME"/.postgresql_password.txt ]] && _messageError 'FAIL: empty: PostgreSQL password' && _stop 1
+	[[ -e "$HOME"/.postgresql_password.txt ]] && current_postgresql_random=$(cat "$HOME"/.postgresql_password.txt | head -c 24)
+	[[ "$current_postgresql_random" == "" ]] && _messageError 'FAIL: empty: PostgreSQL password' && _stop 1
+
+	
+	#if _if_cygwin ...
+	docker run -d -p 127.0.0.1:3500:5432 -v /c/core/data/postgresql:/var/lib/postgresql --name postgresql --restart always -e POSTGRES_PASSWORD="$current_postgresql_random" -e PGDATA=/var/lib/postgresql/18/docker postgres:latest
 
 
 

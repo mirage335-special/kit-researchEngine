@@ -10,6 +10,8 @@ export GH_TOKEN=""
 
 [[ "$OPENAI_API_KEY" == "" ]] && export OPENAI_API_KEY=""
 [[ "$OPENROUTER_API_KEY" == "" ]] && export OPENROUTER_API_KEY=""
+[[ "$OPENCODE_API_KEY" == "" ]] && export OPENCODE_API_KEY=""
+#[[ "$ZENMUX_API_KEY" == "" ]] && export ZENMUX_API_KEY=""
 
 # FineTuning (also Inference) Key
 export HF_API_KEY=""

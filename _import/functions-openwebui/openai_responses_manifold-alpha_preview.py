@@ -18,7 +18,7 @@
 #
 # Tested or suggested non-default 'valves' configurations may include:
 #
-# Model Id: o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.1-chat-latest, gpt-5.1-thinking, gpt-5.1-thinking-high, gpt-5.1-thinking-minimal
+# Model Id: o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.1-codex-max-high, gpt-5.1-chat-latest, gpt-5.1-thinking, gpt-5.1-thinking-high, gpt-5.1-thinking-minimal
 # Persist Reasoning Tokens: conversation
 # Persist Tool Results: Enabled
 # Parallel Tool Calls: Enabled
@@ -114,6 +114,7 @@ class ModelFamily:
         "gpt-5-auto":           {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
 
         "gpt-5.1-codex":        {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
+        "gpt-5.1-codex-max":    {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
 
         "gpt-5.1":              {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
 
@@ -145,12 +146,13 @@ class ModelFamily:
     _ALIASES: Dict[str, Dict[str, Any]] = {
         "o3-high":                 {"base_model": "o3",     "params": {"reasoning": {"effort": "high"}}},
         
-        "o3-high-deep-research":                 {"base_model": "o3-deep-research",     "params": {"reasoning": {"effort": "high"}}},
+        "o3-high-deep-research":                      {"base_model": "o3-deep-research",     "params": {"reasoning": {"effort": "high"}}},
         
         "o4-mini-high-deep-research":                 {"base_model": "o4-mini-deep-research",     "params": {"reasoning": {"effort": "high"}}},
         
-        "gpt-5-codex-high":          {"base_model": "gpt-5-codex",       "params": {"reasoning": {"effort": "high"}}},
+        "gpt-5-codex-high":            {"base_model": "gpt-5-codex",       "params": {"reasoning": {"effort": "high"}}},
         "gpt-5.1-codex-high":          {"base_model": "gpt-5.1-codex",       "params": {"reasoning": {"effort": "high"}}},
+        "gpt-5.1-codex-max-high":      {"base_model": "gpt-5.1-codex-max", "params": {"reasoning": {"effort": "high"}}},
         
         "gpt-5.1-thinking":               {"base_model": "gpt-5"},
         "gpt-5.1-thinking-minimal":       {"base_model": "gpt-5",       "params": {"reasoning": {"effort": "minimal"}}},
@@ -589,7 +591,7 @@ class Pipe:
 
         # Models
         MODEL_ID: str = Field(
-            default="o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.1-chat-latest, gpt-5.1-thinking, gpt-5.1-thinking-high, gpt-5.1-thinking-minimal",
+            default="o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.1-codex-max, gpt-5.1-codex-max-high, gpt-5.1-chat-latest, gpt-5.1-thinking, gpt-5.1-thinking-high, gpt-5.1-thinking-minimal",
             description=(
                 "Comma separated OpenAI model IDs. Each ID becomes a model entry in WebUI. "
                 "Supports all official OpenAI model IDs and pseudo IDs (see README.md for full list)."

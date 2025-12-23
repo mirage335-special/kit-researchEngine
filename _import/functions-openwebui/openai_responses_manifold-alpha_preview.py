@@ -18,7 +18,7 @@
 #
 # Tested or suggested non-default 'valves' configurations may include:
 #
-# Model Id: o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.1-codex-max-high, gpt-5.1-chat-latest, gpt-5.1-thinking, gpt-5.1-thinking-high, gpt-5.1-thinking-minimal
+# Model Id: o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.2-pro, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.2-codex-high, gpt-5.1-codex-max-high, gpt-5.2-codex-max-high, gpt-5.1-chat-latest, gpt-5.2-chat-latest, gpt-5.1-thinking, gpt-5.2-thinking, gpt-5.1-thinking-high, gpt-5.2-thinking-high, gpt-5.1-thinking-minimal, gpt-5.2-thinking-minimal
 # Persist Reasoning Tokens: conversation
 # Persist Tool Results: Enabled
 # Parallel Tool Calls: Enabled

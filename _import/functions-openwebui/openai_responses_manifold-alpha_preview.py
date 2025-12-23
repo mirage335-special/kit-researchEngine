@@ -108,6 +108,7 @@ class ModelFamily:
     _SPECS: Dict[str, Dict[str, Any]] = {
         "gpt-5-pro":          {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
         "gpt-5.1-pro":          {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
+        "gpt-5.2-pro":          {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
         
         "gpt-5-codex":          {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
         
@@ -115,8 +116,11 @@ class ModelFamily:
 
         "gpt-5.1-codex":        {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
         "gpt-5.1-codex-max":    {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
+        "gpt-5.2-codex":        {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
+        "gpt-5.2-codex-max":    {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
 
         "gpt-5.1":              {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
+        "gpt-5.2":              {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
 
         "gpt-5":                {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
         "gpt-5-mini":           {"features": {"function_calling","reasoning","reasoning_summary","web_search_tool","image_gen_tool","verbosity"}},
@@ -137,6 +141,7 @@ class ModelFamily:
         "o3-deep-research":     {"features": {"function_calling","reasoning","reasoning_summary","deep_research"}},
         "o4-mini-deep-research":{"features": {"function_calling","reasoning","reasoning_summary","deep_research"}},
 
+        "gpt-5.2-chat-latest":  {"features": {"function_calling","web_search_tool"}},
         "gpt-5.1-chat-latest":  {"features": {"function_calling","web_search_tool"}},
         "gpt-5-chat-latest":    {"features": {"function_calling","web_search_tool"}},
         "chatgpt-4o-latest":    {"features": {}}, # Chat-optimized non-reasoning model does not support tool calling, or any other advanced features.
@@ -153,10 +158,15 @@ class ModelFamily:
         "gpt-5-codex-high":            {"base_model": "gpt-5-codex",       "params": {"reasoning": {"effort": "high"}}},
         "gpt-5.1-codex-high":          {"base_model": "gpt-5.1-codex",       "params": {"reasoning": {"effort": "high"}}},
         "gpt-5.1-codex-max-high":      {"base_model": "gpt-5.1-codex-max", "params": {"reasoning": {"effort": "high"}}},
+        "gpt-5.2-codex-high":          {"base_model": "gpt-5.2-codex",       "params": {"reasoning": {"effort": "high"}}},
+        "gpt-5.2-codex-max-high":      {"base_model": "gpt-5.2-codex-max", "params": {"reasoning": {"effort": "high"}}},
         
-        "gpt-5.1-thinking":               {"base_model": "gpt-5"},
-        "gpt-5.1-thinking-minimal":       {"base_model": "gpt-5",       "params": {"reasoning": {"effort": "minimal"}}},
-        "gpt-5.1-thinking-high":          {"base_model": "gpt-5",       "params": {"reasoning": {"effort": "high"}}},
+        "gpt-5.1-thinking":               {"base_model": "gpt-5.1"},
+        "gpt-5.1-thinking-minimal":       {"base_model": "gpt-5.1",       "params": {"reasoning": {"effort": "minimal"}}},
+        "gpt-5.1-thinking-high":          {"base_model": "gpt-5.1",       "params": {"reasoning": {"effort": "high"}}},
+        "gpt-5.2-thinking":               {"base_model": "gpt-5.2"},
+        "gpt-5.2-thinking-minimal":       {"base_model": "gpt-5.2",       "params": {"reasoning": {"effort": "minimal"}}},
+        "gpt-5.2-thinking-high":          {"base_model": "gpt-5.2",       "params": {"reasoning": {"effort": "high"}}},
 
         "gpt-5-thinking":               {"base_model": "gpt-5"},
         "gpt-5-thinking-minimal":       {"base_model": "gpt-5",       "params": {"reasoning": {"effort": "minimal"}}},
@@ -591,7 +601,7 @@ class Pipe:
 
         # Models
         MODEL_ID: str = Field(
-            default="o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.1-pro, gpt-5-pro, gpt-5.1-codex-high, gpt-5.1-codex-max, gpt-5.1-codex-max-high, gpt-5.1-chat-latest, gpt-5.1-thinking, gpt-5.1-thinking-high, gpt-5.1-thinking-minimal",
+            default="o3, o3-high, o3-pro, o4-mini, o4-mini-high, o3-deep-research, o4-mini-deep-research, o3-high-deep-research, o4-mini-high-deep-research, gpt-5.2-pro, gpt-5.1-pro, gpt-5-pro, gpt-5.2-codex-high, gpt-5.1-codex-high, gpt-5.2-codex-max, gpt-5.1-codex-max, gpt-5.2-codex-max-high, gpt-5.1-codex-max-high, gpt-5.2-chat-latest, gpt-5.1-chat-latest, gpt-5.2-thinking, gpt-5.1-thinking, gpt-5.2-thinking-high, gpt-5.1-thinking-high, gpt-5.2-thinking-minimal, gpt-5.1-thinking-minimal",
             description=(
                 "Comma separated OpenAI model IDs. Each ID becomes a model entry in WebUI. "
                 "Supports all official OpenAI model IDs and pseudo IDs (see README.md for full list)."

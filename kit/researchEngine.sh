@@ -370,7 +370,7 @@ _setup_openwebui-user() {
 	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 
 
 
@@ -381,13 +381,13 @@ _setup_openwebui-user() {
 	# OBSOLETE
 
 	#docker pull ghcr.io/open-webui/open-webui:main
-	#docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+	#docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 	
 	# OPTIONAL alternative. Discouraged unless either necessary (possibly to use built-in embedding AI model for RAG, instead of ollama) or unless internal NVIDIA GPU is permanently installed and absence of external GPU will NOT cause 'GPU container missing' failures (because NVIDIA likes to ensure their dirvers break if anyone ever uses anyone else's hardware).
 	# WARNING: Especially strongly discouraged for automatic installation, as 'ollama' will already use GPU if available, and built-in NVIDIA GPU support for only unusual use cases is NOT a sane default!
 	#  If these commands are used, it may be most sensible to include these in a script already installing NVIDIA drivers.
 	#_bash> docker pull ghcr.io/open-webui/open-webui:cuda
-	#_bash> docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
+	#_bash> docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$HOME"/core/data/openwebui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:cuda
 }
 _setup_openwebui() {
 	_messageNormal 'Install OpenWebUI'
@@ -733,7 +733,7 @@ _upgrade_researchEngine_openwebui() {
 	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 
 	#_service_researchEngine-docker-chroot-stop
 }
@@ -811,7 +811,7 @@ EOF
 	#echo 'bash -i' >> "$ub_researchEngine_data"openwebui-multiuser/._run.sh
 
 	#--entrypoint "/app/backend/data/._run.sh"
-	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+	docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v "$ub_researchEngine_data_docker"openwebui-multiuser:/app/backend/data -v "$ub_researchEngine_data_docker"certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 
 	#_service_researchEngine-docker-chroot-stop
 }
@@ -1011,7 +1011,7 @@ _install_researchEngine-MSWindows() {
 		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui/._run.sh
 
 		#--entrypoint "/app/backend/data/._run.sh"
-		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 	fi
 
 	if [[ "$ub_researchEngine_nvidia" == "true" ]]
@@ -1068,7 +1068,7 @@ EOF
 		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui/._run.sh
 
 		#--entrypoint "/app/backend/data/._run.sh"
-		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+		docker run -d -p 127.0.0.1:3000:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=False -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 	fi
 #fi
 	
@@ -1111,7 +1111,7 @@ EOF
 		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
 
 		#--entrypoint "/app/backend/data/._run.sh"
-		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
+		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:main
 	fi
 
 	if [[ "$ub_researchEngine_nvidia" == "true" ]]
@@ -1168,7 +1168,7 @@ EOF
 		#echo 'bash -i' >> /cygdrive/c/core/data/openwebui-multiuser/._run.sh
 
 		#--entrypoint "/app/backend/data/._run.sh"
-		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
+		docker run -d -p 127.0.0.1:3005:8080 -e OPENAI_API_KEY="$OPENAI_API_KEY" -e WEBUI_AUTH=True -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e AIOHTTP_CLIENT_TIMEOUT=32400 -e AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA=32400 --gpus all --add-host=host.docker.internal:host-gateway -v /c/core/data/openwebui-multiuser:/app/backend/data -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name open-webui-multiuser --restart always --entrypoint "/app/backend/data/._run.sh" ghcr.io/open-webui/open-webui:cuda
 	fi
 
 
@@ -1289,7 +1289,7 @@ EOF
 	#--entrypoint "/app/server/storage/._run.sh" mintplexlabs/anythingllm
 	#mintplexlabs/anythingllm
 	#-v /cygdrive/c/core/data/anythingllm/.env:/app/server/.env
-	docker run -d -p 127.0.0.1:3001:3001 --cap-add SYS_ADMIN -v /c/core/data/anythingllm:/app/server/storage -e STORAGE_DIR="/app/server/storage" -e NODE_EXTRA_CA_CERTS="/app/server/storage/certs/extra-cas.pem" -e OPENAI_API_KEY="$OPENAI_API_KEY" -e OLLAMA_NOHISTORY=true -e DISABLE_TELEMETRY=true --add-host=host.docker.internal:host-gateway -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name anythingllm --restart always --entrypoint "/app/server/storage/._run.sh" mintplexlabs/anythingllm
+	docker run -d -p 127.0.0.1:3001:3001 --cap-add SYS_ADMIN -v /c/core/data/anythingllm:/app/server/storage -e STORAGE_DIR="/app/server/storage" -e NODE_EXTRA_CA_CERTS="/app/server/storage/certs/extra-cas.pem" -e OPENAI_API_KEY="$OPENAI_API_KEY" -e BYPASS_MODEL_ACCESS_CONTROL=true -e CHAT_STREAM_RESPONSE_CHUNK_MAX_BUFFER_SIZE=20971520 -e OLLAMA_NOHISTORY=true -e DISABLE_TELEMETRY=true --add-host=host.docker.internal:host-gateway -v /c/core/data/certs:/usr/local/share/ca-certificates:ro --name anythingllm --restart always --entrypoint "/app/server/storage/._run.sh" mintplexlabs/anythingllm
 
 	fi
 
